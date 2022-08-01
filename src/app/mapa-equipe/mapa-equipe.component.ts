@@ -1,7 +1,5 @@
 import { Component, OnInit } from '@angular/core';
 import { Loader } from '@googlemaps/js-api-loader';
-import { MarkerClusterer } from "@googlemaps/markerclusterer";
-
 
 @Component({
   selector: 'app-mapa-equipe',
@@ -9,7 +7,8 @@ import { MarkerClusterer } from "@googlemaps/markerclusterer";
   styleUrls: ['./mapa-equipe.component.css']
 })
 export class MapaEquipeComponent implements OnInit {
-
+  
+  public titulo:any;
   constructor() { }
   closeResult = '';
   input1: any;
@@ -29,9 +28,10 @@ export class MapaEquipeComponent implements OnInit {
 
   MarkerHead = '';
   MarkerContent = '';
-
+  mostrarModalFuncionario: boolean = false;
   contentString =
-   '<h3>Jonathan Rossato</h3>'
+   `<div style="background-color: blue">
+   <a>Jonathan Rossato</a></div>`
 
 
   locationsComplex: [string, number, number, number][] = [
@@ -41,6 +41,13 @@ export class MapaEquipeComponent implements OnInit {
     ["Cidade 4", -23.6687, -46.4614, 2],
     ["Cidade 5", -21.1767, -47.8208, 1],
   ];
+
+
+
+ 
+
+
+
   ngOnInit() {
     let loader = new Loader({
       apiKey: 'AIzaSyCbu9PxUAnPqy2W1fyKwLANXFywzDyiDKI',
@@ -63,7 +70,6 @@ export class MapaEquipeComponent implements OnInit {
 
   }
   
-
 
   setMarkers(map: google.maps.Map) {
 
@@ -118,16 +124,8 @@ export class MapaEquipeComponent implements OnInit {
           shouldFocus: false,
         });
       });
-    }
-
-   
+    }   
   }
-  
-
-
-
-  
-
 }
 
 

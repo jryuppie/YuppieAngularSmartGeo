@@ -3,3 +3,33 @@
     height: 80vh;
     margin-top: 2%;
    }
+
+   .modalwindow {
+    visibility: hidden;
+    opacity: 0;
+    position: absolute;
+    top: 0;
+    right: 0;
+    bottom: 0;
+    left: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background-color: 
+    rgb(28 74 149);
+    transition: all 0.4s;
+    width: 15vw;
+    height: 25vh;
+    margin-left:70%;
+    margin-top:3%;
+  }
+
+
+  .modalwindow:target {
+    visibility: visible;
+    opacity: 0.9;
+  }
+
+  .modalwindow .modal-opened {
+    display: flex;
+    }

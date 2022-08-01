@@ -1,0 +1,61 @@
+<!DOCTYPE html>
+<html>
+<body id="principal">  
+    <div class="wrapper">
+        
+        <nav id="sidebar" [className]="toggle ? 'active' : 'inactive'">
+            <div style="margin-top:10%" class="sidebar-header">
+                <h2><b>Smart</b>Geo</h2>
+            </div>
+
+            <ul style="margin-top:10%" class="list-unstyled components">
+                <p>Jonathan Rossato</p>                
+                <li>
+                    <a href="#" routerLink="/Dashboard">Dashboard</a>
+                </li>
+                <li>
+                    <a href="#"routerLink="/app/mapaEquipe">Mapa Equipe</a>
+                </li>
+                <li>
+                    <a href="#"routerLink="/app/agendarPlanejar">Agendar/Planejar</a>
+                </li>
+                <li>
+                  <a href="#"routerLink="/Configuracoes">Configurações</a>
+              </li>
+            </ul>   
+            
+            
+            <img src="assets/images/yuppie-white.png" style="margin-top: 160%; margin-left:6%" alt="Image" class="p-image-mask w-min h-screen" >
+        </nav>
+
+        <!-- Page Content Holder -->
+        <div  id="content">
+
+            <nav class="navbar navbar-expand-lg navbar-light bg-light">
+                <div class="container-fluid">
+
+                    <button type="button"  [className]="toggle ? 'active' : 'inactive'" id="sidebarCollapse" (click)="mudarActive()"  class="navbar-btn">
+                        <span></span>
+                        <span></span>
+                        <span></span>
+                    </button>
+                    <button class="btn btn-dark d-inline-block d-lg-none ml-auto" type="button" data-toggle="collapse" data-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+                        <i class="fas fa-align-justify"></i>
+                    </button>
+
+
+                    <div class="collapse navbar-collapse" id="navbarSupportedContent">  
+                          <h1 id="h1Titulo" style="margin-left: 40%;" class="nav-item active">{{titulo}}</h1>                     
+                  </div>
+                </div>
+           </nav>
+     
+          <!-- //BODY AQUI -->
+          <router-outlet></router-outlet> 
+         
+        </div>
+    </div>
+</body>
+</html>
+
+

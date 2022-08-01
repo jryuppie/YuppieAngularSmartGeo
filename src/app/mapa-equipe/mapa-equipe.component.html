@@ -1,21 +1,25 @@
 
 
 
-    <!-- <div id="floating-panel">
-      <b>Start: </b>
-      <input type="text" id="start">
-  
     
-      <b>End: </b>
-      <input type="text" id="end">
-
-      <b>WayPoint: </b>
-      <input type="text" id="waypoint">
-
-      <button id="enviar"></button>
-    
-    </div> -->
     <div class="full" id="map"></div>
 
+    <div id="modal-window"  [ngClass]="{ 'modal-opened': mostrarModalFuncionario }"   class="modalwindow">
+    <mat-card class="example-card">
+      <mat-card-subtitle>São Paulo</mat-card-subtitle>
+      <mat-card-title>Jonathan Rossato</mat-card-title>
+      <mat-card-content>
+        <p>Detalhes da rota do funcionário</p>
+        <p>Proxima rota agendada</p>
+      </mat-card-content>
+      <mat-divider inset></mat-divider>
+      <mat-card-actions>
+        <a  class="modalwindow__close">Votlar ao Mapa.</a>
+      </mat-card-actions>
+      <mat-card-footer>
+        <mat-progress-bar mode="indeterminate"></mat-progress-bar>
+      </mat-card-footer>
+    </mat-card>
+  </div>
 
 
