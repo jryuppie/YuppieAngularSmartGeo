@@ -53,3 +53,17 @@ img.p-image-mask.w-min.h-screen {
     height: 35rem !important;
     margin-left: 80px;
 }
+
+:host ::ng-deep .p-chip.custom-chip {
+  background: var(--primary-color);
+  color: var(--primary-color-text);
+}
+
+.icon {
+  background: url('src/assets/images/truck_icon.png');
+  height: 64px;
+  width: 64px;
+  margin-top: 3%;
+  /* display: block; */
+  /* Other styles here */
+}

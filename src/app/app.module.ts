@@ -24,7 +24,8 @@ import {DialogModule} from 'primeng/dialog';
 import { CardModule } from 'primeng/card';
 import {ButtonModule} from 'primeng/button';
 import {ListboxModule} from 'primeng/listbox';
-
+import {PanelModule} from 'primeng/panel';
+import { MenuModule } from 'primeng/menu';
 @NgModule({
   declarations: [
     AppComponent,
@@ -41,7 +42,7 @@ import {ListboxModule} from 'primeng/listbox';
     NgbModule,
     BrowserAnimationsModule,MatCardModule,MatDividerModule,MatProgressBarModule,MatFormFieldModule,
     FormsModule,ReactiveFormsModule,
-    DialogModule,CardModule,ButtonModule,ListboxModule
+    DialogModule,CardModule,ButtonModule,ListboxModule,PanelModule,MenuModule
   ],
   providers: [MenuLateralService],
   bootstrap: [AppComponent]

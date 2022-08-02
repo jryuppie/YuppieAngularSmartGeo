@@ -2,20 +2,22 @@ import { Component, OnInit } from '@angular/core';
 import { Loader } from '@googlemaps/js-api-loader';
 import { MenuLateralService } from '../menu-lateral/menu-lateral.service';
 import { PrimeNGConfig, SelectItemGroup } from "primeng/api";
-
+import { PrimeIcons} from 'primeng/api';
+import {MessageService} from 'primeng/api';
+import {MenuItem} from 'primeng/api';
 @Component({
   selector: 'app-mapa-equipe',
   templateUrl: './mapa-equipe.component.html',
   styleUrls: ['./mapa-equipe.component.css'],
-  providers: [MenuLateralService],
+  providers: [MenuLateralService,MessageService],
 
 })
 export class MapaEquipeComponent implements OnInit {
   
   public titulo:any;
-  constructor(private menuLateralService : MenuLateralService) { }
+  constructor(private menuLateralService : MenuLateralService, public messageService:MessageService) { }
 
-  
+  items: any;
 
 selectedLocation: any;
 selectedFuncionario: [string, number, number, number] = ["", 0, 0, 0];
@@ -55,6 +57,10 @@ selectedFuncionario: [string, number, number, number] = ["", 0, 0, 0];
  
 
   ngOnInit() {
+
+  
+
+
     let loader = new Loader({
       apiKey: 'AIzaSyCbu9PxUAnPqy2W1fyKwLANXFywzDyiDKI',
       libraries: ['places']
