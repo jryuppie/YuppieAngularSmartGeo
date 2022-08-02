@@ -229,3 +229,53 @@ a.article, a.article:hover {
 
 
 
+
+
+
+.iconDash {
+    background: url('src/assets/images/iconDash.png');
+   color: white !important;
+   margin-left: 5%;
+   position:relative;
+   background-repeat: no-repeat;
+   width: 50%;
+   display: inline-table;
+   text-align: center;
+   cursor: pointer;
+  }
+  .iconMap {
+    background: url('src/assets/images/mapIcon.png');
+    color: white !important;
+    margin-left: 5%;
+    position:relative;
+    background-repeat: no-repeat;
+    width: 50%;
+    display: inline-table;
+    text-align: center;
+    cursor: pointer;
+   
+  }
+  .iconConfig {
+    background: url('src/assets/images/configIcon.png');
+    color: white !important;
+    margin-left: 5%;
+    position:relative;
+    background-repeat: no-repeat;
+    width: 50%;
+    display: inline-table;
+    text-align: center;
+    cursor: pointer;
+  
+  }
+  .iconCalendar {
+    background: url('src/assets/images/calendarIcon.png');
+    color: white !important;
+    margin-left: 5%;
+    position:relative;
+    background-repeat: no-repeat;
+    width: 50%;
+    display: inline-table;
+    text-align: center;
+    cursor: pointer;
+ 
+  }
