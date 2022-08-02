@@ -15,6 +15,7 @@ export class MenuLateralComponent implements OnInit {
   constructor() { }
 
   ngOnInit(): void {
+   
   }
   expandirSidebar(event: Event){
     console.log(event);
@@ -23,6 +24,10 @@ export class MenuLateralComponent implements OnInit {
   }
 
   mudarActive(){
-    this.toggle = !this.toggle;
+    this.toggle = !this.toggle;   
   }
+
+  
+
+
 }

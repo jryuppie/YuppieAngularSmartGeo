@@ -18,6 +18,12 @@ import {MatFormFieldModule} from '@angular/material/form-field';
 
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { MenuLateralComponent } from './menu-lateral/menu-lateral.component';
+import { MenuLateralService } from './menu-lateral/menu-lateral.service';
+
+import {DialogModule} from 'primeng/dialog';
+import { CardModule } from 'primeng/card';
+import {ButtonModule} from 'primeng/button';
+import {ListboxModule} from 'primeng/listbox';
 
 @NgModule({
   declarations: [
@@ -34,9 +40,10 @@ import { MenuLateralComponent } from './menu-lateral/menu-lateral.component';
     AppRoutingModule,
     NgbModule,
     BrowserAnimationsModule,MatCardModule,MatDividerModule,MatProgressBarModule,MatFormFieldModule,
-    FormsModule,ReactiveFormsModule
+    FormsModule,ReactiveFormsModule,
+    DialogModule,CardModule,ButtonModule,ListboxModule
   ],
-  providers: [],
+  providers: [MenuLateralService],
   bootstrap: [AppComponent]
 })
 export class AppModule { }

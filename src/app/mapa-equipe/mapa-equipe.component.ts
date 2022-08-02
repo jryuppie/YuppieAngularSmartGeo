@@ -1,15 +1,24 @@
 import { Component, OnInit } from '@angular/core';
 import { Loader } from '@googlemaps/js-api-loader';
+import { MenuLateralService } from '../menu-lateral/menu-lateral.service';
+import { PrimeNGConfig, SelectItemGroup } from "primeng/api";
 
 @Component({
   selector: 'app-mapa-equipe',
   templateUrl: './mapa-equipe.component.html',
-  styleUrls: ['./mapa-equipe.component.css']
+  styleUrls: ['./mapa-equipe.component.css'],
+  providers: [MenuLateralService],
+
 })
 export class MapaEquipeComponent implements OnInit {
   
   public titulo:any;
-  constructor() { }
+  constructor(private menuLateralService : MenuLateralService) { }
+
+  
+
+selectedLocation: any;
+selectedFuncionario: [string, number, number, number] = ["", 0, 0, 0];
   closeResult = '';
   input1: any;
   input2: any;
@@ -29,24 +38,21 @@ export class MapaEquipeComponent implements OnInit {
   MarkerHead = '';
   MarkerContent = '';
   mostrarModalFuncionario: boolean = false;
-  contentString =
-   `<div style="background-color: blue">
-   <a>Jonathan Rossato</a></div>`
+ 
 
 
   locationsComplex: [string, number, number, number][] = [
-    ["Cidade 1", -23.5062, -47.4559, 4],
-    ["Cidade 2", -23.9618, -46.3322, 5],
-    ["Cidade 3", -22.5645, -47.4004, 3],
-    ["Cidade 4", -23.6687, -46.4614, 2],
-    ["Cidade 5", -21.1767, -47.8208, 1],
+    ["Funcionario 1", -23.5062, -47.4559, 4],
+    ["Funcionario 2", -23.9618, -46.3322, 5],
+    ["Funcionario 3", -22.5645, -47.4004, 3],
+    ["Funcionario 4", -23.6687, -46.4614, 2],
+    ["Funcionario 5", -21.1767, -47.8208, 1],
   ];
 
 
 
+  
  
-
-
 
   ngOnInit() {
     let loader = new Loader({
@@ -57,54 +63,30 @@ export class MapaEquipeComponent implements OnInit {
     loader.load().then(() => {
       var directionsService = new google.maps.DirectionsService();
       var directionsRenderer = new google.maps.DirectionsRenderer();
-
-
-      let map = new google.maps.Map(document.getElementById('map')!, {
-        
+      let map = new google.maps.Map(document.getElementById('map')!, {       
         center: { lat: -23.5489, lng: -46.6388 },
         zoom: 8
       })
       directionsRenderer.setMap(map);  
       this.setMarkers(map);
-    });
 
-  }
-  
-
-  setMarkers(map: google.maps.Map) {
-
-
-
+    });   
     
 
-  const infowindow = new google.maps.InfoWindow({
-    content: this.contentString,
-  });
+  }
+  showDialog(){
+     this.mostrarModalFuncionario = true;
+  }
+  mostrarFuncionario(id:number){   
+debugger;
+    this.selectedFuncionario = this.locationsComplex.find(f=> f[3] == id)!;
+    this.mostrarModalFuncionario = true;
+  }
 
+  setMarkers(map: google.maps.Map) {   
 
-    // Adds markers to the map.
-  
-    // Marker sizes are expressed as a Size of X,Y where the origin of the image
-    // (0,0) is located in the top left of the image.
-  
-    // Origins, anchor positions and coordinates of the marker increase in the X
-    // direction to the right and in the Y direction down.
-    const image = {
-      url: "https://developers.google.com/maps/documentation/javascript/examples/full/images/beachflag.png",
-      // This marker is 20 pixels wide by 32 pixels high.
-      size: new google.maps.Size(20, 32),
-      // The origin for this image is (0, 0).
-      origin: new google.maps.Point(0, 0),
-      // The anchor for this image is the base of the flagpole at (0, 32).
-      anchor: new google.maps.Point(0, 32),
-    };
-    // Shapes define the clickable region of the icon. The type defines an HTML
-    // <area> element 'poly' which traces out a polygon as a series of X,Y points.
-    // The final coordinate closes the poly by connecting to the first coordinate.
-    const shape = {
-      coords: [1, 1, 1, 20, 18, 20, 18, 1],
-      type: "poly",
-    };
+     
+    const infowindow = new google.maps.InfoWindow().setContent(' <a onClick="showDialog()">Jonathan Rossato</a>');
   
     for (let i = 0; i < this.locationsComplex.length; i++) {
       const location = this.locationsComplex[i];
@@ -112,20 +94,29 @@ export class MapaEquipeComponent implements OnInit {
       let cMarker = new google.maps.Marker({
         position: { lat: location[1], lng: location[2] },
         map,       
-        shape: shape,
+        
         title: location[0],
         zIndex: location[3],
       });
 
       cMarker.addListener("click", () => {
-        infowindow.open({
+        var infowindow = new google.maps.InfoWindow({          
+          content: location[0],
+         
+      });
+      infowindow.open({
           anchor: cMarker,
           map,
-          shouldFocus: false,
+          shouldFocus: false,                    
         });
       });
+
+      window.addEventListener 
     }   
+    
   }
+
+  
 }
 
 

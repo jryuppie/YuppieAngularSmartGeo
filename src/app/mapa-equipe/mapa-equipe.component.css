@@ -1,4 +1,10 @@
-.full{
+.mapMenuOn{
+    width: 100%;
+    height: 99%;
+    
+   }
+
+   .mapMenuOff{
     width: 84vw;
     height: 80vh;
     margin-top: 2%;
@@ -33,3 +39,17 @@
   .modalwindow .modal-opened {
     display: flex;
     }
+
+
+
+    @media (max-width: 768px) {
+      
+  }
+  .mt-8.grid.grid-nogutter.surface-section.text-900.shadow-8.cardInicio {
+    height: 35rem !important;
+
+}
+img.p-image-mask.w-min.h-screen {
+    height: 35rem !important;
+    margin-left: 80px;
+}
