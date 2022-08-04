@@ -2,40 +2,43 @@
     <div class="grid">
 
         <div class="col-2 align-items-center">
-            <div id="grupoGeral" class="row" style="height: 100%;">
-                <div id="grupoInput" class="flex-row">
-                    <div class="row ml-2 mt-5">
+            <div id="grupoGeral" class="row" style="height: 100%;">              
+                       <!-- <div id="sidebarPanel" class="max-h-15rem"></div>                  -->
+
+
+                <div id="grupoInput" [hidden]="!inputGrupo" class="flex-row">
+                    <div class="row ml-5 mt-5">
                         <span class="p-input-icon-right">
                             <i class="pi pi-search"></i>
                             <input type="text" id="partida" pInputText placeholder="Partida">
                         </span>
                     </div>
-                    <div class="row ml-2 mt-5">
+                    <div class="row ml-5 mt-5">
                         <span class="p-input-icon-right">
                             <i class="pi pi-search"></i>
                             <input type="text" id="destino" pInputText placeholder="Destino">
                         </span>
                     </div>
-                    <div class="row ml-2 mt-5">
+                    <div class="row ml-5 mt-5">
                         <span class="p-input-icon-right">
                             <i class="pi pi-search"></i>
                             <input type="text" id="parada" pInputText placeholder="Parada (Opcional)">
                         </span>
                     </div>
-                    
-                    <div class="row ml-2 mt-5" [hidden]="!parada2show">
+
+                    <div class="row ml-5 mt-5" [hidden]="!parada2show">
                         <span class="p-input-icon-right">
                             <i class="pi pi-search"></i>
                             <input type="text" id="parada2" pInputText placeholder="Parada 2 (Opcional)">
                         </span>
                     </div>
-                    <div class="row ml-2 mt-5" [hidden]="!parada3show">
+                    <div class="row ml-5 mt-5" [hidden]="!parada3show">
                         <span class="p-input-icon-right">
                             <i class="pi pi-search"></i>
                             <input type="text" id="parada3" pInputText placeholder="Parada 3 (Opcional)">
                         </span>
                     </div>
-                    <div class="row ml-2 mt-5" [hidden]="!parada4show">
+                    <div class="row ml-5 mt-5" [hidden]="!parada4show">
                         <span class="p-input-icon-right">
                             <i class="pi pi-search"></i>
                             <input type="text" id="parada4" pInputText placeholder="Parada 4 (Opcional)">
@@ -44,17 +47,27 @@
                 </div>
 
                 <div class="ml-3 mt-5 mb-3 align-self-end " id="grupoBotoes">
-                    <button pButton type="button" (click)="adicionarParadaTela()" id="adicionarParada" label="Adicionar Paradas" icon="pi pi-plus-circle" iconPos="right"
-                        class="p-button-secondary min-w-full "></button>
+                    <input id="uploadFile" style="display: none" type="file" (change)="onFileSelected($event)" #hiddenfileinput>
+                    <button pButton (click)="hiddenfileinput.click()" label="Enviar Rotas"   [loading]="isUpload" class="waves-effect waves-light btn min-w-full"><i
+                            class="material-icons left"> map</i></button>
 
-                    <button pButton id="enviar" type="button" label="Calcular Rotas" icon="pi pi-search"
-                        class="p-button-success min-w-full text-center mt-3"></button>
+
+                    <button pButton type="button" (click)="adicionarParadaTela()" [loading]="isAdd" [disabled]="true" id="adicionarParada"
+                        label="Adicionar Paradas" icon="pi pi-plus-circle" iconPos="right"
+                        class="p-button-secondary min-w-full mt-3"></button>
+
+                    <button pButton id="enviar" type="button" label="Calcular Rotas" [disabled]="true" icon="pi pi-search"
+                        class="p-button-success min-w-full text-center mt-3" [loading]="isLoading"></button>
+
+
+
                 </div>
             </div>
         </div>
         <div class="col-10 mt-1">
             <div class="full flex align-items-center my-1  border-round-left-2xl border-round-right-2xl align-self-center "
-                id="mapAgendar"></div>
+                id="mapAgendar"></div>              
+                
         </div>
     </div>
 </div>

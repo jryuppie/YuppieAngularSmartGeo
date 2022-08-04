@@ -1,3 +1,5 @@
+
+ 
 <!DOCTYPE html>
 <html>
 <body id="principal">  
@@ -11,19 +13,19 @@
             <ul style="margin-top:10%" class="list-unstyled components">
                 <p>Jonathan Rossato</p>                
                 <li>
-                    <a href="#" class="px-5" routerLink="/Dashboard">Dashboard</a>
+                    <a href="#" (click)="mudarTitulo('Dashboard')" class="px-5" routerLink="/Dashboard">Dashboard</a>
                 </li>
                 <li>
                    
-                    <a class="px-5" href="#"routerLink="/app/mapaEquipe">Mapa Equipe</a>
+                    <a class="px-5" (click)="mudarTitulo('Mapa Equipe')" href="#"routerLink="/app/mapaEquipe">Mapa Equipe</a>
                 </li>
                 <li>
                  
-                    <a class="px-5" href="#"routerLink="/app/agendarPlanejar">Agendar/Planejar</a>
+                    <a class="px-5" (click)="mudarTitulo('Agendar/Planejar')" href="#"routerLink="/app/agendarPlanejar">Agendar/Planejar</a>
                 </li>
                 <li>
                   
-                  <a class="px-5" href="#"routerLink="/Configuracoes">Configurações</a>
+                  <a class="px-5" (click)="mudarTitulo('Configurações')" href="#"routerLink="/Configuracoes">Configurações</a>
               </li>
             </ul>   
             
@@ -49,7 +51,7 @@
 
                     <div class="collapse navbar-collapse" id="navbarSupportedContent"> 
                         <div  class="flex-grow-1 flex-shrink-1 flex"></div> 
-                        <div class="flex-grow-1 flex font-bold">   <h1 id="h1Titulo" style="margin-left: 40%;" class=" text-5xl nav-item active">Planejar Rotas</h1>   </div> 
+                        <div  class="flex-grow-1 flex font-bold">   <h1 id="h1Titulo" style="margin-left: 40%;" class=" text-5xl nav-item active" >Planejar Rotas</h1></div> 
                         <div  class="flex-grow-1 flex-shrink-1 flex"></div> 
                                          
                   </div>
