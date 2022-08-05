@@ -3,7 +3,20 @@
 
         <div class="col-2 align-items-center">
             <div id="grupoGeral" class="row" style="height: 100%;">              
-                       <!-- <div id="sidebarPanel" class="max-h-15rem"></div>                  -->
+                       <div id="sidebarPanel" class="mt-4 ml-5" style="overflow:overlay; height:400px;"></div>                 
+                       <div id="sidebarMarkers" class="mt-4 ml-5"  style="overflow:overlay; height:250px;">
+                        
+                        <div class="card"  [ngStyle]="{backgroundColor:'rgb(239,243,248)'}">                           
+                            <p-timeline  [value]="listaPontos">
+                                <ng-template pTemplate="content" let-pontos>
+                                    <small   class="p-text-secondary">{{pontos.a}}</small>
+                                </ng-template>
+                                <ng-template pTemplate="opposite" let-pontos>
+                                    <b>{{pontos.b}}</b>
+                                </ng-template>
+                            </p-timeline>
+                        </div>
+                    </div>    
 
 
                 <div id="grupoInput" [hidden]="!inputGrupo" class="flex-row">

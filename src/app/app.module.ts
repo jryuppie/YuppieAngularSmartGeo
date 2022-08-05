@@ -27,7 +27,7 @@ import {ListboxModule} from 'primeng/listbox';
 import {PanelModule} from 'primeng/panel';
 import { MenuModule } from 'primeng/menu';
 import {InputTextModule} from 'primeng/inputtext';
-import {VirtualScrollerModule} from 'primeng/virtualscroller';
+import {TimelineModule} from 'primeng/timeline';
 
 import {HttpClientModule} from '@angular/common/http';
 @NgModule({
@@ -46,7 +46,7 @@ import {HttpClientModule} from '@angular/common/http';
     NgbModule,
     BrowserAnimationsModule,MatCardModule,MatDividerModule,MatProgressBarModule,MatFormFieldModule,
     FormsModule,ReactiveFormsModule,
-    DialogModule,CardModule,ButtonModule,ListboxModule,PanelModule,MenuModule,InputTextModule,HttpClientModule,VirtualScrollerModule
+    DialogModule,CardModule,ButtonModule,ListboxModule,PanelModule,MenuModule,InputTextModule,HttpClientModule,TimelineModule
   ],
   providers: [MenuLateralService],
   bootstrap: [AppComponent]
