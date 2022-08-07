@@ -23,7 +23,7 @@ export class MapaEquipeComponent implements OnInit {
   }
 
 
-
+  map: any
   items: any;
 
   selectedLocation: any;
@@ -63,22 +63,27 @@ export class MapaEquipeComponent implements OnInit {
 
 
   ngOnInit() {   
-   
+    (document.getElementById('h1Titulo') as HTMLElement).innerHTML =  'Mapa Equipe';
+    
     let loader = new Loader({
       apiKey: 'AIzaSyCbu9PxUAnPqy2W1fyKwLANXFywzDyiDKI',
-      libraries: ['places']
+      libraries: ['places'],
+      region: 'BR',
+      language: 'pt-BR',
     });
 
     loader.load().then(() => {
       var directionsService = new google.maps.DirectionsService();
       var directionsRenderer = new google.maps.DirectionsRenderer();
-      let map = new google.maps.Map(document.getElementById('map')!, {
+      this.map = new google.maps.Map(document.getElementById('mapEquipe')!, {
+        mapId: '178c0b225e053393',
         center: { lat: -23.5489, lng: -46.6388 },
-        zoom: 8
+        zoom: 8,
+        streetViewControl: false
       })
-      directionsRenderer.setMap(map);
-      this.setMarkers(map);
-      this.menuLateralService.setMap(map);
+      directionsRenderer.setMap( this.map);
+      this.setMarkers( this.map);
+      this.menuLateralService.setMap( this.map);
     });
 
 

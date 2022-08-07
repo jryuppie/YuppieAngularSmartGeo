@@ -4,8 +4,8 @@ import { Component, OnInit, Input } from '@angular/core';
 import { Loader } from '@googlemaps/js-api-loader';
 
 import { MenuLateralService } from '../menu-lateral/menu-lateral.service';
-import { csvRotas, ListaRotasCSV, RotasMaps } from '../models/csvRotas';
-import {PrimeIcons} from 'primeng/api';
+import { csvRotas, ListaRotasCSV, Localizacao, RotasMaps } from '../models/csvRotas';
+import { PrimeIcons } from 'primeng/api';
 
 
 @Component({
@@ -31,8 +31,9 @@ export class AgendarRotasComponent implements OnInit {
   isAdd: boolean = false;
   isUpload: boolean = false;
   listaPontos: any;
-
-
+  painelRotasVisualizar: boolean = true;
+  envarRotasVisualizar: boolean = true;
+  rotaManualVisualizar: boolean = true;
   fileName: string = '';
 
   map: any;
@@ -43,21 +44,14 @@ export class AgendarRotasComponent implements OnInit {
   public rotasMapa: RotasMaps = new RotasMaps();
   public rotasImportadas: Array<csvRotas> = new Array<csvRotas>();
 
-  
+
   //  geocoder: any = new google.maps.Geocoder();
   //  serviceMatrix: any = new google.maps.DistanceMatrixService();
 
   ngOnInit() {
+    (document.getElementById('h1Titulo') as HTMLElement).innerHTML =  'Planejamento de Rotas';   
 
 
-    this.listaPontos = [{a:'A',b:'São Paulo'},
-    {a:'B',b:'Barueri'},
-    {a:'C',b:'Osasco'},    
-    {a:'E',b:'Jundiaí'},
-    {a:'F',b:'São Paulo'},
-    {a:'G',b:'Santos'},
-    {a:'H',b:'São Paulo'}
-  ]
 
     this.parada2show = false;
     this.parada3show = false;
@@ -82,7 +76,7 @@ export class AgendarRotasComponent implements OnInit {
         mapId: '178c0b225e053393',
         center: { lat: -23.5489, lng: -46.6388 },
         zoom: 8,
-        streetViewControl: false
+        streetViewControl: false 
       })
       this.directionsRenderer.setMap(this.map);
       this.directionsRenderer.setPanel(
@@ -96,14 +90,6 @@ export class AgendarRotasComponent implements OnInit {
         "click",
         onChangeHandler
       );
-
-
-
-
-
-
-
-
 
       var options = {
         componentRestrictions: { country: "BR" },
@@ -144,8 +130,8 @@ export class AgendarRotasComponent implements OnInit {
         (document.querySelector("#mapAgendar > div > div > div:nth-child(17) > div") as HTMLElement).style['display'] = 'none';
         (document.querySelector("#mapAgendar > div > div > div:nth-child(15) > div") as HTMLElement).style['display'] = 'none';
         (document.querySelector("#mapAgendar > div > div > div:nth-child(5) > div") as HTMLElement).style['display'] = 'none';
-
-      }, 2000);
+        
+      }, 4000);
     });
 
 
@@ -189,12 +175,15 @@ export class AgendarRotasComponent implements OnInit {
         });
       }
       if ((document.getElementById("partida") as HTMLInputElement).value != '') {
-        partida = (document.getElementById("partida") as HTMLInputElement).value;
+        let partida = new csvRotas()
+        partida.Cidade = (document.getElementById("partida") as HTMLInputElement).value
+        this.rotasMapa.Partida = partida
       }
       if ((document.getElementById("destino") as HTMLInputElement).value != '') {
-        destino = (document.getElementById("destino") as HTMLInputElement).value;
+        let destino = new csvRotas()
+        destino.Cidade = (document.getElementById("destino") as HTMLInputElement).value
+        this.rotasMapa.Destino = destino
       }
-
     } else {
       if (this.rotasImportadas != []) {
 
@@ -228,30 +217,12 @@ export class AgendarRotasComponent implements OnInit {
       }
     }
 
-    var origin = new google.maps.LatLng(parseFloat(this.rotasMapa.Partida?.Latitude!), parseFloat(this.rotasMapa.Partida?.Longitude!));
-    // var destination = new google.maps.LatLng(37.7683909618184, -122.51089453697205);
 
-    console.log(origin);
+    if (this.rotasMapa.Destino != undefined && this.rotasMapa.Partida != undefined) {
 
-
-    if (partida != '' && destino != '') {
       this.directionsService.route(
-        {
-          origin: {
-            lat: parseFloat(this.rotasMapa.Partida?.Latitude!) + 0.00050, lng: parseFloat(this.rotasMapa.Partida?.Longitude!)
-          },
-          destination: {
-            lat: parseFloat(this.rotasMapa.Partida?.Latitude!), lng: parseFloat(this.rotasMapa.Partida?.Longitude!)
-          },
-          waypoints: waypts,
-          travelMode: google.maps.TravelMode.DRIVING,
-          optimizeWaypoints: true,
-
-          region: 'BR',
-
-        })
+        this.atribuirRequest(csv, waypts))
         .then((response: any) => {
-
           this.directionsRenderer.setOptions({ polylineOptions: { strokeColor: 'yellow' } });
           this.directionsRenderer.setDirections(response);
           this.getLegs(response);
@@ -261,27 +232,30 @@ export class AgendarRotasComponent implements OnInit {
         })
         .catch((e: any) => {
           this.isLoading = false
-
           console.log(e);
         });
     }
-
-
-
-
   }
 
   getLegs(response: any) {
+    console.log(response)
     const Legs = response!.routes[0]!.legs!;
-
+    this.listaPontos = [];
     for (let index = 0; index < Legs.length; index++) {
-      const ponto: string = Legs[index].start_address;
+      if (index == 0) {
+        const ponto: string = Legs[index].start_address.split(',')[Legs[index].start_address.split(',').length === 4 ? 1 : 2];
+        const distancia: string = '';//Legs[index].distance.text;
+        const duracao: string = '';//Legs[index].duration.text;
+        let item: any = { a: ponto, b: distancia, c: duracao }
+        this.listaPontos.push(item);
+      }
+      const ponto: string = Legs[index].end_address.split(',')[Legs[index].end_address.split(',').length === 4 ? 1 : 2];
       const distancia: string = Legs[index].distance.text;
       const duracao: string = Legs[index].duration.text;
-      let item: any = [ponto, distancia, duracao]
+      let item: any = { a: ponto, b: distancia, c: duracao }
       this.listaPontos.push(item);
     }
- 
+    console.log(this.listaPontos);
   }
 
   showSteps(
@@ -347,7 +321,18 @@ export class AgendarRotasComponent implements OnInit {
     this.isAdd = false;
   }
 
+  rotaManualVisualizarFunc() {
+    if (this.rotaManualVisualizar) {
+      (document.getElementById('uploadFile2') as HTMLElement).style['display'] = 'inline-flex';
+      // (document.getElementById('uploadFile')  as HTMLElement).style['display'] = 'inline-flex';
+    }
+    else {
+      (document.getElementById('uploadFile2') as HTMLElement).style['display'] = 'none';
+      // (document.getElementById('uploadFile')  as HTMLElement).style['display'] = 'none';
 
+    }
+
+  }
 
 
 
@@ -379,7 +364,7 @@ export class AgendarRotasComponent implements OnInit {
   linesR = []; // for rows
 
   leituraArquivoRotas(reader: FileReader) {
-
+    this.rotasImportadas = [];
     let csv: any = reader.result;
     let allTextLines = [];
     allTextLines = csv.split(/\r|\n|\r/);
@@ -422,6 +407,37 @@ export class AgendarRotasComponent implements OnInit {
     }
 
   }
+  atribuirRequest(csv: boolean, waypts: google.maps.DirectionsWaypoint[]) {
+    debugger;
+    var request = {}
+    
+    //fazer retornar um request de route
+    if (csv) {
+      let lat = parseFloat(this.rotasMapa.Partida?.Latitude!)
+      let lng = parseFloat(this.rotasMapa.Partida?.Longitude!)
+      request = {
+        origin: { lat, lng },
+        destination: { lat, lng },
+        waypoints: waypts,
+        travelMode: google.maps.TravelMode.DRIVING,
+        optimizeWaypoints: true,
+        region: 'BR',
+        
+      };
 
+    } else {
+      request = {
+        origin: this.rotasMapa.Partida?.Cidade!,
+        destination: this.rotasMapa.Destino?.Cidade!,
+        waypoints: waypts,
+        travelMode: google.maps.TravelMode.DRIVING,
+        optimizeWaypoints: true,
+        region: 'BR',
+      };
+    }
+    return request;
+  }
 
 }
+
+
