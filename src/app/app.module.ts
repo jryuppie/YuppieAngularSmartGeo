@@ -28,6 +28,7 @@ import {PanelModule} from 'primeng/panel';
 import { MenuModule } from 'primeng/menu';
 import {InputTextModule} from 'primeng/inputtext';
 import {TimelineModule} from 'primeng/timeline';
+import { ChipModule } from 'primeng/chip';
 
 import {HttpClientModule} from '@angular/common/http';
 @NgModule({
@@ -47,6 +48,7 @@ import {HttpClientModule} from '@angular/common/http';
     BrowserAnimationsModule,MatCardModule,MatDividerModule,MatProgressBarModule,MatFormFieldModule,
     FormsModule,ReactiveFormsModule,
     DialogModule,CardModule,ButtonModule,ListboxModule,PanelModule,MenuModule,InputTextModule,HttpClientModule,TimelineModule
+    ,ChipModule
   ],
   providers: [MenuLateralService],
   bootstrap: [AppComponent]

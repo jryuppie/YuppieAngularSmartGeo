@@ -7,25 +7,26 @@
         
         <nav id="sidebar" [className]="toggle ? 'active' : 'inactive'">
             <div style="margin-top:10%" class="sidebar-header">
-                <h1 class="text-5xl"><b >Smart</b>Geo</h1>
+                <h1 class="text-6xl"><b >Smart</b>Geo</h1>
             </div>
-
-            <ul style="margin-top:10%" class="list-unstyled components">
-                <p>Jonathan Rossato</p>                
+            <p-chip label="Jonathan Rossato" image="assets/images/avatar.jpg" styleClass="text-align-center mt-5 custom-chip min-w-full"></p-chip>
+            <!-- <p class="font-italic text-base mb-2" >Jonathan Rossato</p>                 -->
+            <ul  class="list-unstyled components">
+               
                 <li>
-                    <a href="#" (click)="mudarTitulo('Dashboard')" class="px-5" routerLink="/Dashboard">Dashboard</a>
+                    <a href="#" (click)="mudarTitulo('Dashboard')" class="px-5 align-items-center" routerLink="/Dashboard"><i class="material-icons left mr-2 mb-2 "> pie_chart</i><span>Dashboard</span></a>
                 </li>
                 <li>
                    
-                    <a class="px-5" (click)="mudarTitulo('Mapa Equipe')" href="#"routerLink="/app/mapaEquipe">Mapa Equipe</a>
+                    <a class="px-5" (click)="mudarTitulo('Mapa Equipe')" href="#"routerLink="/app/mapaEquipe"><i class="material-icons left mr-2"> person_pin_circle</i>Mapa Equipe</a>
                 </li>
                 <li>
                  
-                    <a class="px-5" (click)="mudarTitulo('Agendar/Planejar')" href="#"routerLink="/app/agendarPlanejar">Agendar/Planejar</a>
+                    <a class="px-5" (click)="mudarTitulo('Agendar/Planejar')" href="#"routerLink="/app/agendarPlanejar"><i class="material-icons left mr-2"> layers</i>Planejar Rotas </a>
                 </li>
                 <li>
                   
-                  <a class="px-5" (click)="mudarTitulo('Configurações')" href="#"routerLink="/Configuracoes">Configurações</a>
+                  <a class="px-5" (click)="mudarTitulo('Configurações')" href="#"routerLink="/Configuracoes"><i class="material-icons left mr-2"> settings</i>Configurações</a>
               </li>
             </ul>   
             
