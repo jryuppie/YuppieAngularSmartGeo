@@ -276,3 +276,19 @@ a.article, a.article:hover {
     cursor: pointer;
  
   }
+
+  :host ::ng-deep .p-chip.custom-chip {
+    background: rgb(28,74,149);
+    color: white;
+    border-color: black !important;
+    border: 10px 10px 10px 10px !important;
+  }
+  h1#h1Titulo {
+    font-size: 70px;
+font-weight: 600;
+    color:rgb(28,74,149);
+    text-shadow: 0 0 black;
+    background-clip: text;
+-webkit-background-clip: text;
+}
+

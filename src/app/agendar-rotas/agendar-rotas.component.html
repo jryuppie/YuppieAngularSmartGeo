@@ -8,13 +8,13 @@
                 <div id="sidebarMarkers" [hidden]="!rotaManualVisualizar" class="mt-4 ml-5 min-w-full"
                     style="overflow:overlay; height:400px;">
 
-                    <div class="card" [ngStyle]="{backgroundColor:'rgb(239,243,248)'}">
-                        <p-timeline [value]="listaPontos" align="alternate">
+                    <div class="card" [ngStyle]="{backgroundColor:'rgb(239,243,248)'} ">
+                        <p-timeline [value]="listaPontos" align="alternate" >
                             <ng-template pTemplate="content" let-pontos>
-                                <small class="p-text-secondary">{{pontos.b}}</small>
+                                <small class="p-text-secondary">{{pontos.b}}</small>                              
                             </ng-template>
                             <ng-template pTemplate="opposite" let-pontos>
-                                <b>{{pontos.a}}</b>
+                                <b style="color:red">[{{pontos.d}}]</b> - <b>{{pontos.a}}</b>
                             </ng-template>
                         </p-timeline>
                     </div>

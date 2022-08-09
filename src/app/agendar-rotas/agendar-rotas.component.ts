@@ -35,21 +35,23 @@ export class AgendarRotasComponent implements OnInit {
   envarRotasVisualizar: boolean = true;
   rotaManualVisualizar: boolean = true;
   fileName: string = '';
-
+//FIM VARIVEIS DE TELA
   map: any;
   directionsService: any;
   directionsRenderer: any;
   stepDisplay: any;
   markerArray: any[] = [];
-  public rotasMapa: RotasMaps = new RotasMaps();
-  public rotasImportadas: Array<csvRotas> = new Array<csvRotas>();
+  rotasMapa: RotasMaps = new RotasMaps();
+  rotasImportadas: Array<csvRotas> = new Array<csvRotas>();
+  geocoder: any;
+  rotasCep: any[] = [];
+  ListaGeocode: Array<string> = [];
+  buscarPorCep:boolean = true;
 
 
-  //  geocoder: any = new google.maps.Geocoder();
-  //  serviceMatrix: any = new google.maps.DistanceMatrixService();
 
   ngOnInit() {
-    (document.getElementById('h1Titulo') as HTMLElement).innerHTML =  'Planejamento de Rotas';   
+    (document.getElementById('h1Titulo') as HTMLElement).innerHTML = 'Planejar Rotas';
 
 
 
@@ -59,12 +61,13 @@ export class AgendarRotasComponent implements OnInit {
 
     let loader = new Loader({
       apiKey: 'AIzaSyCbu9PxUAnPqy2W1fyKwLANXFywzDyiDKI',
-      libraries: ['places'],
+      libraries: ['places', 'geometry'],
       region: 'BR',
       language: 'pt-BR',
     });
 
     loader.load().then(() => {
+      this.geocoder = new google.maps.Geocoder();
 
       this.directionsService = new google.maps.DirectionsService();
       this.directionsRenderer = new google.maps.DirectionsRenderer();
@@ -76,7 +79,7 @@ export class AgendarRotasComponent implements OnInit {
         mapId: '178c0b225e053393',
         center: { lat: -23.5489, lng: -46.6388 },
         zoom: 8,
-        streetViewControl: false 
+        streetViewControl: false
       })
       this.directionsRenderer.setMap(this.map);
       this.directionsRenderer.setPanel(
@@ -130,7 +133,7 @@ export class AgendarRotasComponent implements OnInit {
         (document.querySelector("#mapAgendar > div > div > div:nth-child(17) > div") as HTMLElement).style['display'] = 'none';
         (document.querySelector("#mapAgendar > div > div > div:nth-child(15) > div") as HTMLElement).style['display'] = 'none';
         (document.querySelector("#mapAgendar > div > div > div:nth-child(5) > div") as HTMLElement).style['display'] = 'none';
-        
+
       }, 4000);
     });
 
@@ -194,12 +197,9 @@ export class AgendarRotasComponent implements OnInit {
           this.rotasMapa.Destino = arrayPartida[0];
         }
 
-        const paradasImportadas = this.rotasImportadas.filter(r => r.PatridaDestino === false);
-
-        paradasImportadas.forEach((item) => {
-          this.rotasMapa.Paradas?.push(item);
-        });
-        console.log(this.rotasMapa.Paradas);
+        const paradasImportadas: Array<csvRotas> = this.rotasImportadas.filter(r => r.PatridaDestino === false);
+        this.rotasMapa.Paradas = paradasImportadas;
+        console.log(this.rotasMapa);
 
 
         partida = this.rotasMapa.Partida?.Latitude! + this.rotasMapa.Partida?.Longitude!;
@@ -219,25 +219,101 @@ export class AgendarRotasComponent implements OnInit {
 
 
     if (this.rotasMapa.Destino != undefined && this.rotasMapa.Partida != undefined) {
+      if (this.buscarPorCep)
+        this.buscarRotasPorCep();
+      else
+        this.buscarRotasPorGeocode(csv, waypts)
+    }
+  }
 
+
+  buscarRotasPorGeocode(csv: boolean, waypts: google.maps.DirectionsWaypoint[]) {
+    this.directionsService.route(
+      this.atribuirRequest(csv, waypts))
+      .then((response: any) => {
+        this.directionsRenderer.setOptions({ polylineOptions: { strokeColor: '#F0F04D' } });
+        this.directionsRenderer.setDirections(response);
+        this.getLegs(response);
+        // this.showSteps(response, markerArray, stepDisplay, map);
+        this.isLoading = false;
+
+      })
+      .catch((e: any) => {
+        this.isLoading = false
+        console.log(e);
+      });
+  }
+
+  buscarRotasPorCep() {
+    let rotasListaCEP: string[] = []
+    this.rotasMapa.Paradas?.forEach((a) => { rotasListaCEP.push(a.CEP!) })
+    let dataPromise: Promise<void> = new Promise((resolve, reject) => {
+      let partidaCep = this.rotasMapa.Partida?.CEP;
+      let destinoCep = this.rotasMapa.Destino?.CEP;
+      let stringEnvio = partidaCep + '|' + destinoCep + '|' + rotasListaCEP.join('|')
+      debugger;
+
+      for (let index = 0; index < stringEnvio.split('|').length; index++) {
+        const element = stringEnvio.split('|')[index]; this.geocoder
+          .geocode({ address: element }).then((ret: any) => {
+            this.ListaGeocode.push(ret.results[0].place_id)
+            if (index == stringEnvio.split('|').length - 1)
+              resolve();
+          })
+      }
+
+    });
+
+    dataPromise.then(() => {
+      debugger;
+      const wayptsGeocode: google.maps.DirectionsWaypoint[] = [];
+
+      for (let index = 0; index < this.ListaGeocode.length; index++) {
+        if (index > 1) {
+          wayptsGeocode.push({
+            location: { placeId: this.ListaGeocode[index] },
+            stopover: true,
+          });
+        }
+      }
+
+      debugger;
       this.directionsService.route(
-        this.atribuirRequest(csv, waypts))
+        {
+          origin: { placeId: this.ListaGeocode[0] },
+          destination: { placeId: this.ListaGeocode[1] },
+          waypoints: wayptsGeocode, travelMode: google.maps.TravelMode.DRIVING, optimizeWaypoints: true, region: 'BR'
+        })
         .then((response: any) => {
-          this.directionsRenderer.setOptions({ polylineOptions: { strokeColor: 'yellow' } });
+          this.directionsRenderer.setOptions({ polylineOptions: { strokeColor: '#F0F04D' } });
           this.directionsRenderer.setDirections(response);
           this.getLegs(response);
           // this.showSteps(response, markerArray, stepDisplay, map);
           this.isLoading = false;
-
+          debugger;
         })
         .catch((e: any) => {
           this.isLoading = false
           console.log(e);
         });
-    }
+    });
   }
 
+
+
+
+
+
+
+
+
+
+
+
+
   getLegs(response: any) {
+    let alfab = ['A', 'B', 'C', 'D', 'E', 'F', 'G', 'H', 'I', 'J', 'K', 'L', 'M', 'N', 'O', 'P', 'Q', 'R', 'S', 'T', 'U', 'V', 'W', 'X', 'Y', 'Z']
+    let indexAlfa = 0
     console.log(response)
     const Legs = response!.routes[0]!.legs!;
     this.listaPontos = [];
@@ -246,14 +322,18 @@ export class AgendarRotasComponent implements OnInit {
         const ponto: string = Legs[index].start_address.split(',')[Legs[index].start_address.split(',').length === 4 ? 1 : 2];
         const distancia: string = '';//Legs[index].distance.text;
         const duracao: string = '';//Legs[index].duration.text;
-        let item: any = { a: ponto, b: distancia, c: duracao }
+        const letra = alfab[indexAlfa]
+        let item: any = { a: ponto, b: distancia, c: duracao, d: letra }
         this.listaPontos.push(item);
+        indexAlfa++
       }
       const ponto: string = Legs[index].end_address.split(',')[Legs[index].end_address.split(',').length === 4 ? 1 : 2];
       const distancia: string = Legs[index].distance.text;
       const duracao: string = Legs[index].duration.text;
-      let item: any = { a: ponto, b: distancia, c: duracao }
+      const letra = alfab[indexAlfa]
+      let item: any = { a: ponto, b: distancia, c: duracao, d: letra }
       this.listaPontos.push(item);
+      indexAlfa++
     }
     console.log(this.listaPontos);
   }
@@ -359,30 +439,20 @@ export class AgendarRotasComponent implements OnInit {
     this.isUpload = false;
   }
 
-  //array varibales to store csv data
-  lines = []; //for headings
-  linesR = []; // for rows
-
   leituraArquivoRotas(reader: FileReader) {
     this.rotasImportadas = [];
     let csv: any = reader.result;
     let allTextLines = [];
     allTextLines = csv.split(/\r|\n|\r/);
 
-    //Table Headings
+    //header tabela
     let headers = allTextLines[0].split(';');
     let data = headers;
     let tarr = [];
     for (let j = 0; j < headers.length; j++) {
       tarr.push(data[j]);
     }
-    //Pusd headings to array variable
-    // this.lines.push(tarr);
-
-
-    // Table Rows
     let tarrR = [];
-
     let arrl = allTextLines.length;
     let rows = [];
     for (let i = 1; i < arrl; i++) {
@@ -408,13 +478,15 @@ export class AgendarRotasComponent implements OnInit {
 
   }
   atribuirRequest(csv: boolean, waypts: google.maps.DirectionsWaypoint[]) {
+
     debugger;
-    var request = {}
-    
+    var request = { origin: {}, destination: {}, waypoints: waypts, travelMode: google.maps.TravelMode.DRIVING, optimizeWaypoints: true, region: 'BR' }
+
     //fazer retornar um request de route
     if (csv) {
       let lat = parseFloat(this.rotasMapa.Partida?.Latitude!)
       let lng = parseFloat(this.rotasMapa.Partida?.Longitude!)
+      debugger;
       request = {
         origin: { lat, lng },
         destination: { lat, lng },
@@ -422,8 +494,10 @@ export class AgendarRotasComponent implements OnInit {
         travelMode: google.maps.TravelMode.DRIVING,
         optimizeWaypoints: true,
         region: 'BR',
-        
+
       };
+      lng = lng + 0.005
+      request.destination = { lat, lng }
 
     } else {
       request = {
