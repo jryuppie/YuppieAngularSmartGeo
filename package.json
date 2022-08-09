@@ -1,13 +1,12 @@
 {
   "name": "yuppie-angular-smartgeo",
-  "version": "1.0.0",
+  "version": "0.0.1",
   "scripts": {
     "ng": "ng",						
     "build": "ng build",
     "watch": "ng build --watch --configuration development export NODE_OPTIONS=--openssl-legacy-provider",
     "test": "ng test",
-    "start": "node server.js",
-    "postinstall": "ng build --aot --prod"
+    "start": "node server.js"  
   },
   "private": true,
   "dependencies": {
