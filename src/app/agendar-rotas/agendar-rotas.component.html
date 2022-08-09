@@ -9,9 +9,9 @@
                     style="overflow:overlay; height:400px;">
 
                     <div class="card" [ngStyle]="{backgroundColor:'rgb(239,243,248)'} ">
-                        <p-timeline [value]="listaPontos" align="alternate" >
+                        <p-timeline [value]="listaPontos" align="alternate">
                             <ng-template pTemplate="content" let-pontos>
-                                <small class="p-text-secondary">{{pontos.b}}</small>                              
+                                <small class="p-text-secondary">{{pontos.b}}</small>
                             </ng-template>
                             <ng-template pTemplate="opposite" let-pontos>
                                 <b style="color:red">[{{pontos.d}}]</b> - <b>{{pontos.a}}</b>
@@ -25,64 +25,81 @@
                     <div class="row ml-5 mt-5  min-w-full">
                         <span class="p-input-icon-right  min-w-full">
                             <i class="pi pi-search  mr-2"></i>
-                            <input type="text" id="partida"  class="min-w-full " pInputText placeholder="Partida">
+                            <input type="text" id="partida" class="min-w-full " pInputText placeholder="Partida">
                         </span>
                     </div>
                     <div class="row ml-5 mt-5  min-w-full">
                         <span class="p-input-icon-right  min-w-full">
                             <i class="pi pi-search mr-2"></i>
-                            <input type="text" id="destino"  class="min-w-full"pInputText placeholder="Destino">
+                            <input type="text" id="destino" class="min-w-full" pInputText placeholder="Destino">
                         </span>
                     </div>
                     <div class="row ml-5 mt-5  min-w-full">
                         <span class="p-input-icon-right  min-w-full">
                             <i class="pi pi-search  mr-2"></i>
-                            <input type="text" id="parada" class="min-w-full" pInputText placeholder="Parada (Opcional)">
+                            <input type="text" id="parada" class="min-w-full" pInputText
+                                placeholder="Parada (Opcional)">
                         </span>
                     </div>
 
                     <div class="row ml-5 mt-5 min-w-full" [hidden]="!parada2show">
                         <span class="p-input-icon-right">
                             <i class="pi pi-search  mr-2"></i>
-                            <input type="text" id="parada2"  class="min-w-full"pInputText placeholder="Parada 2 (Opcional)">
+                            <input type="text" id="parada2" class="min-w-full" pInputText
+                                placeholder="Parada 2 (Opcional)">
                         </span>
                     </div>
                     <div class="row ml-5 mt-5 min-w-full" [hidden]="!parada3show">
                         <span class="p-input-icon-right">
                             <i class="pi pi-search  mr-2"></i>
-                            <input type="text" id="parada3" class="min-w-full" pInputText placeholder="Parada 3 (Opcional)">
+                            <input type="text" id="parada3" class="min-w-full" pInputText
+                                placeholder="Parada 3 (Opcional)">
                         </span>
                     </div>
                     <div class="row ml-5 mt-5 min-w-full" [hidden]="!parada4show">
                         <span class="p-input-icon-right">
                             <i class="pi pi-search  mr-2"></i>
-                            <input type="text" id="parada4" class="min-w-full" pInputText placeholder="Parada 4 (Opcional)">
+                            <input type="text" id="parada4" class="min-w-full" pInputText
+                                placeholder="Parada 4 (Opcional)">
                         </span>
                     </div>
                 </div>
 
-                <div class="ml-5 mt-5 mb-3 align-self-end " id="grupoBotoes">
-                    <input id="uploadFile"  style="display: none" type="file" (change)="onFileSelected($event)"
-                        #hiddenfileinput>
-                    <button pButton id="uploadFile2" (click)="hiddenfileinput.click()" label="Importar Rotas"
-                        [hidden]="!envarRotasVisualizar" [loading]="isUpload"
-                        class="waves-effect waves-light btn min-w-full"><i class="material-icons left"> map</i></button>
+                <div class="row ml-5 mt-5 mb-3 align-self-end " [hidden]="!envarRotasVisualizar" id="grupoBotoes">
+                    <div class="grid flex align-items-center justify-content-center">
+                        <input id="uploadFile" style="display: none" type="file"  [(ngModel)]="valorFileText" (change)="onFileSelected($event)"
+                            #hiddenfileinput>
+                        <button pButton id="uploadFile2"  (click)="hiddenfileinput.click()" label="Importar Rotas"
+                            class="col-7 waves-effect waves-light btn " [loading]="isUpload"><i
+                                class="material-icons left"> map</i></button>
+                        <div clas="row col-5" id="togleCEP">
+                            <mat-button-toggle-group  class="" (change)="handleChange($event)" [value]="buscarPorCep" [(ngModel)]="buscarPorCep" aria-label="Tipo de Importação">
+                                <mat-button-toggle [value]="true" >CEP</mat-button-toggle> 
+                                <mat-button-toggle [value]="false" >Lat/Lng</mat-button-toggle>                                                               
+                            </mat-button-toggle-group>
+                        </div>
+                    </div>
 
                     <button pButton [hidden]="!rotaManualVisualizar"
-                        (click)="rotaManualVisualizar = !rotaManualVisualizar" (click)="rotaManualVisualizarFunc()" type="button" label="Rota Manual"
-                        [disabled]="false" icon="pi pi-pencil" class="p-button-secondary min-w-full text-center mt-3"></button>
-                        <button pButton [hidden]="rotaManualVisualizar"
-                        (click)="rotaManualVisualizar = !rotaManualVisualizar"(click)="rotaManualVisualizarFunc()" type="button" label="Rota Automática"
-                        icon="pi pi-bars" class="p-button-secondary min-w-full text-center mt-3"></button>
+                        (click)="rotaManualVisualizar = !rotaManualVisualizar" (click)="rotaManualVisualizarFunc()"
+                        type="button" label="Rota Manual" [disabled]="true" icon="pi pi-pencil"
+                        class="p-button-secondary min-w-full text-center mt-3"></button>
+
+
+                    <button pButton [hidden]="rotaManualVisualizar"
+                        (click)="rotaManualVisualizar = !rotaManualVisualizar" (click)="rotaManualVisualizarFunc()"
+                        type="button" label="Rota Automática" icon="pi pi-bars"
+                        class="p-button-secondary min-w-full text-center mt-3"></button>
 
 
                     <div class="group">
-                        <button pButton type="button" [hidden]="rotaManualVisualizar" (click)="adicionarParadaTela()"  id="adicionarParada" label="Adicionar Paradas" icon="pi pi-plus-circle" iconPos="right"
+                        <button pButton type="button" [hidden]="rotaManualVisualizar" (click)="adicionarParadaTela()"
+                            id="adicionarParada" label="Adicionar Paradas" icon="pi pi-plus-circle" iconPos="right"
                             class="p-button-secondary min-w-full mt-3">
                         </button>
                         <button pButton id="enviar" [hidden]="rotaManualVisualizar" type="button"
                             label="Calcular Rota Manual" icon="pi pi-search"
-                            class="p-button-success min-w-full text-center mt-3" ></button>
+                            class="p-button-success min-w-full text-center mt-3"></button>
                     </div>
 
 
@@ -99,3 +116,4 @@
         </div>
     </div>
 </div>
+<p-toast  [preventDuplicates]="true" [hideTransitionOptions]="'8000ms'" position="top-right"></p-toast>

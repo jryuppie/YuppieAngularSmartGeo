@@ -29,7 +29,10 @@ import { MenuModule } from 'primeng/menu';
 import {InputTextModule} from 'primeng/inputtext';
 import {TimelineModule} from 'primeng/timeline';
 import { ChipModule } from 'primeng/chip';
-
+import { MatButtonToggleModule } from '@angular/material/button-toggle';
+import {MessagesModule} from 'primeng/messages';
+import {MessageModule} from 'primeng/message';
+import { ToastModule } from 'primeng/toast';
 import {HttpClientModule} from '@angular/common/http';
 @NgModule({
   declarations: [
@@ -48,7 +51,7 @@ import {HttpClientModule} from '@angular/common/http';
     BrowserAnimationsModule,MatCardModule,MatDividerModule,MatProgressBarModule,MatFormFieldModule,
     FormsModule,ReactiveFormsModule,
     DialogModule,CardModule,ButtonModule,ListboxModule,PanelModule,MenuModule,InputTextModule,HttpClientModule,TimelineModule
-    ,ChipModule
+    ,ChipModule,MatButtonToggleModule,MessageModule,MessagesModule,ToastModule
   ],
   providers: [MenuLateralService],
   bootstrap: [AppComponent]

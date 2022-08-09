@@ -11,6 +11,7 @@ export class csvRotas {
     Cidade? : string;
     Estado? : string;
     CEP? : string;
+    PlaceID? :string
 }
 
 

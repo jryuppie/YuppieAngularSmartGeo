@@ -1,20 +1,23 @@
 import { formatDate } from '@angular/common';
 import { HttpClient } from '@angular/common/http';
-import { Component, OnInit, Input } from '@angular/core';
+import { Component, OnInit, Input, Output, EventEmitter } from '@angular/core';
 import { Loader } from '@googlemaps/js-api-loader';
 
 import { MenuLateralService } from '../menu-lateral/menu-lateral.service';
 import { csvRotas, ListaRotasCSV, Localizacao, RotasMaps } from '../models/csvRotas';
 import { PrimeIcons } from 'primeng/api';
-
+import {Message,MessageService} from 'primeng/api';
 
 @Component({
   selector: 'app-agendar-rotas',
   templateUrl: './agendar-rotas.component.html',
-  styleUrls: ['./agendar-rotas.component.css']
+  styleUrls: ['./agendar-rotas.component.css'],
+  providers: [MessageService]
+ 
 })
 export class AgendarRotasComponent implements OnInit {
-  constructor(private menuLateralService: MenuLateralService, private http: HttpClient) { }
+  valorFileText: undefined;
+  constructor(private menuLateralService: MenuLateralService, private http: HttpClient,private messageService: MessageService) { }
   input1: any;
   input2: any;
   input3: any;
@@ -35,7 +38,7 @@ export class AgendarRotasComponent implements OnInit {
   envarRotasVisualizar: boolean = true;
   rotaManualVisualizar: boolean = true;
   fileName: string = '';
-//FIM VARIVEIS DE TELA
+  //FIM VARIVEIS DE TELA
   map: any;
   directionsService: any;
   directionsRenderer: any;
@@ -46,13 +49,16 @@ export class AgendarRotasComponent implements OnInit {
   geocoder: any;
   rotasCep: any[] = [];
   ListaGeocode: Array<string> = [];
-  buscarPorCep:boolean = true;
 
+  buscarPorCep: boolean = true;
 
+  handleChange(e: any) {
+    this.buscarPorCep = e.value;
+  }
 
   ngOnInit() {
     (document.getElementById('h1Titulo') as HTMLElement).innerHTML = 'Planejar Rotas';
-
+    this.buscarPorCep = true;
 
 
     this.parada2show = false;
@@ -199,7 +205,7 @@ export class AgendarRotasComponent implements OnInit {
 
         const paradasImportadas: Array<csvRotas> = this.rotasImportadas.filter(r => r.PatridaDestino === false);
         this.rotasMapa.Paradas = paradasImportadas;
-        console.log(this.rotasMapa);
+        
 
 
         partida = this.rotasMapa.Partida?.Latitude! + this.rotasMapa.Partida?.Longitude!;
@@ -219,7 +225,8 @@ export class AgendarRotasComponent implements OnInit {
 
 
     if (this.rotasMapa.Destino != undefined && this.rotasMapa.Partida != undefined) {
-      if (this.buscarPorCep)
+
+      if (this.buscarPorCep && this.rotaManualVisualizar)
         this.buscarRotasPorCep();
       else
         this.buscarRotasPorGeocode(csv, waypts)
@@ -228,6 +235,7 @@ export class AgendarRotasComponent implements OnInit {
 
 
   buscarRotasPorGeocode(csv: boolean, waypts: google.maps.DirectionsWaypoint[]) {
+    
     this.directionsService.route(
       this.atribuirRequest(csv, waypts))
       .then((response: any) => {
@@ -240,44 +248,46 @@ export class AgendarRotasComponent implements OnInit {
       })
       .catch((e: any) => {
         this.isLoading = false
-        console.log(e);
+        this.messageService.add({severity:'warn', summary:'Erro!', detail:e.message});
       });
   }
+  delay(ms: number) {
+    return new Promise(resolve => setTimeout(resolve, ms));
+  }
+
+
 
   buscarRotasPorCep() {
+    const wayptsGeocode: google.maps.DirectionsWaypoint[] = [];
     let rotasListaCEP: string[] = []
     this.rotasMapa.Paradas?.forEach((a) => { rotasListaCEP.push(a.CEP!) })
-    let dataPromise: Promise<void> = new Promise((resolve, reject) => {
-      let partidaCep = this.rotasMapa.Partida?.CEP;
-      let destinoCep = this.rotasMapa.Destino?.CEP;
-      let stringEnvio = partidaCep + '|' + destinoCep + '|' + rotasListaCEP.join('|')
-      debugger;
+    this.ListaGeocode = [];
+    let stringEnvio = this.rotasMapa.Partida?.CEP + '|' + this.rotasMapa.Destino?.CEP + '|' + rotasListaCEP.join('|')
+    
 
-      for (let index = 0; index < stringEnvio.split('|').length; index++) {
-        const element = stringEnvio.split('|')[index]; this.geocoder
-          .geocode({ address: element }).then((ret: any) => {
-            this.ListaGeocode.push(ret.results[0].place_id)
-            if (index == stringEnvio.split('|').length - 1)
-              resolve();
-          })
+    let teste = stringEnvio.split('|')
+    let loop = true;
+    var bar = new Promise((resolve, reject) => {
+      for (const item of teste) {
+        const retorno = this.geocoder.geocode({ address: item }).then((retorno: any) => {
+          this.ListaGeocode.push(retorno.results[0].place_id)
+          if (this.ListaGeocode.length === teste.length )
+            resolve(true);
+        }).catch((e:any)=>{          
+          this.messageService.add({severity:'warn', summary:'Erro!', detail:e.message});                
+        })
       }
-
     });
-
-    dataPromise.then(() => {
-      debugger;
-      const wayptsGeocode: google.maps.DirectionsWaypoint[] = [];
-
-      for (let index = 0; index < this.ListaGeocode.length; index++) {
+    bar.then(() => {
+      
+      this.ListaGeocode.forEach((tem: string, index: number) => {
         if (index > 1) {
           wayptsGeocode.push({
-            location: { placeId: this.ListaGeocode[index] },
+            location: { placeId: tem },
             stopover: true,
           });
         }
-      }
-
-      debugger;
+      })
       this.directionsService.route(
         {
           origin: { placeId: this.ListaGeocode[0] },
@@ -290,13 +300,14 @@ export class AgendarRotasComponent implements OnInit {
           this.getLegs(response);
           // this.showSteps(response, markerArray, stepDisplay, map);
           this.isLoading = false;
-          debugger;
         })
         .catch((e: any) => {
           this.isLoading = false
-          console.log(e);
+          this.messageService.add({severity:'warn', summary:'Erro!', detail:e.message});
         });
-    });
+
+    })
+
   }
 
 
@@ -314,7 +325,7 @@ export class AgendarRotasComponent implements OnInit {
   getLegs(response: any) {
     let alfab = ['A', 'B', 'C', 'D', 'E', 'F', 'G', 'H', 'I', 'J', 'K', 'L', 'M', 'N', 'O', 'P', 'Q', 'R', 'S', 'T', 'U', 'V', 'W', 'X', 'Y', 'Z']
     let indexAlfa = 0
-    console.log(response)
+    
     const Legs = response!.routes[0]!.legs!;
     this.listaPontos = [];
     for (let index = 0; index < Legs.length; index++) {
@@ -335,7 +346,7 @@ export class AgendarRotasComponent implements OnInit {
       this.listaPontos.push(item);
       indexAlfa++
     }
-    console.log(this.listaPontos);
+    
   }
 
   showSteps(
@@ -417,7 +428,7 @@ export class AgendarRotasComponent implements OnInit {
 
 
   onFileSelected(event: Event) {
-
+    this.valorFileText = undefined;
     this.isUpload = true;
     const result = (event.target as HTMLInputElement).files;
 
@@ -427,7 +438,7 @@ export class AgendarRotasComponent implements OnInit {
         this.fileName = file.name;
         const formData = new FormData();
         formData.append("rotas", file);
-        console.log(formData)
+        
 
         let fileReader = new FileReader();
         fileReader.onload = (e) => {
@@ -439,8 +450,10 @@ export class AgendarRotasComponent implements OnInit {
     this.isUpload = false;
   }
 
+
   leituraArquivoRotas(reader: FileReader) {
     this.rotasImportadas = [];
+    this.rotasMapa = new RotasMaps();
     let csv: any = reader.result;
     let allTextLines = [];
     allTextLines = csv.split(/\r|\n|\r/);
@@ -479,14 +492,14 @@ export class AgendarRotasComponent implements OnInit {
   }
   atribuirRequest(csv: boolean, waypts: google.maps.DirectionsWaypoint[]) {
 
-    debugger;
+
     var request = { origin: {}, destination: {}, waypoints: waypts, travelMode: google.maps.TravelMode.DRIVING, optimizeWaypoints: true, region: 'BR' }
 
     //fazer retornar um request de route
     if (csv) {
       let lat = parseFloat(this.rotasMapa.Partida?.Latitude!)
       let lng = parseFloat(this.rotasMapa.Partida?.Longitude!)
-      debugger;
+
       request = {
         origin: { lat, lng },
         destination: { lat, lng },
