@@ -19,7 +19,7 @@ const routes: Routes = [
     component: MapaEquipeComponent
   },
   {
-    path: 'agendarPlanejar',        
+    path: 'importarRotas',        
     component: AgendarRotasComponent
   } ,
   {

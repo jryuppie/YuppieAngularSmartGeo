@@ -6,26 +6,30 @@ import { Loader } from '@googlemaps/js-api-loader';
 import { MenuLateralService } from '../menu-lateral/menu-lateral.service';
 import { csvRotas, ListaRotasCSV, Localizacao, RotasMaps } from '../models/csvRotas';
 import { PrimeIcons } from 'primeng/api';
-import {Message,MessageService} from 'primeng/api';
+import { Message, MessageService } from 'primeng/api';
 
 @Component({
   selector: 'app-agendar-rotas',
   templateUrl: './agendar-rotas.component.html',
   styleUrls: ['./agendar-rotas.component.css'],
   providers: [MessageService]
- 
+
 })
+
+
 export class AgendarRotasComponent implements OnInit {
   valorFileText: undefined;
-  constructor(private menuLateralService: MenuLateralService, private http: HttpClient,private messageService: MessageService) { }
+  constructor(private menuLateralService: MenuLateralService, private http: HttpClient, private messageService: MessageService) { }
+
+  //#region <VARIAVEIS DE AUTOCOMPLETE - GOOGLE API PLACES>    
   input1: any;
   input2: any;
   input3: any;
   input4: any;
   input5: any;
   input6: any;
-
-  //VARIAVEIS DE TELA
+  //#endregion
+  //#region <VARIAVEIS DE EXIBIÇÃO/TELA>  
   parada2show: boolean = false;
   parada3show: boolean = false;
   parada4show: boolean = false;
@@ -38,33 +42,40 @@ export class AgendarRotasComponent implements OnInit {
   envarRotasVisualizar: boolean = true;
   rotaManualVisualizar: boolean = true;
   fileName: string = '';
-  //FIM VARIVEIS DE TELA
-  map: any;
-  directionsService: any;
-  directionsRenderer: any;
+  //#endregion
+  //#region <VARIAVEIS DE MANIPULAÇÃO DO MAPA>  
   stepDisplay: any;
   markerArray: any[] = [];
   rotasMapa: RotasMaps = new RotasMaps();
   rotasImportadas: Array<csvRotas> = new Array<csvRotas>();
-  geocoder: any;
   rotasCep: any[] = [];
-  ListaGeocode: Array<string> = [];
-
+  ListaGeocode: Array<Localizacao> = [];
   buscarPorCep: boolean = true;
+  //#endregion
+  //#region <VARIAVEIS PARA INICIALIZAÇÃO GOOGLE API'S>  
+  geocoder: any;
+  map: any;
+  directionsService: any;
+  directionsRenderer: any;
+  //#endregion
 
-  handleChange(e: any) {
-    this.buscarPorCep = e.value;
-  }
+
+  
+ 
+
 
   ngOnInit() {
+    //ATRIBUIR TITULO A PAGINA
     (document.getElementById('h1Titulo') as HTMLElement).innerHTML = 'Planejar Rotas';
+
+    //MANIPULAÇÃO DAS VARIAVEIS DE TELA
     this.buscarPorCep = true;
-
-
     this.parada2show = false;
     this.parada3show = false;
     this.parada4show = false;
 
+
+    //INICIALIZAÇÃO DAS APIS DO GOOGLE -- TODO: REMOVER TOKEN ID PESSOAL
     let loader = new Loader({
       apiKey: 'AIzaSyCbu9PxUAnPqy2W1fyKwLANXFywzDyiDKI',
       libraries: ['places', 'geometry'],
@@ -72,9 +83,9 @@ export class AgendarRotasComponent implements OnInit {
       language: 'pt-BR',
     });
 
+    //MANIPUALÇAO DO MAPA APÓS INICIALIZAÇÃO DAS APIS -- AGUMAS FUNÇÕES DE MONITORAMENTO DE TELA DEVEM SER COLCOCADAS AQUI
     loader.load().then(() => {
       this.geocoder = new google.maps.Geocoder();
-
       this.directionsService = new google.maps.DirectionsService();
       this.directionsRenderer = new google.maps.DirectionsRenderer();
       this.stepDisplay = new google.maps.InfoWindow();
@@ -93,13 +104,14 @@ export class AgendarRotasComponent implements OnInit {
       );
 
       const onChangeHandler = () => {
-        this.calculateAndDisplayRoute();
+        this.calcularExibirRotas();
       };
       (document.getElementById("enviar") as HTMLElement).addEventListener(
         "click",
         onChangeHandler
       );
 
+      //OPÇÕES DE INICIALIZAÇÃO DO MAPS - GOOGLE MAPS PLACE
       var options = {
         componentRestrictions: { country: "BR" },
         fields: ["address_components"],
@@ -107,6 +119,7 @@ export class AgendarRotasComponent implements OnInit {
         types: ['(cities)']
       }
 
+      //MANIPUALÇÃO DOS CAMPOS PARA AUTOCOMPLETE - GOOGLE MAPS PLACE
       this.input1 = document.getElementById("partida");
       if (this.input1 !== null) {
         var autocomplete1 = new google.maps.places.Autocomplete(this.input1, options);
@@ -133,8 +146,10 @@ export class AgendarRotasComponent implements OnInit {
       if (this.input6 !== null) {
         var autocomplete1 = new google.maps.places.Autocomplete(this.input6, options);
       }
+      //FIM DE MANIPUALÇÃO DOS CAMPOS PARA CONSULTA MANUAL
 
 
+      //REMOVER INFORMAÇÕES DO GOOGLE MAPS DA TELA
       setTimeout(function () {
         (document.querySelector("#mapAgendar > div > div > div:nth-child(17) > div") as HTMLElement).style['display'] = 'none';
         (document.querySelector("#mapAgendar > div > div > div:nth-child(15) > div") as HTMLElement).style['display'] = 'none';
@@ -142,253 +157,141 @@ export class AgendarRotasComponent implements OnInit {
 
       }, 4000);
     });
-
-
-
-
   }
-  calculateAndDisplayRoute(
-    csv: boolean = false
-  ) {
+
+  //FUNÇÃO PRINCIPAL PARA CONSULTAR E EXIBIR ROTAS
+  calcularExibirRotas(csv: boolean = false) {
+    this.isLoading = true;
+    let waypts: google.maps.DirectionsWaypoint[] = [];
 
 
-    var partida = ''
-    var destino = ''
-    const waypts: google.maps.DirectionsWaypoint[] = [];
     if (!csv) {
-      this.isLoading = true;
-      if ((document.getElementById("parada") as HTMLInputElement).value != '') {
-        waypts.push({
-          location: (document.getElementById("parada") as HTMLInputElement).value,
-          stopover: true,
-        });
-      }
-      if ((document.getElementById("parada2") as HTMLInputElement).value != '') {
-        waypts.push({
-          location: (document.getElementById("parada2") as HTMLInputElement).value,
-          stopover: true,
-        });
-      }
-
-      if ((document.getElementById("parada3") as HTMLInputElement).value != '') {
-        waypts.push({
-          location: (document.getElementById("parada3") as HTMLInputElement).value,
-          stopover: true,
-        });
-      }
-
-      if ((document.getElementById("parada4") as HTMLInputElement).value != '') {
-        waypts.push({
-          location: (document.getElementById("parada4") as HTMLInputElement).value,
-          stopover: true,
-        });
-      }
-      if ((document.getElementById("partida") as HTMLInputElement).value != '') {
-        let partida = new csvRotas()
-        partida.Cidade = (document.getElementById("partida") as HTMLInputElement).value
-        this.rotasMapa.Partida = partida
-      }
-      if ((document.getElementById("destino") as HTMLInputElement).value != '') {
-        let destino = new csvRotas()
-        destino.Cidade = (document.getElementById("destino") as HTMLInputElement).value
-        this.rotasMapa.Destino = destino
-      }
-    } else {
+      //TELA - MANUAL
+      //###TRECHO RESPONSAVEL POR CAPTURAR WAYPOINTS E PARTIDA/DESTINO###
+      waypts = this.capturarInputsWaypoints().waypts;
+      if (this.rotasMapa.Destino != undefined && this.rotasMapa.Partida != undefined)
+        this.buscarRotasPorCidade(waypts)
+    } else if (!this.buscarPorCep && this.rotaManualVisualizar) {
       if (this.rotasImportadas != []) {
-
-        let arrayPartida = this.rotasImportadas.filter(r => r.PatridaDestino === true);
-
-        if (arrayPartida != null && arrayPartida != undefined && arrayPartida.length > 0) {
-          this.rotasMapa.Partida = arrayPartida[0];
-          this.rotasMapa.Destino = arrayPartida[0];
-        }
-
-        const paradasImportadas: Array<csvRotas> = this.rotasImportadas.filter(r => r.PatridaDestino === false);
-        this.rotasMapa.Paradas = paradasImportadas;
-        
-
-
-        partida = this.rotasMapa.Partida?.Latitude! + this.rotasMapa.Partida?.Longitude!;
-        destino = this.rotasMapa.Partida?.Latitude! + this.rotasMapa.Partida?.Longitude!;
-
-        paradasImportadas.forEach(element => {
-          let lat: number = parseFloat(element.Latitude!);
-          let lng: number = parseFloat(element.Longitude!);
-
-          waypts.push({
-            location: new google.maps.LatLng(lat, lng),
-            stopover: true,
-          });
-        });
+        //CSV - LATITUDE - LONGITUDE
+        waypts = this.capturarWaypointsCSV();
+        if (this.rotasMapa.Destino != undefined && this.rotasMapa.Partida != undefined)
+          this.buscarRotasPorGeocode(csv, waypts)
       }
-    }
-
-
-    if (this.rotasMapa.Destino != undefined && this.rotasMapa.Partida != undefined) {
-
-      if (this.buscarPorCep && this.rotaManualVisualizar)
+    } else if (this.buscarPorCep && this.rotaManualVisualizar) {
+      //CSV - CEP
+      waypts = this.capturarWaypointsCSV();
+      if (this.rotasMapa.Destino != undefined && this.rotasMapa.Partida != undefined)
         this.buscarRotasPorCep();
-      else
-        this.buscarRotasPorGeocode(csv, waypts)
     }
   }
 
 
+  //#region <Google API - Directions - Consultar rotas>
   buscarRotasPorGeocode(csv: boolean, waypts: google.maps.DirectionsWaypoint[]) {
-    
     this.directionsService.route(
-      this.atribuirRequest(csv, waypts))
+      this.atribuirRequestLatLong(waypts))
       .then((response: any) => {
         this.directionsRenderer.setOptions({ polylineOptions: { strokeColor: '#F0F04D' } });
         this.directionsRenderer.setDirections(response);
-        this.getLegs(response);
-        // this.showSteps(response, markerArray, stepDisplay, map);
+        this.pegarParadasResponse(response);
+        // this.mostrarParadas(response, markerArray, stepDisplay, map);
         this.isLoading = false;
 
       })
       .catch((e: any) => {
         this.isLoading = false
-        this.messageService.add({severity:'warn', summary:'Erro!', detail:e.message});
+        this.messageService.add({ severity: 'warn', summary: 'Erro!', detail: e.message });
       });
   }
-  delay(ms: number) {
-    return new Promise(resolve => setTimeout(resolve, ms));
+
+  buscarRotasPorCidade(waypts: google.maps.DirectionsWaypoint[]) {
+    this.directionsService.route(
+      this.atribuirRequestManual(waypts))
+      .then((response: any) => {
+        this.directionsRenderer.setOptions({ polylineOptions: { strokeColor: '#F0F04D' } });
+        this.directionsRenderer.setDirections(response);
+        this.pegarParadasResponse(response);
+        // this.mostrarParadas(response, markerArray, stepDisplay, map);
+        this.isLoading = false;
+
+      })
+      .catch((e: any) => {
+        this.isLoading = false
+        this.messageService.add({ severity: 'warn', summary: 'Erro!', detail: e.message });
+      });
   }
-
-
-
+  
   buscarRotasPorCep() {
-    const wayptsGeocode: google.maps.DirectionsWaypoint[] = [];
+    let wayptsGeocode: google.maps.DirectionsWaypoint[] = [];
     let rotasListaCEP: string[] = []
     this.rotasMapa.Paradas?.forEach((a) => { rotasListaCEP.push(a.CEP!) })
     this.ListaGeocode = [];
-    let stringEnvio = this.rotasMapa.Partida?.CEP + '|' + this.rotasMapa.Destino?.CEP + '|' + rotasListaCEP.join('|')
-    
+    let stringEnvio = this.rotasMapa.Partida?.CEP + '|' + this.rotasMapa.Destino?.CEP + '|' + rotasListaCEP.join('|');
+    let splitRotas = stringEnvio.split('|');
 
-    let teste = stringEnvio.split('|')
-    let loop = true;
-    var bar = new Promise((resolve, reject) => {
-      for (const item of teste) {
-        const retorno = this.geocoder.geocode({ address: item }).then((retorno: any) => {
-          this.ListaGeocode.push(retorno.results[0].place_id)
-          if (this.ListaGeocode.length === teste.length )
-            resolve(true);
-        }).catch((e:any)=>{          
-          this.messageService.add({severity:'warn', summary:'Erro!', detail:e.message});                
+    if (splitRotas.length > 0) {
+      var promisse = new Promise((resolve, reject) => {
+        splitRotas.forEach((item, index) => {
+          const retornog = this.geocoder.geocode({ address: item }).then((retorno: any) => {
+            let cep: string = retorno.results[0].address_components[0].long_name.replace(/[^0-9]/g, '');;
+            let placeID : string = retorno.results[0].place_id;
+            let localizacao:Localizacao = new Localizacao();
+            localizacao.CEP = cep;
+            localizacao.PlaceId = placeID;
+            this.ListaGeocode.push(localizacao);            
+            if (this.ListaGeocode.length === splitRotas.length) { resolve(true); }
+          }).catch((e: any) => {
+            this.messageService.add({ severity: 'warn', summary: 'Erro!', detail: e.message });
+          })
+          console.log(retornog);
         })
-      }
-    });
-    bar.then(() => {
-      
-      this.ListaGeocode.forEach((tem: string, index: number) => {
-        if (index > 1) {
-          wayptsGeocode.push({
-            location: { placeId: tem },
-            stopover: true,
+
+      });
+      promisse.then((resolve) => {
+        let placeIdPartida = this.ListaGeocode.find((obj) => {
+          return obj.CEP === this.rotasMapa.Partida?.CEP;
+        });      
+        let placeIdDestino = this.ListaGeocode.find((obj) => {
+          return obj.CEP === this.rotasMapa.Destino?.CEP;
+        });  
+        this.ListaGeocode.forEach((item: any, index: number) => {  
+          if (item.CEP != this.rotasMapa.Partida?.CEP && item.CEP != this.rotasMapa.Destino?.CEP) {
+            debugger;
+            wayptsGeocode.push({
+              location: { placeId: item.PlaceId },
+              stopover: true,
+            });
+          }
+        })    
+        this.directionsService.route(
+          {
+            origin: { placeId: placeIdPartida?.PlaceId },
+            destination: { placeId: placeIdDestino?.PlaceId },
+            waypoints: wayptsGeocode, travelMode: google.maps.TravelMode.DRIVING, optimizeWaypoints: true, region: 'BR'
+          })
+          .then((response: any) => {
+            this.directionsRenderer.setOptions({ polylineOptions: { strokeColor: '#F0F04D' } });
+            this.directionsRenderer.setDirections(response);
+            this.pegarParadasResponse(response);
+            // this.mostrarParadas(response, markerArray, stepDisplay, map);
+            this.isLoading = false;
+          })
+          .catch((e: any) => {
+            this.isLoading = false
+            this.messageService.add({ severity: 'warn', summary: 'Erro!', detail: e.message });
           });
-        }
+
       })
-      this.directionsService.route(
-        {
-          origin: { placeId: this.ListaGeocode[0] },
-          destination: { placeId: this.ListaGeocode[1] },
-          waypoints: wayptsGeocode, travelMode: google.maps.TravelMode.DRIVING, optimizeWaypoints: true, region: 'BR'
-        })
-        .then((response: any) => {
-          this.directionsRenderer.setOptions({ polylineOptions: { strokeColor: '#F0F04D' } });
-          this.directionsRenderer.setDirections(response);
-          this.getLegs(response);
-          // this.showSteps(response, markerArray, stepDisplay, map);
-          this.isLoading = false;
-        })
-        .catch((e: any) => {
-          this.isLoading = false
-          this.messageService.add({severity:'warn', summary:'Erro!', detail:e.message});
-        });
-
-    })
-
-  }
-
-
-
-
-
-
-
-
-
-
-
-
-
-  getLegs(response: any) {
-    let alfab = ['A', 'B', 'C', 'D', 'E', 'F', 'G', 'H', 'I', 'J', 'K', 'L', 'M', 'N', 'O', 'P', 'Q', 'R', 'S', 'T', 'U', 'V', 'W', 'X', 'Y', 'Z']
-    let indexAlfa = 0
-    
-    const Legs = response!.routes[0]!.legs!;
-    this.listaPontos = [];
-    for (let index = 0; index < Legs.length; index++) {
-      if (index == 0) {
-        const ponto: string = Legs[index].start_address.split(',')[Legs[index].start_address.split(',').length === 4 ? 1 : 2];
-        const distancia: string = '';//Legs[index].distance.text;
-        const duracao: string = '';//Legs[index].duration.text;
-        const letra = alfab[indexAlfa]
-        let item: any = { a: ponto, b: distancia, c: duracao, d: letra }
-        this.listaPontos.push(item);
-        indexAlfa++
-      }
-      const ponto: string = Legs[index].end_address.split(',')[Legs[index].end_address.split(',').length === 4 ? 1 : 2];
-      const distancia: string = Legs[index].distance.text;
-      const duracao: string = Legs[index].duration.text;
-      const letra = alfab[indexAlfa]
-      let item: any = { a: ponto, b: distancia, c: duracao, d: letra }
-      this.listaPontos.push(item);
-      indexAlfa++
     }
-    
+    else { this.messageService.add({ severity: 'warn', summary: 'Erro!', detail: 'Erro na leitura do arquivo' }); }
   }
+  //#endregion
 
-  showSteps(
-    directionResult: google.maps.DirectionsResult,
-    markerArray: google.maps.Marker[],
-    stepDisplay: google.maps.InfoWindow,
-    map: google.maps.Map
-  ) {
-
-    // For each step, place a marker, and add the text to the marker's infowindow.
-    // Also attach the marker to an array so we can keep track of it and remove it
-    // when calculating new routes.
-    const myRoute = directionResult!.routes[0]!.legs[0]!;
-
-    for (let i = 0; i < myRoute.steps.length; i++) {
-      const marker = (markerArray[i] =
-        markerArray[i] || new google.maps.Marker());
-
-      marker.setMap(map);
-      marker.setPosition(myRoute.steps[i].start_location);
-      this.attachInstructionText(
-        stepDisplay,
-        marker,
-        myRoute.steps[i].instructions,
-        map
-      );
-    }
+  //#region <Funções de utilizade Tela>
+  manipularTipoImportacao(e: any) {
+    this.buscarPorCep = e.value;
   }
-  attachInstructionText(
-    stepDisplay: google.maps.InfoWindow,
-    marker: google.maps.Marker,
-    text: string,
-    map: google.maps.Map
-  ) {
-    google.maps.event.addListener(marker, "click", () => {
-      // Open an info window when the marker is clicked on, containing the text
-      // of the step.
-      stepDisplay.setContent(text);
-      stepDisplay.open(map, marker);
-    });
-  }
-
 
   adicionarParadaTela() {
     this.isAdd = true;
@@ -424,10 +327,212 @@ export class AgendarRotasComponent implements OnInit {
     }
 
   }
+  //#endregion
 
+  //#region <Funções de utilizade - Google API>
+  atribuirRequestLatLong(waypts: google.maps.DirectionsWaypoint[]) {
+    var request = { origin: {}, destination: {}, waypoints: waypts, travelMode: google.maps.TravelMode.DRIVING, optimizeWaypoints: true, region: 'BR' }
 
+    //fazer retornar um request de route
+    let lat = parseFloat(this.rotasMapa.Partida?.Latitude!)
+    let lng = parseFloat(this.rotasMapa.Partida?.Longitude!)
 
+    request = {
+      origin: { lat, lng },
+      destination: { lat, lng },
+      waypoints: waypts,
+      travelMode: google.maps.TravelMode.DRIVING,
+      optimizeWaypoints: true,
+      region: 'BR',
+
+    };
+    lng = lng + 0.005
+    request.destination = { lat, lng }
+
+    return request;
+  }
+  atribuirRequestManual(waypts: google.maps.DirectionsWaypoint[]) {
+    var request = { origin: {}, destination: {}, waypoints: waypts, travelMode: google.maps.TravelMode.DRIVING, optimizeWaypoints: true, region: 'BR' }
+
+    //fazer retornar um request de route
+    request = {
+      origin: this.rotasMapa.Partida?.Cidade!,
+      destination: this.rotasMapa.Destino?.Cidade!,
+      waypoints: waypts,
+      travelMode: google.maps.TravelMode.DRIVING,
+      optimizeWaypoints: true,
+      region: 'BR',
+    };
+    return request;
+  }
+
+  pegarParadasResponse(response: any) {
+    let alfab = ['A', 'B', 'C', 'D', 'E', 'F', 'G', 'H', 'I', 'J', 'K', 'L', 'M', 'N', 'O', 'P', 'Q', 'R', 'S', 'T', 'U', 'V', 'W', 'X', 'Y', 'Z']
+    let indexAlfa = 0
+
+    const Legs = response!.routes[0]!.legs!;
+    this.listaPontos = [];
+    if(!this.rotaManualVisualizar){
+      for (let index = 0; index < Legs.length; index++) {
+        if (index == 0) {
+          const ponto: string = Legs[index].start_address;
+          const distancia: string = '';//Legs[index].distance.text;
+          const duracao: string = '';//Legs[index].duration.text;
+          const letra = alfab[indexAlfa]
+          let item: any = { a: ponto, b: distancia, c: duracao, d: letra }
+          this.listaPontos.push(item);
+          indexAlfa++
+        }
+        debugger;
+        const ponto: string = Legs[index].end_address;
+        const distancia: string = Legs[index].distance.text;
+        const duracao: string = Legs[index].duration.text;
+        const letra = alfab[indexAlfa]
+        let item: any = { a: ponto, b: distancia, c: duracao, d: letra }
+        this.listaPontos.push(item);
+        indexAlfa++
+      }
+    }
+    else{
+      for (let index = 0; index < Legs.length; index++) {
+        if (index == 0) {
+          const ponto: string = Legs[index].start_address.split(',')[Legs[index].start_address.split(',').length === 4 ? 1 : 2];
+          const distancia: string = '';//Legs[index].distance.text;
+          const duracao: string = '';//Legs[index].duration.text;
+          const letra = alfab[indexAlfa]
+          let item: any = { a: ponto, b: distancia, c: duracao, d: letra }
+          this.listaPontos.push(item);
+          indexAlfa++
+        }
+        debugger;
+        const ponto: string = Legs[index].end_address.split(',')[Legs[index].end_address.split(',').length === 4 ? 1 : 2];
+        const distancia: string = Legs[index].distance.text;
+        const duracao: string = Legs[index].duration.text;
+        const letra = alfab[indexAlfa]
+        let item: any = { a: ponto, b: distancia, c: duracao, d: letra }
+        this.listaPontos.push(item);
+        indexAlfa++
+      }
+    }
+   
+
+  }
+
+  //Caputura inputs de tela e retorna lista de pontos de parada - Utilizado no tipo MANUAL
+  capturarInputsWaypoints() {
+    let waypts: google.maps.DirectionsWaypoint[] = [];
+    let destino: string = '';
+    let partida: string = '';
+    if ((document.getElementById("parada") as HTMLInputElement).value != '') {
+      waypts.push({
+        location: (document.getElementById("parada") as HTMLInputElement).value,
+        stopover: true,
+      });
+    }
+    if ((document.getElementById("parada2") as HTMLInputElement).value != '') {
+      waypts.push({
+        location: (document.getElementById("parada2") as HTMLInputElement).value,
+        stopover: true,
+      });
+    }
+
+    if ((document.getElementById("parada3") as HTMLInputElement).value != '') {
+      waypts.push({
+        location: (document.getElementById("parada3") as HTMLInputElement).value,
+        stopover: true,
+      });
+    }
+
+    if ((document.getElementById("parada4") as HTMLInputElement).value != '') {
+      waypts.push({
+        location: (document.getElementById("parada4") as HTMLInputElement).value,
+        stopover: true,
+      });
+    }
+    if ((document.getElementById("partida") as HTMLInputElement).value != '') {
+      let partida = new csvRotas()
+      partida.Cidade = (document.getElementById("partida") as HTMLInputElement).value
+      this.rotasMapa.Partida = partida
+    }
+    if ((document.getElementById("destino") as HTMLInputElement).value != '') {
+      let destino = new csvRotas()
+      destino.Cidade = (document.getElementById("destino") as HTMLInputElement).value
+      this.rotasMapa.Destino = destino
+    }
+    return { waypts, partida, destino };
+  }
+
+  capturarWaypointsCSV() {
+    let waypts: google.maps.DirectionsWaypoint[] = [];
+    let arrayPartida = this.rotasImportadas.filter(r => r.PatridaDestino === true);
+
+    if (arrayPartida != null && arrayPartida != undefined && arrayPartida.length > 0) {
+      this.rotasMapa.Partida = arrayPartida[0];
+      this.rotasMapa.Destino = arrayPartida[0];
+    }
+
+    const paradasImportadas: Array<csvRotas> = this.rotasImportadas.filter(r => r.PatridaDestino === false);
+    this.rotasMapa.Paradas = paradasImportadas;
+
+    paradasImportadas.forEach(element => {
+      let lat: number = parseFloat(element.Latitude!);
+      let lng: number = parseFloat(element.Longitude!);
+
+      waypts.push({
+        location: new google.maps.LatLng(lat, lng),
+        stopover: true,
+      });
+    });
+
+    return waypts;
+  }
+
+  mostrarParadas(
+    directionResult: google.maps.DirectionsResult,
+    markerArray: google.maps.Marker[],
+    stepDisplay: google.maps.InfoWindow,
+    map: google.maps.Map
+  ) {
+
+    // For each step, place a marker, and add the text to the marker's infowindow.
+    // Also attach the marker to an array so we can keep track of it and remove it
+    // when calculating new routes.
+    const myRoute = directionResult!.routes[0]!.legs[0]!;
+
+    for (let i = 0; i < myRoute.steps.length; i++) {
+      const marker = (markerArray[i] =
+        markerArray[i] || new google.maps.Marker());
+
+      marker.setMap(map);
+      marker.setPosition(myRoute.steps[i].start_location);
+      this.informacoesMostrarParadas(
+        stepDisplay,
+        marker,
+        myRoute.steps[i].instructions,
+        map
+      );
+    }
+  }
+
+  informacoesMostrarParadas(
+    stepDisplay: google.maps.InfoWindow,
+    marker: google.maps.Marker,
+    text: string,
+    map: google.maps.Map
+  ) {
+    google.maps.event.addListener(marker, "click", () => {
+      // Open an info window when the marker is clicked on, containing the text
+      // of the step.
+      stepDisplay.setContent(text);
+      stepDisplay.open(map, marker);
+    });
+  }
+  //#endregion
+
+  //#region <Manipulacao do arquivo importado>
   onFileSelected(event: Event) {
+    this.rotasImportadas = [];
+    this.rotasMapa = new RotasMaps();
     this.valorFileText = undefined;
     this.isUpload = true;
     const result = (event.target as HTMLInputElement).files;
@@ -438,7 +543,7 @@ export class AgendarRotasComponent implements OnInit {
         this.fileName = file.name;
         const formData = new FormData();
         formData.append("rotas", file);
-        
+
 
         let fileReader = new FileReader();
         fileReader.onload = (e) => {
@@ -452,8 +557,7 @@ export class AgendarRotasComponent implements OnInit {
 
 
   leituraArquivoRotas(reader: FileReader) {
-    this.rotasImportadas = [];
-    this.rotasMapa = new RotasMaps();
+
     let csv: any = reader.result;
     let allTextLines = [];
     allTextLines = csv.split(/\r|\n|\r/);
@@ -486,44 +590,12 @@ export class AgendarRotasComponent implements OnInit {
     }
     if (this.rotasImportadas.length > 0) {
       //CHAMAR A FUNÇÃO DE MOSTRAR ROTAS NA TELA
-      this.calculateAndDisplayRoute(true)
+      debugger;
+      this.calcularExibirRotas(true)
     }
 
   }
-  atribuirRequest(csv: boolean, waypts: google.maps.DirectionsWaypoint[]) {
-
-
-    var request = { origin: {}, destination: {}, waypoints: waypts, travelMode: google.maps.TravelMode.DRIVING, optimizeWaypoints: true, region: 'BR' }
-
-    //fazer retornar um request de route
-    if (csv) {
-      let lat = parseFloat(this.rotasMapa.Partida?.Latitude!)
-      let lng = parseFloat(this.rotasMapa.Partida?.Longitude!)
-
-      request = {
-        origin: { lat, lng },
-        destination: { lat, lng },
-        waypoints: waypts,
-        travelMode: google.maps.TravelMode.DRIVING,
-        optimizeWaypoints: true,
-        region: 'BR',
-
-      };
-      lng = lng + 0.005
-      request.destination = { lat, lng }
-
-    } else {
-      request = {
-        origin: this.rotasMapa.Partida?.Cidade!,
-        destination: this.rotasMapa.Destino?.Cidade!,
-        waypoints: waypts,
-        travelMode: google.maps.TravelMode.DRIVING,
-        optimizeWaypoints: true,
-        region: 'BR',
-      };
-    }
-    return request;
-  }
+  //#endregion
 
 }
 

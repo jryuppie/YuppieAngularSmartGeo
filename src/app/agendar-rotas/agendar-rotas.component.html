@@ -72,8 +72,8 @@
                         <button pButton id="uploadFile2"  (click)="hiddenfileinput.click()" label="Importar Rotas"
                             class="col-7 waves-effect waves-light btn shadow-4 " [loading]="isUpload"><i
                                 class="material-icons left"> map</i></button>
-                        <div clas="row col-5 " id="togleCEP">
-                            <mat-button-toggle-group  class="shadow-4 border-round-left-4xl border-round-right-4xl" (change)="handleChange($event)" [value]="buscarPorCep" [(ngModel)]="buscarPorCep" aria-label="Tipo de Importação">
+                        <div clas="row col-5 " [ngStyle]="{'display':!rotaManualVisualizar ? 'none' : ''}" id="togleCEP">
+                            <mat-button-toggle-group  class="shadow-4 border-round-left-4xl border-round-right-4xl" (change)="manipularTipoImportacao($event)" [value]="buscarPorCep" [(ngModel)]="buscarPorCep" aria-label="Tipo de Importação">
                                 <mat-button-toggle [value]="true" >CEP</mat-button-toggle> 
                                 <mat-button-toggle [value]="false" >Lat/Lng</mat-button-toggle>                                                               
                             </mat-button-toggle-group>
@@ -82,27 +82,27 @@
 
                     <button pButton [hidden]="!rotaManualVisualizar"
                         (click)="rotaManualVisualizar = !rotaManualVisualizar" (click)="rotaManualVisualizarFunc()"
-                        type="button" label="Rota Manual" [disabled]="true" icon="pi pi-pencil"
+                        type="button" label="Rota Manual" [disabled]="false" icon="pi pi-pencil"
                         class="p-button-secondary min-w-full text-center mt-3 shadow-4"></button>
 
 
-                    <button pButton [hidden]="rotaManualVisualizar"
-                        (click)="rotaManualVisualizar = !rotaManualVisualizar" (click)="rotaManualVisualizarFunc()"
-                        type="button" label="Rota Automática" icon="pi pi-bars"
-                        class="p-button-secondary min-w-full text-center mt-3"></button>
+                   
 
 
                     <div class="group">
                         <button pButton type="button" [hidden]="rotaManualVisualizar" (click)="adicionarParadaTela()"
                             id="adicionarParada" label="Adicionar Paradas" icon="pi pi-plus-circle" iconPos="right"
-                            class="p-button-secondary min-w-full mt-3">
+                            class=" btn min-w-full mt-3 shadow-4">
                         </button>
                         <button pButton id="enviar" [hidden]="rotaManualVisualizar" type="button"
                             label="Calcular Rota Manual" icon="pi pi-search"
-                            class="p-button-success min-w-full text-center mt-3"></button>
+                            class="p-button-success min-w-full text-center mt-3 shadow-4"></button>
                     </div>
 
-
+                    <button pButton [hidden]="rotaManualVisualizar"
+                    (click)="rotaManualVisualizar = !rotaManualVisualizar" (click)="rotaManualVisualizarFunc()"
+                    type="button" label="Rota Automática" icon="pi pi-bars"
+                    class="p-button-secondary min-w-full text-center mt-3 shadow-4"></button>
 
 
 

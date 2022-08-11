@@ -21,10 +21,11 @@ export class RotasMaps {
     Paradas?: Array<csvRotas>; 
 }
 
-export interface Localizacao {    
-        Cidade: string,
-        CEP: string,
-        Estado: string,
-        Logitude: string,
-        Latitude: string   
+export class Localizacao {    
+        Cidade?: string
+        CEP?: string
+        Estado?: string
+        Logitude?: string
+        Latitude?: string 
+        PlaceId?: string  
 }
