@@ -1,13 +1,11 @@
 <div class="row surface-ground  text-900  shadow-8 border-round-left-2xl border-round-right-2xl" style="height: 86vh;">
     <div class="grid">
 
-        <div class="col-3 align-items-center">
-            <div id="grupoGeral" class="row" style="height: 100%;">
-                <div id="sidebarPanel" [hidden]="!rotaManualVisualizar" class="mt-4 ml-5"
-                    style="overflow:overlay; height:250px;"></div>
-                <div id="sidebarMarkers" [hidden]="!rotaManualVisualizar" class="mt-4 ml-5 min-w-full"
-                    style="overflow:overlay; height:400px;">
-
+        <div class="col-3 align-items-center" id="colgrupoGeral">
+            <div id="grupoGeral" class="row">
+                <div id="sidebarPanel" [hidden]="!rotaManualVisualizar" class="mt-4 ml-5"></div>
+                <div id="sidebarMarkers" [hidden]="!rotaManualVisualizar" class="mt-4 ml-5 min-w-full">
+                  
                     <div class="card" [ngStyle]="{backgroundColor:'rgb(239,243,248)'} ">
                         <p-timeline [value]="listaPontos" align="alternate">
                             <ng-template pTemplate="content" let-pontos>
@@ -65,14 +63,14 @@
                     </div>
                 </div>
 
-                <div class="row ml-5 mt-5 mb-3 align-self-end " [hidden]="!envarRotasVisualizar" id="grupoBotoes">
-                    <div class="grid flex align-items-center justify-content-center">
+                <div class="row mb-3 align-self-end " [hidden]="!envarRotasVisualizar" id="grupoBotoes">
+                    <div class="flex align-items-center justify-content-center">
                         <input id="uploadFile" style="display: none" type="file"  [(ngModel)]="valorFileText" (change)="onFileSelected($event)"
                             #hiddenfileinput>
                         <button pButton id="uploadFile2"  (click)="hiddenfileinput.click()" label="Importar Rotas"
-                            class="col-7 waves-effect waves-light btn shadow-4 " [loading]="isUpload"><i
+                            class="col-6 waves-effect waves-light btn shadow-4 " [loading]="isUpload"><i
                                 class="material-icons left"> map</i></button>
-                        <div clas="row col-5 " [ngStyle]="{'display':!rotaManualVisualizar ? 'none' : ''}" id="togleCEP">
+                        <div clas="row col-6 mb-2" [ngStyle]="{'display':!rotaManualVisualizar ? 'none' : ''}" id="togleCEP">
                             <mat-button-toggle-group  class="shadow-4 border-round-left-4xl border-round-right-4xl" (change)="manipularTipoImportacao($event)" [value]="buscarPorCep" [(ngModel)]="buscarPorCep" aria-label="Tipo de Importação">
                                 <mat-button-toggle [value]="true" >CEP</mat-button-toggle> 
                                 <mat-button-toggle [value]="false" >Lat/Lng</mat-button-toggle>                                                               
@@ -83,11 +81,7 @@
                     <button pButton [hidden]="!rotaManualVisualizar"
                         (click)="rotaManualVisualizar = !rotaManualVisualizar" (click)="rotaManualVisualizarFunc()"
                         type="button" label="Rota Manual" [disabled]="false" icon="pi pi-pencil"
-                        class="p-button-secondary min-w-full text-center mt-3 shadow-4"></button>
-
-
-                   
-
+                        class="p-button-secondary min-w-full text-center mt-3 shadow-4"></button>   
 
                     <div class="group">
                         <button pButton type="button" [hidden]="rotaManualVisualizar" (click)="adicionarParadaTela()"
@@ -110,7 +104,7 @@
             </div>
         </div>
         <div class="col-9 mt-1">
-            <div class="full flex align-items-center my-1  border-round-left-2xl border-round-right-2xl align-self-center "
+            <div class="flex align-items-center my-1  border-round-left-2xl border-round-right-2xl align-self-center "
                 id="mapAgendar"></div>
 
         </div>
