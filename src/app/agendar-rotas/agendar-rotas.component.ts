@@ -66,6 +66,11 @@ export class AgendarRotasComponent implements OnInit {
 
   ngOnInit() {
 
+
+
+
+
+
     //ATRIBUIR TITULO A PAGINA
     (document.getElementById('h1Titulo') as HTMLElement).innerHTML = 'Planejar Rotas';
 
@@ -95,10 +100,29 @@ export class AgendarRotasComponent implements OnInit {
       // mappId 57f03a0f789e26df
       this.map = new google.maps.Map(document.getElementById('mapAgendar')!, {
         mapId: '178c0b225e053393',
-        center: { lat: -23.5489, lng: -46.6388 },
-        zoom: 8,
+        center: { lat: -23.734836221085317, lng: -46.56740373222433 },
+        zoom: 15,
         streetViewControl: false
       })
+      //EXEMPLO DE MARKER FIXO NO MAPA
+      // const svgMarker = {
+      //   path: "M17.592,8.936l-6.531-6.534c-0.593-0.631-0.751-0.245-0.751,0.056l0.002,2.999L5.427,9.075H2.491c-0.839,0-0.162,0.901-0.311,0.752l3.683,3.678l-3.081,3.108c-0.17,0.171-0.17,0.449,0,0.62c0.169,0.17,0.448,0.17,0.618,0l3.098-3.093l3.675,3.685c-0.099-0.099,0.773,0.474,0.773-0.296v-2.965l3.601-4.872l2.734-0.005C17.73,9.688,18.326,9.669,17.592,8.936 M3.534,9.904h1.906l4.659,4.66v1.906L3.534,9.904z M10.522,13.717L6.287,9.48l4.325-3.124l3.088,3.124L10.522,13.717z M14.335,8.845l-3.177-3.177V3.762l5.083,5.083H14.335z",
+      //   fillColor: "green",
+      //   fillOpacity: 100,
+      //   strokeWeight: 0,
+      //   rotation: 15,
+      //   scale: 2,
+      //   anchor: new google.maps.Point(10, 30),
+      // };
+
+      // new google.maps.Marker({
+      //   position: this.map.getCenter(),
+      //   icon: svgMarker,
+      //   map: this.map,
+      // });
+
+
+
       this.directionsRenderer.setMap(this.map);
       this.directionsRenderer.setPanel(
         document.getElementById("sidebarPanel") as HTMLElement
@@ -120,6 +144,7 @@ export class AgendarRotasComponent implements OnInit {
         strictBounds: true,
         types: ['(cities)']
       }
+
 
       //MANIPUALÇÃO DOS CAMPOS PARA AUTOCOMPLETE - GOOGLE MAPS PLACE
       this.input1 = document.getElementById("partida");
@@ -192,6 +217,7 @@ export class AgendarRotasComponent implements OnInit {
 
   //#region <Google API - Directions - Consultar rotas>
   buscarRotasPorGeocode(csv: boolean, waypts: google.maps.DirectionsWaypoint[]) {
+    debugger;
     this.directionsService.route(
       this.atribuirRequestLatLong(waypts))
       .then((response: any) => {
@@ -225,13 +251,7 @@ export class AgendarRotasComponent implements OnInit {
       });
   }
 
-  dividirLista(itens: any, maximo: any) {
-    return itens.reduce((acumulador: any, item: any, indice: any) => {
-      const grupo = Math.floor(indice / maximo);
-      acumulador[grupo] = [...(acumulador[grupo] || []), item];
-      return acumulador;
-    }, []);
-  };
+
   private async buscarRotasPorCep() {
     let wayptsGeocode: google.maps.DirectionsWaypoint[] = [];
     let rotasListaCEP: string[] = []
@@ -246,53 +266,55 @@ export class AgendarRotasComponent implements OnInit {
     //console.log(listaDividida)
 
 
-    
+    debugger;
     if (listaDividida.length > 0) {
       var rotasPromisse: Promise<boolean>[] = []
       await listaDividida[0].forEach((item: any) => {
         rotasPromisse.push(
           new Promise((resolve, reject) => {
-
             let stringet = 'https://maps.googleapis.com/maps/api/geocode/json?address=' + item + '&key=AIzaSyCbu9PxUAnPqy2W1fyKwLANXFywzDyiDKI&region=BR&language=pt-BR';
             this.http.get<any>(stringet).subscribe(data => {
-
-              data.results[0]
-              let cep: string = data.results[0].address_components[0].long_name.replace(/[^0-9]/g, '')!;
-              let placeID: string = data.results[0].place_id;
-              let localizacao: Localizacao = new Localizacao();
-              localizacao.CEP = cep;
-              localizacao.PlaceId = placeID;
-              console.log(cep + ' - ' + placeID+ ' - ' + this.ListaGeocode.length)
-              if (!this.ListaGeocode.some((a) => a.PlaceId === placeID)) {  this.ListaGeocode.push(localizacao);} 
+              if (data.status == 'OK') {
+                let cep: string = data.results[0]?.address_components[0].long_name.replace(/[^0-9]/g, '')!;
+                let placeID: string = data.results[0]?.place_id;
+                if (typeof cep !== 'undefined' && cep && typeof placeID !== 'undefined' && placeID) {
+                  let localizacao: Localizacao = new Localizacao();
+                  localizacao.CEP = cep;
+                  localizacao.PlaceId = placeID;
+                  console.log(cep + ' - ' + placeID + ' - ' + this.ListaGeocode.length)
+                  if (!this.ListaGeocode.some((a) => a.PlaceId === placeID)) { this.ListaGeocode.push(localizacao); }
+                }                
+              }
               resolve(true)
+              if(data.status == 'ZERO_RESULTS'){
+                this.messageService.add({ sticky: true,severity: 'info', summary: item, detail: 'CEP ou Coordenadas não encontrada!' });
+              }
             })
           })
         )
       });
       Promise.all(rotasPromisse).
         then(async (resolve) => {
-
           var placeIdPartida: string = '';
           var placeIdDestino: string = '';
-
 
           for (let item of this.ListaGeocode) {
             if (item.CEP == this.rotasMapa.Partida?.CEP) { placeIdPartida = item.PlaceId! }
             if (item.CEP == this.rotasMapa.Destino?.CEP) { placeIdDestino = item.PlaceId! }
           }
-          
-          if (placeIdPartida != '' && placeIdDestino != '') {            
-            let unique = [...new Set(this.ListaGeocode)]      
+
+          if (placeIdPartida != '' && placeIdDestino != '') {
+            let unique = [...new Set(this.ListaGeocode)]
             unique.forEach(element => {
-             
-               if (!wayptsGeocode.some((a) => a.location === element.PlaceId)) {
-              if (element.CEP != this.rotasMapa.Partida?.CEP && element.CEP != this.rotasMapa.Destino?.CEP) {
-                wayptsGeocode.push({
-                  location: { placeId: element.PlaceId },
-                  stopover: true,
-                });              
+
+              if (!wayptsGeocode.some((a) => a.location === element.PlaceId)) {
+                if (element.CEP != this.rotasMapa.Partida?.CEP && element.CEP != this.rotasMapa.Destino?.CEP) {
+                  wayptsGeocode.push({
+                    location: { placeId: element.PlaceId },
+                    stopover: true,
+                  });
+                }
               }
-               }
             });
           };
           await this.consultarDirectionsService(placeIdPartida, placeIdDestino, wayptsGeocode)
@@ -366,8 +388,18 @@ export class AgendarRotasComponent implements OnInit {
   //#endregion
 
   //#region <Funções de utilizade - Google API>
+  dividirLista(itens: any, maximo: any) {
+    return itens.reduce((acumulador: any, item: any, indice: any) => {
+      const grupo = Math.floor(indice / maximo);
+      acumulador[grupo] = [...(acumulador[grupo] || []), item];
+      return acumulador;
+    }, []);
+  };
+
   atribuirRequestLatLong(waypts: google.maps.DirectionsWaypoint[]) {
-    var listaDividida = this.dividirLista(waypts, 22)
+    let unique = [...new Set(waypts)]
+    let listaDividida = this.dividirLista(unique, 22)
+
 
     var request = { origin: {}, destination: {}, waypoints: listaDividida[0], travelMode: google.maps.TravelMode.DRIVING, optimizeWaypoints: true, region: 'BR' }
 
@@ -378,13 +410,13 @@ export class AgendarRotasComponent implements OnInit {
     request = {
       origin: { lat, lng },
       destination: { lat, lng },
-      waypoints: waypts,
+      waypoints: listaDividida[0],
       travelMode: google.maps.TravelMode.DRIVING,
       optimizeWaypoints: true,
       region: 'BR',
 
     };
-    lng = lng + 0.005
+    lng = lng + 0.0001
     request.destination = { lat, lng }
 
     return request;
@@ -404,7 +436,8 @@ export class AgendarRotasComponent implements OnInit {
     return request;
   }
 
-  pegarParadasResponse(response: any) {  debugger;
+  pegarParadasResponse(response: any) {
+    debugger;
     let alfab = ['A', 'B', 'C', 'D', 'E', 'F', 'G', 'H', 'I', 'J', 'K', 'L', 'M', 'N', 'O', 'P', 'Q', 'R', 'S', 'T', 'U', 'V', 'W', 'X', 'Y', 'Z']
     let indexAlfa = 0
     const Legs = response!.routes[0]!.legs!;
