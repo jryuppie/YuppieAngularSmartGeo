@@ -19,7 +19,7 @@ import { HttpClientModule } from '@angular/common/http';
 
 export class AgendarRotasComponent implements OnInit {
   valorFileText: undefined;
-  constructor(private menuLateralService: MenuLateralService, private http: HttpClient, private messageService: MessageService,) { }
+  constructor(private menuLateralService: MenuLateralService, private http: HttpClient, private messageService: MessageService) { }
 
   //#region <VARIAVEIS DE AUTOCOMPLETE - GOOGLE API PLACES>    
   input1: any;
@@ -163,7 +163,7 @@ export class AgendarRotasComponent implements OnInit {
 
   //FUNÇÃO PRINCIPAL PARA CONSULTAR E EXIBIR ROTAS
   calcularExibirRotas(csv: boolean = false) {
-    debugger;
+
     this.isLoading = true;
     let waypts: google.maps.DirectionsWaypoint[] = [];
     this.rotasMapa = new RotasMaps();
@@ -184,7 +184,7 @@ export class AgendarRotasComponent implements OnInit {
     } else if (this.buscarPorCep && this.rotaManualVisualizar) {
       //CSV - CEP
       waypts = this.capturarWaypointsCSV();
-      if (this.rotasMapa.Destino === undefined || this.rotasMapa.Destino === null   && this.rotasMapa.Partida === undefined || this.rotasMapa.Partida === null)
+      if (this.rotasMapa.Destino != undefined && this.rotasMapa.Partida != undefined)
         this.buscarRotasPorCep();
     }
   }
@@ -198,7 +198,7 @@ export class AgendarRotasComponent implements OnInit {
         this.directionsRenderer.setOptions({ polylineOptions: { strokeColor: '#F0F04D' } });
         this.directionsRenderer.setDirections(response);
         this.pegarParadasResponse(response);
-        // this.mostrarParadas(response, markerArray, stepDisplay, map);
+        //this.mostrarParadas(response, markerArray, stepDisplay, map);
         this.isLoading = false;
 
       })
@@ -233,109 +233,94 @@ export class AgendarRotasComponent implements OnInit {
     }, []);
   };
   private async buscarRotasPorCep() {
-
-
-
     let wayptsGeocode: google.maps.DirectionsWaypoint[] = [];
     let rotasListaCEP: string[] = []
     this.rotasMapa.Paradas?.forEach((a) => { rotasListaCEP.push(a.CEP!) })
     this.ListaGeocode = [];
     let stringEnvio = this.rotasMapa.Partida?.CEP + '|' + this.rotasMapa.Destino?.CEP + '|' + rotasListaCEP.join('|');
     let splitRotas = stringEnvio.split('|');
-    var listaDividida = this.dividirLista(splitRotas, 5)
-    let ultimoCep = splitRotas[splitRotas.length -1];
+    let unique = [...new Set(splitRotas)]
+    var listaDividida = this.dividirLista(unique, 25)
+    let ultimoCep = splitRotas[splitRotas.length - 1];
     //console.log(splitRotas)
     //console.log(listaDividida)
 
 
-    if (splitRotas.length > 0) {  
-      //var testePromisse:Promise<boolean>[] = []
-      //await splitRotas.forEach((item: any) => {testePromisse.push(
-        
-       var testePromisse = new Promise((resolve, reject) => {
+    
+    if (listaDividida.length > 0) {
+      var rotasPromisse: Promise<boolean>[] = []
+      await listaDividida[0].forEach((item: any) => {
+        rotasPromisse.push(
+          new Promise((resolve, reject) => {
 
+            let stringet = 'https://maps.googleapis.com/maps/api/geocode/json?address=' + item + '&key=AIzaSyCbu9PxUAnPqy2W1fyKwLANXFywzDyiDKI&region=BR&language=pt-BR';
+            this.http.get<any>(stringet).subscribe(data => {
 
-     
-          // let stringet = 'https://maps.googleapis.com/maps/api/geocode/json?address=' + lista + '&key=AIzaSyCbu9PxUAnPqy2W1fyKwLANXFywzDyiDKI&region=BR&language=pt-BR';
-          // this.http.get<any>(stringet).subscribe(data => {
-          //   console.log(data);
-          //   data.results.forEach((item: { address_components: { long_name: string; }[]; place_id: string; }) => {
-          //     let cep: string = item.address_components[0].long_name.replace(/[^0-9]/g, '')!;
-          //     let placeID: string = item.place_id;
-          //     let localizacao: Localizacao = new Localizacao();
-          //     localizacao.CEP = cep;
-          //     localizacao.PlaceId = placeID;
-          //     this.ListaGeocode.push(localizacao);
-          //     console.log( cep + ' - ' + placeID)
-          //   })
-          //   resolve(true)
-          // })        
-
-        splitRotas.forEach((item, index) => {
-          const retornog = this.geocoder.geocode({ address: item }).then((retorno: any) => {
-            let cep: string = retorno.results[0].address_components[0].long_name.replace(/[^0-9]/g, '');;
-            let placeID: string = retorno.results[0].place_id;
-            let localizacao: Localizacao = new Localizacao();
-            localizacao.CEP = cep;
-            localizacao.PlaceId = placeID;
-            this.ListaGeocode.push(localizacao);
-            if (this.ListaGeocode.length === splitRotas.length) { resolve(true); }
-          }).catch((e: any) => {
-            this.messageService.add({ severity: 'warn', summary: 'Erro!', detail: e.message });
+              data.results[0]
+              let cep: string = data.results[0].address_components[0].long_name.replace(/[^0-9]/g, '')!;
+              let placeID: string = data.results[0].place_id;
+              let localizacao: Localizacao = new Localizacao();
+              localizacao.CEP = cep;
+              localizacao.PlaceId = placeID;
+              console.log(cep + ' - ' + placeID+ ' - ' + this.ListaGeocode.length)
+              if (!this.ListaGeocode.some((a) => a.PlaceId === placeID)) {  this.ListaGeocode.push(localizacao);} 
+              resolve(true)
+            })
           })
-         })
-
+        )
       });
-    //)});
-      //Promise.all(testePromisse)
-      testePromisse.then((resolve) => {
-        debugger;
-        var placeIdPartida:string = '';
-        var placeIdDestino:string = '';
+      Promise.all(rotasPromisse).
+        then(async (resolve) => {
 
-        
-        for (let item of this.ListaGeocode) {
-          console.group();
-          console.log(item)
-          console.log(this.rotasMapa.Partida)
-          console.log(this.rotasMapa.Destino)
-          console.groupEnd();
-          if (item.CEP == this.rotasMapa.Partida?.CEP) { placeIdPartida = item.CEP! }
-          if (item.CEP == this.rotasMapa.Destino?.CEP) { placeIdDestino = item.CEP! }
-        }
+          var placeIdPartida: string = '';
+          var placeIdDestino: string = '';
 
-        if (placeIdPartida != '' && placeIdDestino != '') {
-          this.ListaGeocode.forEach((item: any, index: number) => {
-            if (item.CEP != this.rotasMapa.Partida?.CEP && item.CEP != this.rotasMapa.Destino?.CEP) {            
-              wayptsGeocode.push({
-                location: { placeId: item.PlaceId },
-                stopover: true,
-              });
-            }
-          })
-          debugger;
-          this.directionsService.route(
-            {
-              origin: { placeId: placeIdPartida },
-              destination: { placeId: placeIdDestino },
-              waypoints: wayptsGeocode, travelMode: google.maps.TravelMode.DRIVING, optimizeWaypoints: true, region: 'BR'
-            })
-            .then((response: any) => {
-              this.directionsRenderer.setOptions({ polylineOptions: { strokeColor: '#F0F04D' } });
-              this.directionsRenderer.setDirections(response);
-              this.pegarParadasResponse(response);
-              // this.mostrarParadas(response, markerArray, stepDisplay, map);
-              this.isLoading = false;
-            })
-            .catch((e: any) => {
-              this.isLoading = false
-              this.messageService.add({ severity: 'warn', summary: 'Erro!', detail: e.message });
+
+          for (let item of this.ListaGeocode) {
+            if (item.CEP == this.rotasMapa.Partida?.CEP) { placeIdPartida = item.PlaceId! }
+            if (item.CEP == this.rotasMapa.Destino?.CEP) { placeIdDestino = item.PlaceId! }
+          }
+          
+          if (placeIdPartida != '' && placeIdDestino != '') {            
+            let unique = [...new Set(this.ListaGeocode)]      
+            unique.forEach(element => {
+             
+               if (!wayptsGeocode.some((a) => a.location === element.PlaceId)) {
+              if (element.CEP != this.rotasMapa.Partida?.CEP && element.CEP != this.rotasMapa.Destino?.CEP) {
+                wayptsGeocode.push({
+                  location: { placeId: element.PlaceId },
+                  stopover: true,
+                });              
+              }
+               }
             });
-        }
-
-      })
+          };
+          await this.consultarDirectionsService(placeIdPartida, placeIdDestino, wayptsGeocode)
+        })
     }
     else { this.messageService.add({ severity: 'warn', summary: 'Erro!', detail: 'Erro na leitura do arquivo' }); }
+  }
+
+
+
+  private async consultarDirectionsService(partida: string, destino: string, waypoints: google.maps.DirectionsWaypoint[]) {
+    this.directionsService.route(
+      {
+        origin: { placeId: partida },
+        destination: { placeId: destino },
+        waypoints: waypoints, travelMode: google.maps.TravelMode.DRIVING, optimizeWaypoints: true, region: 'BR'
+      })
+      .then((response: any) => {
+        this.directionsRenderer.setOptions({ polylineOptions: { strokeColor: '#F0F04D' } });
+        this.directionsRenderer.setDirections(response);
+        this.pegarParadasResponse(response);
+        // this.mostrarParadas(response, markerArray, stepDisplay, map);
+        this.isLoading = false;
+      })
+      .catch((e: any) => {
+        this.isLoading = false
+        this.messageService.add({ severity: 'warn', summary: 'Erro!', detail: e.message });
+      });
   }
   //#endregion
 
@@ -382,7 +367,9 @@ export class AgendarRotasComponent implements OnInit {
 
   //#region <Funções de utilizade - Google API>
   atribuirRequestLatLong(waypts: google.maps.DirectionsWaypoint[]) {
-    var request = { origin: {}, destination: {}, waypoints: waypts, travelMode: google.maps.TravelMode.DRIVING, optimizeWaypoints: true, region: 'BR' }
+    var listaDividida = this.dividirLista(waypts, 22)
+
+    var request = { origin: {}, destination: {}, waypoints: listaDividida[0], travelMode: google.maps.TravelMode.DRIVING, optimizeWaypoints: true, region: 'BR' }
 
     //fazer retornar um request de route
     let lat = parseFloat(this.rotasMapa.Partida?.Latitude!)
@@ -417,10 +404,9 @@ export class AgendarRotasComponent implements OnInit {
     return request;
   }
 
-  pegarParadasResponse(response: any) {
+  pegarParadasResponse(response: any) {  debugger;
     let alfab = ['A', 'B', 'C', 'D', 'E', 'F', 'G', 'H', 'I', 'J', 'K', 'L', 'M', 'N', 'O', 'P', 'Q', 'R', 'S', 'T', 'U', 'V', 'W', 'X', 'Y', 'Z']
     let indexAlfa = 0
-
     const Legs = response!.routes[0]!.legs!;
     this.listaPontos = [];
     if (!this.rotaManualVisualizar) {
@@ -434,7 +420,7 @@ export class AgendarRotasComponent implements OnInit {
           this.listaPontos.push(item);
           indexAlfa++
         }
-        debugger;
+
         const ponto: string = Legs[index].end_address;
         const distancia: string = Legs[index].distance.text;
         const duracao: string = Legs[index].duration.text;
@@ -447,23 +433,42 @@ export class AgendarRotasComponent implements OnInit {
     else {
       for (let index = 0; index < Legs.length; index++) {
         if (index == 0) {
-          const ponto: string = Legs[index].start_address.split(',')[Legs[index].start_address.split(',').length === 4 ? 1 : 2];
-          const distancia: string = '';//Legs[index].distance.text;
-          const duracao: string = '';//Legs[index].duration.text;
+          const c: string = Legs[index].start_address.split(',')[Legs[index].start_address.split(',').length === 4 ? 2 : 2];
+          const d: string = Legs[index].start_address.split(',')[Legs[index].start_address.split(',').length === 4 ? 0 : 2] + ' - Início';
+          const dr: string = '';//Legs[index].duration.text;
           const letra = alfab[indexAlfa]
-          let item: any = { a: ponto, b: distancia, c: duracao, d: letra }
+          let item: any = { a: c, b: d, c: dr, d: letra }
           this.listaPontos.push(item);
           indexAlfa++
         }
-        debugger;
-        const ponto: string = Legs[index].end_address.split(',')[Legs[index].end_address.split(',').length === 4 ? 1 : 2];
-        const distancia: string = Legs[index].distance.text;
-        const duracao: string = Legs[index].duration.text;
+        let cep: string = '';
+        let endereco: string = '';
+        let duracao: string = ';'
+        switch (Legs[index].end_address.split(',').length) {
+          case 4:
+            cep = Legs[index].end_address.split(',')[2];
+            endereco = Legs[index].end_address.split(',')[0];
+            duracao = Legs[index].duration.text;
+            break;
+          case 5:
+            cep = Legs[index].end_address.split(',')[3];
+            endereco = Legs[index].end_address.split(',')[0];
+            duracao = Legs[index].duration.text;
+            break;
+          default:
+            cep = Legs[index].end_address.split(',')[2];
+            endereco = Legs[index].end_address.split(',')[0];
+            duracao = Legs[index].duration.text;
+            break;
+        }
+
+
         const letra = alfab[indexAlfa]
-        let item: any = { a: ponto, b: distancia, c: duracao, d: letra }
+        let item: any = { a: cep, b: endereco, c: duracao, d: letra }
         this.listaPontos.push(item);
         indexAlfa++
       }
+      console.log(this.listaPontos);
     }
 
 
@@ -621,7 +626,7 @@ export class AgendarRotasComponent implements OnInit {
     let rows = [];
     for (let i = 1; i < arrl; i++) {
       if (allTextLines[i] != '') {
-        let campos = allTextLines[i].split(';')
+        let campos = allTextLines[i].split(',')
         let rotaRow: csvRotas = {
           IdFuncionario: campos[0],
           NomeFuncionario: campos[1],
@@ -630,14 +635,14 @@ export class AgendarRotasComponent implements OnInit {
           Longitude: campos[4],
           Cidade: campos[5],
           Estado: campos[6],
-          CEP: campos[7],
+          CEP: campos[7].length == 7 ? '0'.concat(campos[7]) : campos[7],
         };
         this.rotasImportadas?.push(rotaRow);
       }
     }
     if (this.rotasImportadas.length > 0) {
       //CHAMAR A FUNÇÃO DE MOSTRAR ROTAS NA TELA
-      debugger;
+
       this.calcularExibirRotas(true)
     }
 

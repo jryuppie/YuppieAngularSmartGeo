@@ -9,7 +9,7 @@
                     <div class="card" [ngStyle]="{backgroundColor:'rgb(239,243,248)'} ">
                         <p-timeline [value]="listaPontos" align="alternate">
                             <ng-template pTemplate="content" let-pontos>
-                                <small class="p-text-secondary">{{pontos.b}}</small>
+                                <small class="p-text-secondary">{{pontos.b}} - {{pontos.c}}</small>
                             </ng-template>
                             <ng-template pTemplate="opposite" let-pontos>
                                 <b style="color:red">[{{pontos.d}}]</b> - <b>{{pontos.a}}</b>
