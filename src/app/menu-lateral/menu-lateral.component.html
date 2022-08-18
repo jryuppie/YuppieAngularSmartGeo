@@ -7,31 +7,24 @@
         
         <nav id="sidebar" [className]="toggle ? 'active' : 'inactive'">
             <div style="margin-top:10%" class="sidebar-header">
-                <h1 class="text-6xl"><b >Luks</b>Move</h1>
-            </div>
-            <p-chip id="idAvatar" label="Jonathan Rossato" image="assets/images/avatar.jpeg" styleClass="text-align-center mt-5 custom-chip min-w-full  shadow-8 "></p-chip>
-            <!-- <p class="font-italic text-base mb-2" >Jonathan Rossato</p>                 -->
-            <ul  class="list-unstyled components">
-               
+                <h1 id="header" class="text-6xl"><b >Luks</b>Move</h1>
+            </div>       
+            <ul  class="list-unstyled components"> 
+                <p-chip id="idAvatar" label="Jonathan Rossato" image="assets/images/avatar.jpeg"  style="margin-bottom: 10%" styleClass="text-align-center custom-chip min-w-full  shadow-8 "></p-chip>               
                 <li>
-                    <a href="#" (click)="mudarTitulo('Dashboard')" class="px-5 align-items-center" routerLink="/Dashboard"><i class="material-icons left mr-2 mb-2 "> pie_chart</i><span>Dashboard</span></a>
+                    <a href="#" (click)="mudarTitulo('Dashboard')" class="px-5 align-items-center linkLateral" routerLink="/Dashboard"><i class="material-icons left mr-2 mb-2 "> pie_chart</i><span>Dashboard</span></a>
                 </li>
-                <li>
-                   
-                    <a class="px-5" (click)="mudarTitulo('Mapa Equipe')" href="#" routerLink="/app/mapaEquipe"><i class="material-icons left mr-2"> person_pin_circle</i>Mapa Equipe</a>
+                <li>                   
+                    <a class="px-5" (click)="mudarTitulo('Mapa Equipe')" href="#" routerLink="/app/mapaEquipe"><i class="material-icons left mr-2 linkLateral"> person_pin_circle</i>Mapa Equipe</a>
                 </li>
-                <li>
-                 
-                    <a class="px-5" (click)="mudarTitulo('Agendar/Planejar')" href="#"routerLink="/app/agendarPlanejar"><i class="material-icons left mr-2"> layers</i>Planejar Rotas </a>
+                <li>                 
+                    <a class="px-5" (click)="mudarTitulo('Agendar/Planejar')" href="#"routerLink="/app/agendarPlanejar"><i class="material-icons left mr-2 linkLateral"> layers</i>Planejar Rotas </a>
                 </li>
-                <li>
-                  
-                  <a class="px-5" (click)="mudarTitulo('Configurações')" href="#"routerLink="/Configuracoes"><i class="material-icons left mr-2"> settings</i>Configurações</a>
-              </li>
-            </ul>   
-            
-            
-            <img src="assets/images/yuppie-white.png" style="margin-top: 64vh;margin-left: 2%;" alt="Image" class="p-image-mask w-min" >
+                <li>                  
+                  <a class="px-5" (click)="mudarTitulo('Configurações')" href="#"routerLink="/Configuracoes"><i class="material-icons left mr-2 linkLateral"> settings</i>Configurações</a>
+              </li>        
+            </ul>  
+            <img src="assets/images/landscape-white.png" style="margin-top: 51vh;margin-left: 2%;" alt="Image" class="p-image-mask w-min" >
         </nav>
 
         <!-- Page Content Holder -->
@@ -59,7 +52,7 @@
                 </div>
            </nav>
      
-          <!-- //BODY AQUI -->
+          <!-- //BODY  -->
           <router-outlet></router-outlet> 
          
         </div>

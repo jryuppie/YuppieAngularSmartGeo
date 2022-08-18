@@ -12,11 +12,17 @@ html, body {
   margin-left:3%; 
 }
 
+::ng-deep :root {
+  /* --cor-base-autoluks: rgba(28 74 149); */
+  --cor-base-autoluks:#212121;
+  --cor-base-complementar-autoluks: #a82e2e;
+}
 
 /* Works on Firefox */
 * {
   scrollbar-width: thin;
-  scrollbar-color: rgb(28, 74, 149) rgb(156, 167, 182);
+  /* scrollbar-color: rgb(28, 74, 149) rgb(156, 167, 182); */
+  scrollbar-color: var(--cor-base-autoluks) var(--cor-base-complementar);
 }
 
 /* Works on Chrome, Edge, and Safari */
@@ -25,13 +31,13 @@ html, body {
 }
 
 *::-webkit-scrollbar-track {
-  background: rgb(156, 167, 182);
+  background: var(--cor-base-complementar);
 }
 
 *::-webkit-scrollbar-thumb {
-  background-color: rgb(28, 74, 149);
+  background-color: var(--cor-base-autoluks);
   border-radius: 20px;
-  border: 3px solid rgb(156, 167, 182);
+  border: 3px solid var(--cor-base-complementar);
 }
 
 
@@ -39,7 +45,7 @@ html, body {
 
 
 .mat-button-toggle-checked {
-  background-color: #3b82f6;
+  background: var(--cor-base-autoluks);
   color: white;
   /* color: rgba(0,0,0,.54); */
 
@@ -108,3 +114,15 @@ div#sidebarMarkers {
   .p-toast-icon-close {
     color: #2c1e30;
 }
+
+.p-button {
+  color: #ffffff;
+  background: var(--cor-base-autoluks);
+  border: 1px solid var(--cor-base-autoluks);
+  padding: 0.75rem 1.25rem;
+  font-size: 1rem;
+  transition: background-color 0.2s, color 0.2s, border-color 0.2s, box-shadow 0.2s;
+  border-radius: 6px;
+}
+
+
