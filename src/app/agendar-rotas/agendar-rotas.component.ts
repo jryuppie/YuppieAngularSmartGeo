@@ -230,7 +230,7 @@ export class AgendarRotasComponent implements OnInit {
       })
       .catch((e: any) => {
         this.isLoading = false
-        this.messageService.add({ sticky: true,severity: 'warn', summary: 'Erro!', detail: e.message });
+        this.messageService.add({ sticky: true, severity: 'warn', summary: 'Erro!', detail: e.message });
       });
   }
 
@@ -247,7 +247,7 @@ export class AgendarRotasComponent implements OnInit {
       })
       .catch((e: any) => {
         this.isLoading = false
-        this.messageService.add({ sticky: true,severity: 'warn', summary: 'Erro!', detail: e.message });
+        this.messageService.add({ sticky: true, severity: 'warn', summary: 'Erro!', detail: e.message });
       });
   }
 
@@ -261,7 +261,7 @@ export class AgendarRotasComponent implements OnInit {
     let splitRotas = stringEnvio.split('|');
     let unique = [...new Set(splitRotas)]
     var listaDividida = this.dividirLista(unique, 25)
-    
+
 
 
     debugger;
@@ -316,10 +316,10 @@ export class AgendarRotasComponent implements OnInit {
             });
           };
           await this.consultarDirectionsService(placeIdPartida, placeIdDestino, wayptsGeocode)
-          if(listaDividida.length > 1){ this.messageService.add({ sticky: true,severity: 'info', summary: 'Limite de Rotas!', detail: 'Limite de 25 rotas atingido, as demais rotas não seram exibidas!' });}
+          if (listaDividida.length > 1) { this.messageService.add({ sticky: true, severity: 'info', summary: 'Limite de Rotas!', detail: 'Limite de 25 rotas atingido, as demais rotas não seram exibidas!' }); }
         })
-    }    
-    else { this.messageService.add({ sticky: true,severity: 'warn', summary: 'Erro!', detail: 'Erro na leitura do arquivo' }); }
+    }
+    else { this.messageService.add({ sticky: true, severity: 'warn', summary: 'Erro!', detail: 'Erro na leitura do arquivo' }); }
   }
 
 
@@ -356,7 +356,7 @@ export class AgendarRotasComponent implements OnInit {
       })
       .catch((e: any) => {
         this.isLoading = false
-        this.messageService.add({ sticky: true,severity: 'warn', summary: 'Erro!', detail: e.message });
+        this.messageService.add({ sticky: true, severity: 'warn', summary: 'Erro!', detail: e.message });
       });
   }
   //#endregion
@@ -657,43 +657,48 @@ export class AgendarRotasComponent implements OnInit {
 
 
   leituraArquivoRotas(reader: FileReader) {
-    let separador = ';'
-    let csv: any = reader.result;
-    let allTextLines = [];
-    allTextLines = csv.split(/\r|\n|\r/);
+    try 
+    {
+      let separador = ';'
+      let csv: any = reader.result;
+      let allTextLines = [];
+      allTextLines = csv.split(/\r|\n|\r/);
 
-    //header tabela
-    let headers = allTextLines[0].split(separador);
-    let data = headers;
-    let tarr = [];
-    for (let j = 0; j < headers.length; j++) {
-      tarr.push(data[j]);
-    }
-    let tarrR = [];
-    let arrl = allTextLines.length;
-    let rows = [];
-    for (let i = 1; i < arrl; i++) {
-      if (allTextLines[i] != '') {
-        let campos = allTextLines[i].split(separador)
-        let rotaRow: csvRotas = {
-          IdFuncionario: campos[0],
-          NomeFuncionario: campos[1],
-          PatridaDestino: campos[2] === "SIM" ? true : false,
-          Latitude: campos[3],
-          Longitude: campos[4],
-          Cidade: campos[5],
-          Estado: campos[6],
-          CEP: campos[7].length == 7 ? '0'.concat(campos[7]) : campos[7],
-        };
-        this.rotasImportadas?.push(rotaRow);
+      //header tabela
+      let headers = allTextLines[0].split(separador);
+      let data = headers;
+      let tarr = [];
+      for (let j = 0; j < headers.length; j++) {
+        tarr.push(data[j]);
+      }
+      let tarrR = [];
+      let arrl = allTextLines.length;
+      let rows = [];
+      for (let i = 1; i < arrl; i++) {
+        if (allTextLines[i] != '') {
+          let campos = allTextLines[i].split(separador)
+          let rotaRow: csvRotas = {
+            IdFuncionario: campos[0],
+            NomeFuncionario: campos[1],
+            PatridaDestino: campos[2] === "SIM" ? true : false,
+            Latitude: campos[3],
+            Longitude: campos[4],
+            Cidade: campos[5],
+            Estado: campos[6],
+            CEP: campos[7].length == 7 ? '0'.concat(campos[7]) : campos[7],
+          };
+          this.rotasImportadas?.push(rotaRow);
+       
+        }
+      }
+      if (this.rotasImportadas.length > 0) {
+        //CHAMAR A FUNÇÃO DE MOSTRAR ROTAS NA TELA
+        this.calcularExibirRotas(true)
       }
     }
-    if (this.rotasImportadas.length > 0) {
-      //CHAMAR A FUNÇÃO DE MOSTRAR ROTAS NA TELA
-
-      this.calcularExibirRotas(true)
+    catch (e) {
+      this.messageService.add({ sticky: true, severity: 'error', summary: 'Erro de leitura', detail: 'Erro na leiturado arquivo, verifique o modelo de importação' });
     }
-
   }
   //#endregion
 
