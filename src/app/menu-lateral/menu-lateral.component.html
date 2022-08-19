@@ -5,26 +5,34 @@
 <body id="principal">  
     <div class="wrapper">
         
-        <nav id="sidebar" [className]="toggle ? 'active' : 'inactive'">
+        <nav id="sidebar"  [className]="toggle ? 'active' : 'inactive'"  >
             <div style="margin-top:10%" class="sidebar-header">
                 <h1 id="header" class="text-6xl"><b >Luks</b>Move</h1>
             </div>       
             <ul  class="list-unstyled components"> 
-                <p-chip id="idAvatar" label="Jonathan Rossato" image="assets/images/avatar.jpeg"  style="margin-bottom: 10%" styleClass="text-align-center custom-chip min-w-full  shadow-8 "></p-chip>               
+                <p-chip id="idAvatar" [hidden]="temaLuksColor" label="SP1103" image="assets/images/avatarAutoLuks.png"  style="margin-bottom: 10%" styleClass="text-align-center custom-chip min-w-full  shadow-8 "></p-chip>      
+                <p-chip id="idAvatar" [hidden]="!temaLuksColor" label="SP1103" image="assets/images/lukscolorR.png"  style="margin-bottom: 10%" styleClass="text-align-center custom-chip min-w-full  shadow-8 "></p-chip>               
+
                 <li>
                     <a href="#" (click)="mudarTitulo('Dashboard')" class="px-5 align-items-center linkLateral" routerLink="/Dashboard"><i class="material-icons left mr-2 mb-2 "> pie_chart</i><span>Dashboard</span></a>
                 </li>
                 <li>                   
-                    <a class="px-5" (click)="mudarTitulo('Mapa Equipe')" href="#" routerLink="/app/mapaEquipe"><i class="material-icons left mr-2 linkLateral"> person_pin_circle</i>Mapa Equipe</a>
+                    <a class="px-5" (click)="mudarTitulo('Mapa Equipe')" ><i class="material-icons left mr-2 linkLateral"> person_pin_circle</i>Mapa Equipe</a>
                 </li>
                 <li>                 
-                    <a class="px-5" (click)="mudarTitulo('Agendar/Planejar')" href="#"routerLink="/app/agendarPlanejar"><i class="material-icons left mr-2 linkLateral"> layers</i>Planejar Rotas </a>
+                    <a class="px-5" (click)="mudarTitulo('Agendar/Planejar')" href="#" routerLink="/app/agendarPlanejar"><i class="material-icons left mr-2 linkLateral"> layers</i>Planejar Rotas </a>
                 </li>
                 <li>                  
                   <a class="px-5" (click)="mudarTitulo('Configurações')" href="#"routerLink="/Configuracoes"><i class="material-icons left mr-2 linkLateral"> settings</i>Configurações</a>
               </li>        
             </ul>  
-            <img src="assets/images/landscape-white.png" style="margin-top: 51vh;margin-left: 2%;" alt="Image" class="p-image-mask w-min" >
+            
+            <img [hidden]="temaLuksColor" src="assets/images/landscape-white.png" alt="Image" class="p-image-mask w-min" style="margin-top: 40vh;margin-left: 5%;height: 5%;">          
+            <img [hidden]="!temaLuksColor" src="assets/images/lukscolorR.png" alt="Image" class="p-image-mask w-min" style="margin-top: 35vh;margin-left: 20%;height: 11%;  ">
+            <img  src="assets/images/yuppie-white.png" alt="Image" class="p-image-mask w-min" style="margin-top: 2vh; margin-left: 24%;height: 4%;">  
+
+   
+            
         </nav>
 
         <!-- Page Content Holder -->
@@ -43,12 +51,21 @@
                     </button>
 
 
+                    <div class="toggle-container">
+                   
+                      </div>
                     <div class="collapse navbar-collapse" id="navbarSupportedContent"> 
                         <div  class="flex-grow-1 flex-shrink-1 flex"></div> 
-                        <div  class="flex-grow-1 flex font-bold" id="h1TituloDv">   <h1 id="h1Titulo" class=" text-5xl nav-item active" ></h1></div> 
+                        <div  class="flex-grow-1 flex font-bold" id="h1TituloDv">   <h1 id="h1Titulo" class=" text-6xl nav-item active" ></h1></div> 
                         <div  class="flex-grow-1 flex-shrink-1 flex"></div> 
                                          
                   </div>
+                  <button  [hidden]="temaLuksColor" id="mudarTema1" class="theme-btn" style="background-color: green;"  title="LuksColor">
+                    <img style="height: 15px; " src="assets/images/lukscolorR.png" alt="LuksColor">
+                  </button>
+                  <button [hidden]="!temaLuksColor" id="mudarTema2" class="theme-btn" style="background-color: black;"  title="AutoLuks">
+                    <img style="height: 10px;" src="assets/images/landscape-white.png" alt="AutoLuks">
+                  </button>
                 </div>
            </nav>
      

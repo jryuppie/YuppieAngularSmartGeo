@@ -1,3 +1,17 @@
+::ng-deep :root {
+  /* --cor-base-autoluks: rgba(28 74 149); */
+  --cor-base-autoluks:rgb(33, 33, 33);
+  --cor-base-complementar-autoluks: #a82e2e;
+
+  --cor-base-lukscolor:#016730;
+  --cor-base-complementar-lukscolor: #ff9c0a;
+  /* //#ebebeb */
+
+  --cor-base: var( --cor-base-lukscolor);
+  --cor-base-complementar:var( --cor-base-complementar-lukscolor)
+}
+
+
 @import url('https://rsms.me/inter/inter-ui.css');
 ::selection {
   background: #2D2F36;

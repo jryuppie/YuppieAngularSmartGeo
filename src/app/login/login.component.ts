@@ -9,18 +9,25 @@ import { loadFull } from "tsparticles";
   templateUrl: './login.component.html',
   styleUrls: ['./login.component.css']
 })
+
+
 export class LoginComponent implements OnInit {
+ 
+  corTema:string = ''
   form: FormGroup = new FormGroup({
     username: new FormControl(''),
     password: new FormControl(''),
+
+
   });
   constructor() { }
 
+  
   id = "tsparticles";  
   particlesOptions = {
     background: {
       color: {
-        value: "#0d47a1"
+        value: '#212121'
       }
     },
     fpsLimit: 120,
@@ -90,20 +97,37 @@ export class LoginComponent implements OnInit {
     detectRetina: true
   };
 
+  
+
   particlesLoaded(container: Container): void {
     console.log(container);
   }
 
-  async particlesInit(engine: Engine): Promise<void> {await loadFull(engine);}
+  async particlesInit(engine: Engine): Promise<void> {
+
+    this.cor
+    await loadFull(engine);
+  
+  }
 
   
 
-
+cor:string = ''
   ngOnInit(): void {
     this.form = new FormGroup({
       username: new FormControl(''),
       password: new FormControl(''),
     });
+
+    let docStyle = getComputedStyle(document.documentElement);
+
+    //get variable
+    this.cor = docStyle.getPropertyValue('--cor-base');
+
+    console.log(this.cor);
+
+
+    
   }
  
 
@@ -116,3 +140,5 @@ export class LoginComponent implements OnInit {
 
   @Output() submitEM = new EventEmitter();
 }
+
+

@@ -1,11 +1,21 @@
 @import "https://fonts.googleapis.com/css?family=Poppins:300,400,500,600,700";
 
-::ng-deep :root {
-    /* --cor-base-autoluks: rgba(28 74 149); */
+::ng-deep :root {  
     --cor-base-autoluks:#212121;
     --cor-base-complementar-autoluks: #a82e2e;
+    --background-sidebar-autoluks:url(https://www.autoluks.com.br/uploads/1/1/5/6/115643989/background-images/1817667807.jpg);
+
+    --cor-base-lukscolor:#016730;
+    --cor-base-complementar-lukscolor: #ff9c0a;
+    --background-sidebar-lukscolor: #016730;
+    
+
+    --cor-base: var(  --cor-base-autoluks);
+    --cor-base-complementar:var( --cor-base-complementar-autoluks);
+    --background-sidebar: var(--background-sidebar-autoluks);
+
 }
-  
+
 
 body {
     font-family: 'Poppins', sans-serif;
@@ -62,13 +72,17 @@ a:focus {
 }
 
 
-#sidebar {
-    min-width: 260px;
-    max-width: 260px;
-    background: var(--cor-base-autoluks);
+.sidebarLukscolor {   
+    background: var(--cor-base) !important; 
+    background-image:var(--cor-base) !important; 
+}
+.sidebarAutoluks { 
+    background-image: url(https://www.autoluks.com.br/uploads/1/1/5/6/115643989/background-images/1817667807.jpg) !important;
+    background-repeat: no-repeat !important;    
+    background-position: 90% 45% !important;
+    background-attachment: fixed !important;
+    background-size: cover !important;
     color: #fff;
-    transition: all 0.6s cubic-bezier(0.945, 0.020, 0.270, 0.665);
-    transform-origin: bottom left;
 }
 
 #sidebar.active {
@@ -78,7 +92,8 @@ a:focus {
 
 #sidebar .sidebar-header {
     padding: 10px;
-    background: var(--cor-base-autoluks);;
+    /* background: var(--cor-base); */
+    background: transparent;
 }
 
 #sidebar ul.components {
@@ -127,7 +142,7 @@ a[data-toggle="collapse"] {
 ul ul a {
     font-size: 0.9em !important;
     padding-left: 30px !important;
-    background: var(--cor-base-autoluks);
+    background: var(--cor-base);
 }
 
 ul.CTAs {
@@ -149,7 +164,7 @@ a.download {
 
 a.article,
 a.article:hover {
-    background: var(--cor-base-autoluks) !important;;
+    background: var(--cor-base) !important;;
     color: #fff !important;
 }
 
@@ -171,7 +186,7 @@ a.article:hover {
     background: #f5f5f5;
     cursor: pointer;
     border-radius: 5px !important;
-    border-color: var(--cor-base-autoluks) !important;
+    border-color: var(--cor-base) !important;
 }
 
 
@@ -300,19 +315,19 @@ a.article:hover {
     text-align: center;
     cursor: pointer;
 
-}
+    }
 
 :host ::ng-deep .p-chip.custom-chip {
-    background: var(--cor-base-autoluks);
+    background: var(--cor-base);
     color: white;    
     margin-bottom: 10%;
-    border-bottom: 3px solid var(--cor-base-complementar-autoluks) !important;
+    border-bottom: 3px solid var(--cor-base-complementar) !important;
 }
 
 h1#h1Titulo {
     font-size: 70px;
     font-weight: 600;
-    color: var(--cor-base-autoluks);
+    color: var(--cor-base);
     text-shadow: 0 0 black;
     background-clip: text;
     -webkit-background-clip: text;   
@@ -323,18 +338,34 @@ h1#h1Titulo {
     font-family: 'Gugi', cursive;
 }
 
-
-
-ul.list-unstyled.components {
-    margin-top: 15vh;
+div#h1TituloDv{
+    margin-left: 21%;
+    
 }
+
 
 h1#header {
     margin-top: 4%;
 }
 
 
-ul.list-unstyled.components{    
+ul.list-unstyled.components{  
+    margin-top: 15vh;  
     padding: 20px 0;
-    border-bottom: 1px solid var(--cor-base-complementar-autoluks) !important;
+    border-bottom: 1px solid var(--cor-base-complementar) !important;
+}
+
+nav#sidebar {
+    min-width: 260px;
+    max-width: 260px;
+    background: var(--cor-base);
+    color: #fff;
+    transition: all 0.6s cubic-bezier(0.945, 0.020, 0.270, 0.665);
+    transform-origin: bottom left;
+
+
+    background-repeat: no-repeat !important;    
+    background-position: 90% 45% !important;
+    background-attachment: fixed !important;
+    background-size: cover !important;
 }

@@ -59,15 +59,15 @@ export class AgendarRotasComponent implements OnInit {
   directionsRenderer: any;
   //#endregion
 
-
-
+  apiKey: string = 'AIzaSyDYR45TvExNG498aRNe_C2MS4R0p4EKS4U';//'AIzaSyCbu9PxUAnPqy2W1fyKwLANXFywzDyiDKI',
+  corRota: string = '';
 
 
 
   ngOnInit() {
 
 
-
+    this.corRota = getComputedStyle(document.documentElement).getPropertyValue('--cor-base');
 
 
 
@@ -83,7 +83,7 @@ export class AgendarRotasComponent implements OnInit {
 
     //INICIALIZAÇÃO DAS APIS DO GOOGLE -- TODO: REMOVER TOKEN ID PESSOAL
     let loader = new Loader({
-      apiKey: 'AIzaSyCbu9PxUAnPqy2W1fyKwLANXFywzDyiDKI',
+      apiKey: this.apiKey,
       libraries: ['places', 'geometry'],
       region: 'BR',
       language: 'pt-BR',
@@ -221,7 +221,7 @@ export class AgendarRotasComponent implements OnInit {
     this.directionsService.route(
       this.atribuirRequestLatLong(waypts))
       .then((response: any) => {
-        this.directionsRenderer.setOptions({ polylineOptions: { strokeColor: '#F0F04D' } });
+        this.directionsRenderer.setOptions({ polylineOptions: { strokeColor: this.corRota } });
         this.directionsRenderer.setDirections(response);
         this.pegarParadasResponse(response);
         //this.mostrarParadas(response, markerArray, stepDisplay, map);
@@ -230,7 +230,7 @@ export class AgendarRotasComponent implements OnInit {
       })
       .catch((e: any) => {
         this.isLoading = false
-        this.messageService.add({ severity: 'warn', summary: 'Erro!', detail: e.message });
+        this.messageService.add({ sticky: true,severity: 'warn', summary: 'Erro!', detail: e.message });
       });
   }
 
@@ -238,7 +238,7 @@ export class AgendarRotasComponent implements OnInit {
     this.directionsService.route(
       this.atribuirRequestManual(waypts))
       .then((response: any) => {
-        this.directionsRenderer.setOptions({ polylineOptions: { strokeColor: '#F0F04D' } });
+        this.directionsRenderer.setOptions({ polylineOptions: { strokeColor: this.corRota } });
         this.directionsRenderer.setDirections(response);
         this.pegarParadasResponse(response);
         // this.mostrarParadas(response, markerArray, stepDisplay, map);
@@ -247,7 +247,7 @@ export class AgendarRotasComponent implements OnInit {
       })
       .catch((e: any) => {
         this.isLoading = false
-        this.messageService.add({ severity: 'warn', summary: 'Erro!', detail: e.message });
+        this.messageService.add({ sticky: true,severity: 'warn', summary: 'Erro!', detail: e.message });
       });
   }
 
@@ -261,9 +261,7 @@ export class AgendarRotasComponent implements OnInit {
     let splitRotas = stringEnvio.split('|');
     let unique = [...new Set(splitRotas)]
     var listaDividida = this.dividirLista(unique, 25)
-    let ultimoCep = splitRotas[splitRotas.length - 1];
-    //console.log(splitRotas)
-    //console.log(listaDividida)
+    
 
 
     debugger;
@@ -272,7 +270,7 @@ export class AgendarRotasComponent implements OnInit {
       await listaDividida[0].forEach((item: any) => {
         rotasPromisse.push(
           new Promise((resolve, reject) => {
-            let stringet = 'https://maps.googleapis.com/maps/api/geocode/json?address=' + item + '&key=AIzaSyCbu9PxUAnPqy2W1fyKwLANXFywzDyiDKI&region=BR&language=pt-BR';
+            let stringet = 'https://maps.googleapis.com/maps/api/geocode/json?address=' + item + '&key=' + this.apiKey + '&region=BR&language=pt-BR';
             this.http.get<any>(stringet).subscribe(data => {
               if (data.status == 'OK') {
                 let cep: string = data.results[0]?.address_components[0].long_name.replace(/[^0-9]/g, '')!;
@@ -283,11 +281,11 @@ export class AgendarRotasComponent implements OnInit {
                   localizacao.PlaceId = placeID;
                   console.log(cep + ' - ' + placeID + ' - ' + this.ListaGeocode.length)
                   if (!this.ListaGeocode.some((a) => a.PlaceId === placeID)) { this.ListaGeocode.push(localizacao); }
-                }                
+                }
               }
               resolve(true)
-              if(data.status == 'ZERO_RESULTS'){
-                this.messageService.add({ sticky: true,severity: 'info', summary: item, detail: 'CEP ou Coordenadas não encontrada!' });
+              if (data.status == 'ZERO_RESULTS') {
+                this.messageService.add({ sticky: true, severity: 'info', summary: item, detail: 'CEP ou Coordenadas não encontrada!' });
               }
             })
           })
@@ -318,9 +316,10 @@ export class AgendarRotasComponent implements OnInit {
             });
           };
           await this.consultarDirectionsService(placeIdPartida, placeIdDestino, wayptsGeocode)
+          if(listaDividida.length > 1){ this.messageService.add({ sticky: true,severity: 'info', summary: 'Limite de Rotas!', detail: 'Limite de 25 rotas atingido, as demais rotas não seram exibidas!' });}
         })
-    }
-    else { this.messageService.add({ severity: 'warn', summary: 'Erro!', detail: 'Erro na leitura do arquivo' }); }
+    }    
+    else { this.messageService.add({ sticky: true,severity: 'warn', summary: 'Erro!', detail: 'Erro na leitura do arquivo' }); }
   }
 
 
@@ -333,15 +332,31 @@ export class AgendarRotasComponent implements OnInit {
         waypoints: waypoints, travelMode: google.maps.TravelMode.DRIVING, optimizeWaypoints: true, region: 'BR'
       })
       .then((response: any) => {
-        this.directionsRenderer.setOptions({ polylineOptions: { strokeColor: '#F0F04D' } });
+        this.directionsRenderer.setOptions({
+          polylineOptions: {
+            geodesic: true,
+            strokeColor: this.corRota,
+            strokeOpacity: 1.0,
+            strokeWeight: 5,
+            clickable: true, icons: [
+              // {
+              //   icon: lineSymbol,
+              //   offset: "100%",
+              // },
+            ]
+          }
+        });
+
         this.directionsRenderer.setDirections(response);
+
+
         this.pegarParadasResponse(response);
         // this.mostrarParadas(response, markerArray, stepDisplay, map);
         this.isLoading = false;
       })
       .catch((e: any) => {
         this.isLoading = false
-        this.messageService.add({ severity: 'warn', summary: 'Erro!', detail: e.message });
+        this.messageService.add({ sticky: true,severity: 'warn', summary: 'Erro!', detail: e.message });
       });
   }
   //#endregion
@@ -642,13 +657,13 @@ export class AgendarRotasComponent implements OnInit {
 
 
   leituraArquivoRotas(reader: FileReader) {
-
+    let separador = ';'
     let csv: any = reader.result;
     let allTextLines = [];
     allTextLines = csv.split(/\r|\n|\r/);
 
     //header tabela
-    let headers = allTextLines[0].split(',');
+    let headers = allTextLines[0].split(separador);
     let data = headers;
     let tarr = [];
     for (let j = 0; j < headers.length; j++) {
@@ -659,7 +674,7 @@ export class AgendarRotasComponent implements OnInit {
     let rows = [];
     for (let i = 1; i < arrl; i++) {
       if (allTextLines[i] != '') {
-        let campos = allTextLines[i].split(',')
+        let campos = allTextLines[i].split(separador)
         let rotaRow: csvRotas = {
           IdFuncionario: campos[0],
           NomeFuncionario: campos[1],

@@ -1,7 +1,8 @@
-html, body {
-  height: 100%; 
-  width: 100%; 
-  margin: 0; 
+html,
+body {
+  height: 100%;
+  width: 100%;
+  margin: 0;
 }
 
 
@@ -9,20 +10,16 @@ html, body {
   width: 98%;
   height: 97%;
   margin-top: 2%;
-  margin-left:3%; 
+  margin-left: 3%;
 }
 
-::ng-deep :root {
-  /* --cor-base-autoluks: rgba(28 74 149); */
-  --cor-base-autoluks:#212121;
-  --cor-base-complementar-autoluks: #a82e2e;
-}
+
 
 /* Works on Firefox */
 * {
   scrollbar-width: thin;
   /* scrollbar-color: rgb(28, 74, 149) rgb(156, 167, 182); */
-  scrollbar-color: var(--cor-base-autoluks) var(--cor-base-complementar);
+  scrollbar-color: var(--cor-base-complementar) var(--cor-base-complementar);
 }
 
 /* Works on Chrome, Edge, and Safari */
@@ -31,11 +28,11 @@ html, body {
 }
 
 *::-webkit-scrollbar-track {
-  background: var(--cor-base-complementar);
+  background: var(--cor-base);
 }
 
 *::-webkit-scrollbar-thumb {
-  background-color: var(--cor-base-autoluks);
+  background-color: var(--cor-base-complementar);
   border-radius: 20px;
   border: 3px solid var(--cor-base-complementar);
 }
@@ -45,7 +42,7 @@ html, body {
 
 
 .mat-button-toggle-checked {
-  background: var(--cor-base-autoluks);
+  background: var(--cor-base);
   color: white;
   /* color: rgba(0,0,0,.54); */
 
@@ -63,9 +60,10 @@ div#grupoBotoes {
   margin-left: 20px;
 }
 
-.row.surface-ground.text-900.shadow-8.border-round-left-2xl.border-round-right-2xl{
+.row.surface-ground.text-900.shadow-8.border-round-left-2xl.border-round-right-2xl {
   height: 90%;
 }
+
 div#grupoGeral {
   height: 99%;
 }
@@ -79,20 +77,22 @@ div#sidebarMarkers {
   max-height: 45vh;
   overflow: scroll;
 }
+
 /* ---------------------------------------------------
     MEDIAQUERIES
 ----------------------------------------------------- */
- @media (min-width: 500px) and (max-width: 1100px) {
-  .row.surface-ground.text-900.shadow-8.border-round-left-2xl.border-round-right-2xl{
+@media (min-width: 500px) and (max-width: 1100px) {
+  .row.surface-ground.text-900.shadow-8.border-round-left-2xl.border-round-right-2xl {
     height: 70%;
   }
+
   div#grupoGeral {
     height: 70%;
   }
-  
+
   div#sidebarPanel {
     overflow: scroll;
-  display: none;
+    display: none;
   }
 
   #mapAgendar {
@@ -102,27 +102,26 @@ div#sidebarMarkers {
     margin-left: 3%;
   }
 }
- 
 
-  .p-toast-message-custom {
-      background-color: #E1CFE7;
-      border: solid #8A427A;
-      border-width: 0 0 0 6px;
-      color: #2c1e30;
-     
-  }
-  .p-toast-icon-close {
-    color: #2c1e30;
+
+.p-toast-message-custom {
+  background-color: #E1CFE7;
+  border: solid #8A427A;
+  border-width: 0 0 0 6px;
+  color: #2c1e30;
+
+}
+
+.p-toast-icon-close {
+  color: #2c1e30;
 }
 
 .p-button {
   color: #ffffff;
-  background: var(--cor-base-autoluks);
-  border: 1px solid var(--cor-base-autoluks);
+  background: var(--cor-base);
+  border: 1px solid var(--cor-base);
   padding: 0.75rem 1.25rem;
   font-size: 1rem;
   transition: background-color 0.2s, color 0.2s, border-color 0.2s, box-shadow 0.2s;
   border-radius: 6px;
 }
-
-
