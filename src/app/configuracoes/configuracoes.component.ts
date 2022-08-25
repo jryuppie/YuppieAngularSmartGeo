@@ -1,4 +1,5 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, ViewChild } from '@angular/core';
+
 
 @Component({
   selector: 'app-configuracoes',
@@ -6,10 +7,11 @@ import { Component, OnInit } from '@angular/core';
   styleUrls: ['./configuracoes.component.css']
 })
 export class ConfiguracoesComponent implements OnInit {
-
+ 
   constructor() { }
 
-  ngOnInit(): void {
-  }
+  ngOnInit() {  
 
+  }
+ 
 }

@@ -1,27 +1,47 @@
-<mat-card>
-    <mat-card-title>Login</mat-card-title>
-<mat-card-content>
-<form [formGroup]="form" (ngSubmit)="submit()">
-  <p>
-    <mat-form-field>
-      <input type="text" matInput placeholder="Username" formControlName="username">
-    </mat-form-field>
-  </p>
 
-  <p>
-    <mat-form-field>
-      <input type="password" matInput placeholder="Password" formControlName="password">
-    </mat-form-field>
-  </p>
 
-  <!-- <p *ngIf="error" class="error">
-    {{ error }}
-  </p> -->
-
-  <div class="button">
-    <button type="submit" mat-button>Login</button>
-  </div>
-
-</form>
-</mat-card-content>
-</mat-card>
+<ng-particles [id]="id" [options]="particlesOptions" [particlesInit]="particlesInit"
+              (particlesLoaded)="particlesLoaded($event)">
+             
+            
+            </ng-particles>
+            <div class="page">
+              <div class="container">
+                <div class="left">
+                  <div class="login">LuksMove</div>
+                  <div class="eula">Bem-vindo a ferramenta de roteirização LuksMove. <div>Importe suas rotas personalizadas com objetividade.</div></div>
+                 
+                </div>
+                <div class="right">
+                  <svg viewBox="0 0 320 300">
+                    <defs>
+                      <linearGradient
+                                      inkscape:collect="always"
+                                      id="linearGradient"
+                                      x1="13"
+                                      y1="193.49992"
+                                      x2="307"
+                                      y2="193.49992"
+                                      gradientUnits="userSpaceOnUse">
+                        <stop
+                              style="stop-color:rgb(28, 74, 149);"
+                              offset="0"
+                              id="stop876" />
+                        <stop
+                              style="stop-color:rgb(156, 167, 182);"
+                              offset="1"
+                              id="stop878" />
+                      </linearGradient>
+                    </defs>
+                    <path d="m 40,120.00016 239.99984,-3.2e-4 c 0,0 24.99263,0.79932 25.00016,35.00016 0.008,34.20084 -25.00016,35 -25.00016,35 h -239.99984 c 0,-0.0205 -25,4.01348 -25,38.5 0,34.48652 25,38.5 25,38.5 h 215 c 0,0 20,-0.99604 20,-25 0,-24.00396 -20,-25 -20,-25 h -190 c 0,0 -20,1.71033 -20,25 0,24.00396 20,25 20,25 h 168.57143" />
+                  </svg>
+                  <div class="form">
+                    <label for="email">Usuario</label>
+                    <input type="email" id="email">
+                    <label for="password">Senha</label>
+                    <input type="password" id="password">
+                    <input type="submit" id="submit" value="Logar">
+                  </div>
+                </div>
+              </div>
+            </div>

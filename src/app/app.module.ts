@@ -34,6 +34,8 @@ import {MessagesModule} from 'primeng/messages';
 import {MessageModule} from 'primeng/message';
 import { ToastModule } from 'primeng/toast';
 import {HttpClientModule} from '@angular/common/http';
+
+import { NgParticlesModule } from "ng-particles";
 @NgModule({
   declarations: [
     AppComponent,
@@ -51,7 +53,7 @@ import {HttpClientModule} from '@angular/common/http';
     BrowserAnimationsModule,MatCardModule,MatDividerModule,MatProgressBarModule,MatFormFieldModule,
     FormsModule,ReactiveFormsModule,
     DialogModule,CardModule,ButtonModule,ListboxModule,PanelModule,MenuModule,InputTextModule,HttpClientModule,TimelineModule
-    ,ChipModule,MatButtonToggleModule,MessageModule,MessagesModule,ToastModule
+    ,ChipModule,MatButtonToggleModule,MessageModule,MessagesModule,ToastModule,NgParticlesModule
   ],
   providers: [MenuLateralService],
   bootstrap: [AppComponent]

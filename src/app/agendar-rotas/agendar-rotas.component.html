@@ -1,15 +1,15 @@
-<div class="row surface-ground  text-900  shadow-8 border-round-left-2xl border-round-right-2xl" style="height: 86vh;">
+<div class="row surface-ground  text-900  shadow-8 border-round-left-2xl border-round-right-2xl">
     <div class="grid">
 
         <div class="col-3 align-items-center" id="colgrupoGeral">
             <div id="grupoGeral" class="row">
-                <div id="sidebarPanel" [hidden]="!rotaManualVisualizar" class="mt-4 ml-5"></div>
-                <div id="sidebarMarkers" [hidden]="!rotaManualVisualizar" class="mt-4 ml-5 min-w-full">
+                <div id="sidebarPanel" [hidden]="!rotaManualVisualizar" class=" mt-4 ml-5"></div>
+                <div id="sidebarMarkers" [hidden]="!rotaManualVisualizar" class=" mt-4 ml-5 min-w-full ">
                   
                     <div class="card" [ngStyle]="{backgroundColor:'rgb(239,243,248)'} ">
                         <p-timeline [value]="listaPontos" align="alternate">
                             <ng-template pTemplate="content" let-pontos>
-                                <small class="p-text-secondary">{{pontos.b}}</small>
+                                <small class="p-text-secondary">{{pontos.b}} - {{pontos.c}}</small>
                             </ng-template>
                             <ng-template pTemplate="opposite" let-pontos>
                                 <b style="color:red">[{{pontos.d}}]</b> - <b>{{pontos.a}}</b>
@@ -73,7 +73,7 @@
                         <div clas="row col-6 mb-2" [ngStyle]="{'display':!rotaManualVisualizar ? 'none' : ''}" id="togleCEP">
                             <mat-button-toggle-group  class="shadow-4 border-round-left-4xl border-round-right-4xl" (change)="manipularTipoImportacao($event)" [value]="buscarPorCep" [(ngModel)]="buscarPorCep" aria-label="Tipo de Importação">
                                 <mat-button-toggle [value]="true" >CEP</mat-button-toggle> 
-                                <mat-button-toggle [value]="false" >Lat/Lng</mat-button-toggle>                                                               
+                                <mat-button-toggle [value]="false" >Lat/Lon</mat-button-toggle>                                                               
                             </mat-button-toggle-group>
                         </div>
                     </div>
@@ -110,4 +110,4 @@
         </div>
     </div>
 </div>
-<p-toast  [preventDuplicates]="true" [hideTransitionOptions]="'8000ms'" position="top-right"></p-toast>
+<p-toast  [preventDuplicates]="true"   position="top-right"></p-toast>

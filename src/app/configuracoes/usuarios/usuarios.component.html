@@ -1,0 +1,108 @@
+<p-toast></p-toast>
+
+<div class="card">
+    <p-toolbar styleClass="mb-4">
+        <ng-template pTemplate="left">
+            <button pButton pRipple label="Criar" icon="pi pi-plus" class="p-button-config mr-2" (click)="abrirNovo()"></button>           
+        </ng-template>
+
+        <ng-template pTemplate="right">            
+            <button pButton pRipple label="Exportar" icon="pi pi-upload" class="p-button-help"></button>
+        </ng-template>
+    </p-toolbar>
+
+    <p-table #dt  responsiveLayout="scroll" currentPageReportTemplate="Mostrando {first} de {last} de um total de {totalRecords} registros" [value]="usuarios"  [(selection)]="selectedUsuarios"   dataKey="id" [rows]="10" [paginator]="true" [showCurrentPageReport]="true"  [rowHover]="true"  [globalFilterFields]="['nome']">
+        <!--    -->
+        <ng-template pTemplate="caption">
+            <div class="flex align-items-end justify-content-between">
+                <h5 class="m-0">Gerenciamento de Usuários</h5>
+                <span class="p-input-icon-left">
+                    <i class="pi pi-search"></i>
+                    <input pInputText type="text"  (input)="applyFilterGlobal($event,'contains')"  placeholder="Procurar..." />
+                  
+                </span>
+            </div>
+        </ng-template>
+        <ng-template pTemplate="header">
+            <tr>    
+                <th>Avatar</th>             
+                <th pSortableColumn="nome">Nome </th>
+                <th pSortableColumn="matricula">Matrícula </th>       
+                <th pSortableColumn="unidade">Unidade </th>
+                <th pSortableColumn="funcao">Função </th>   
+                <th pSortableColumn="email">Email</th> 
+                <th pSortableColumn="email">Status</th>        
+                <th pSortableColumn="funcao"> </th>              
+                <th></th>
+            </tr>
+        </ng-template>
+        <ng-template pTemplate="body" let-usuario>
+            <tr>
+                <td><img [src]="'assets/images/logotipo-yuppie-azul.png'" [alt]="usuario.nome" width="50" class="shadow-4" /></td>
+                <td>{{usuario.nome}}</td>     
+                <td>{{usuario.matricula}}</td>          
+                <td>{{usuario.unidade}}</td>
+                <td>{{usuario.funcao}}</td>
+                <td>{{usuario.email}}</td>
+                <td>{{usuario.status}}</td>
+                <td style="text-align: right;">
+                    <button pButton pRipple icon="pi pi-pencil" class="p-button-rounded p-button-config mr-2" (click)="editarUsuario(usuario)"></button>
+                    <button pButton pRipple icon="pi pi-trash" class="p-button-rounded p-button-warning" (click)="deletarUsuario(usuario)"></button>
+                </td>
+            </tr>
+        </ng-template>
+        <ng-template pTemplate="summary">
+            <div class="flex align-items-center justify-content-between">
+               Um total de {{usuarios ? usuarios.length : 0 }} usuários.
+            </div>
+        </ng-template>
+    </p-table>
+</div>
+
+<p-dialog [(visible)]="usuarioDialog" [style]="{width: '450px'}" header="Detalhes do usuário" [modal]="true" styleClass="p-fluid">
+    <ng-template pTemplate="content">
+        <img [src]="'assets/images/logotipo-yuppie-azul.png'" class="usuario-image" *ngIf="usuario.avatar">
+        <div class="field">
+            <label for="name">Nome</label>
+            <input type="text" pInputText id="name" [(ngModel)]="usuario.nome" required autofocus />
+            <small class="p-error" *ngIf="submitted && !usuario.nome">Campo nome é obrigatório</small>
+        </div>
+       
+
+        <div class="field">
+            <label for="matricula">Matrícula</label>
+            <input type="text" pInputText id="matricula" [(ngModel)]="usuario.matricula" required autofocus />
+            <small class="p-error" *ngIf="submitted && !usuario.matricula">Campo matricula é obrigatório</small>           
+        </div>
+
+
+       <div class="field">
+            <label for="unidade">Unidade</label>
+            <input type="text" pInputText id="unidade" [(ngModel)]="usuario.unidade" required autofocus />
+            <small class="p-error" *ngIf="submitted && !usuario.unidade">Campo unidade é obrigatório</small>           
+        </div>
+
+        <div class="field">
+            <label for="funcao">Função</label>
+            <input type="text" pInputText id="funcao" [(ngModel)]="usuario.funcao" required autofocus />
+            <small class="p-error" *ngIf="submitted && !usuario.funcao">Campo função é obrigatório</small>           
+        </div>
+
+        
+        <div class="field">
+            <label for="email">Email</label>
+            <input type="text" pInputText id="email" [(ngModel)]="usuario.email"/>           
+        </div>
+        <div class="field">
+            <label for="status">Status</label>
+            <input type="text" pInputText id="status" [(ngModel)]="usuario.status"/>           
+        </div>
+    </ng-template>
+
+    <ng-template pTemplate="footer">
+        <button pButton pRipple label="Cancelar" icon="pi pi-times" class="p-button-text" (click)="hideDialog()"></button>
+        <button pButton pRipple label="Salvar" icon="pi pi-check" class="p-button-text" (click)="salvarUsuario()"></button>
+    </ng-template>
+</p-dialog>
+
+<p-confirmDialog [style]="{width: '450px'}"></p-confirmDialog>

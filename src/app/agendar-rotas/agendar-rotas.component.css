@@ -1,24 +1,31 @@
+html,
+body {
+  height: 100%;
+  width: 100%;
+  margin: 0;
+}
+
+
 #mapAgendar {
-  width: 99%;
-  height: 99%;
+  width: 98%;
+  height: 97%;
   margin-top: 2%;
   margin-left: 3%;
 }
-
-#sidebarMarkers {
-  overflow: overlay;
-  height: 450px;
+.p-timeline-event-marker.ng-star-inserted {
+  border: 2px solid #f8f9fa;
+  border-radius: 50%;
+  width: 1rem;
+  height: 1rem;
+  background-color: #212121;
 }
 
-#sidebarPanel {
-  overflow: overlay;
-  height: 250px;
-}
 
 /* Works on Firefox */
 * {
   scrollbar-width: thin;
-  scrollbar-color: rgb(28, 74, 149) rgb(156, 167, 182);
+  /* scrollbar-color: rgb(28, 74, 149) rgb(156, 167, 182); */
+  scrollbar-color: var(--cor-base-complementar) var(--cor-base-complementar);
 }
 
 /* Works on Chrome, Edge, and Safari */
@@ -27,13 +34,13 @@
 }
 
 *::-webkit-scrollbar-track {
-  background: rgb(156, 167, 182);
+  background: var(--cor-base);
 }
 
 *::-webkit-scrollbar-thumb {
-  background-color: rgb(28, 74, 149);
+  background-color: var(--cor-base-complementar);
   border-radius: 20px;
-  border: 3px solid rgb(156, 167, 182);
+  border: 3px solid var(--cor-base-complementar);
 }
 
 
@@ -41,7 +48,7 @@
 
 
 .mat-button-toggle-checked {
-  background-color: #3b82f6;
+  background: var(--cor-base);
   color: white;
   /* color: rgba(0,0,0,.54); */
 
@@ -54,133 +61,73 @@
 }
 
 
+div#grupoBotoes {
+  margin-top: 20px;
+  margin-left: 20px;
+}
 
+.row.surface-ground.text-900.shadow-8.border-round-left-2xl.border-round-right-2xl {
+  height: 90%;
+}
 
+div#grupoGeral {
+  height: 99%;
+}
 
+div#sidebarPanel {
+  overflow: scroll;
+  max-height: 22vh;
+}
+
+div#sidebarMarkers {
+  max-height: 45vh;
+  overflow: scroll;
+}
 
 /* ---------------------------------------------------
     MEDIAQUERIES
 ----------------------------------------------------- */
-@media (min-width: 1860px) and (max-width: 1960px) {
-  div#mapAgendar {
-    height: 845px
-  } 
-  div#colgrupoGeral {
-    height: 890px
+@media (min-width: 500px) and (max-width: 1100px) {
+  .row.surface-ground.text-900.shadow-8.border-round-left-2xl.border-round-right-2xl {
+    height: 70%;
   }
-   div#colgrupoGeral {
-    height: 890px
+
+  div#grupoGeral {
+    height: 70%;
   }
 
   div#sidebarPanel {
-    height: 250px
+    overflow: scroll;
+    display: none;
   }
 
-  div#sidebarMarkers {
-    height: 470px
-  }
-  div#grupoBotoes {
-    margin-left: 5px;
-    margin-right: 5px;
-   }
-}
-
-@media (min-width: 1818px) and (max-width: 1860px) {
-  div#mapAgendar {
-    height: 845px
-  }
-  div#grupoBotoes {
-    margin-left: 5px;
-    margin-right: 5px;
-   }
-   div#colgrupoGeral {
-    height: 845px
-  }
-
-  div#sidebarPanel {
-    height: 230px
-  }
-
-  div#sidebarMarkers {
-    height: 467px
-  }
-  div#grupoBotoes {
-    margin-left: 5px;
-    margin-right: 5px;
-   }
-}
-
-@media (min-width: 1600px) and (max-width: 1818px){
-  div#mapAgendar {
-    height: 775px
-  }
-  div#colgrupoGeral {
-    height: 775px
-  }
-  div#sidebarPanel {
-    height: 230px
-  }
-
-  div#sidebarMarkers {
-    height: 370px
-  }
-}
-@media (min-width: 1400px) and (max-width: 1600px)  {
-  div#mapAgendar {
-    height: 770px
-  }
-
-  div#colgrupoGeral {
-    height: 770px
-  }
-
-  div#sidebarPanel {
-    height: 230px
-  }
-
-  div#sidebarMarkers {
-    height: 380px
-  }
-  div#grupoBotoes {
-    margin-left: 5px;
-    margin-right: 5px;
-   }
-}
-
-@media (max-width: 1015px) and (max-width: 1400px)  {
-  div#mapAgendar {
-    height: 775px
-  }
-  div#grupoBotoes {
-   margin-left: 1px;
-   margin-right: 1px;
-  }
-  
-}
-
-@media (max-width: 1015px) and (orientation: landscape) {
-  div#mapAgendar {
-    height: 770px
-  }
-
-  div#colgrupoGeral {
-    height: 770px
+  #mapAgendar {
+    width: 95%;
+    height: 95%;
+    margin-top: 2%;
+    margin-left: 3%;
   }
 }
 
-@media (max-width: 1075) {
-  div#mapAgendar {
-    height: 765px
-  }
 
-  div#colgrupoGeral {
-    height: 765px
-  }
+.p-toast-message-custom {
+  background-color: #E1CFE7;
+  border: solid #8A427A;
+  border-width: 0 0 0 6px;
+  color: #2c1e30;
+
 }
 
-/* @media (max-width: 700px) and (orientation: landscape) { 
+.p-toast-icon-close {
+  color: #2c1e30;
+}
 
-  div#mapAgendar {      
-    height: 200px  
-  }
- } */
+.p-button {
+  color: #ffffff;
+  background: var(--cor-base);
+  border: 1px solid var(--cor-base);
+  padding: 0.75rem 1.25rem;
+  font-size: 1rem;
+  transition: background-color 0.2s, color 0.2s, border-color 0.2s, box-shadow 0.2s;
+  border-radius: 6px;
+}
