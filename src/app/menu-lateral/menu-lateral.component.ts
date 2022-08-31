@@ -1,7 +1,7 @@
 import { Component, OnInit, Input } from '@angular/core';
 import { MenuLateralService } from './menu-lateral.service';
-
-
+import { MenuItem } from 'primeng/api';
+import { Router } from '@angular/router';
 @Component({
   selector: 'app-menu-lateral',
   templateUrl: './menu-lateral.component.html',
@@ -19,13 +19,13 @@ export class MenuLateralComponent implements OnInit {
 
   temaLuksColor: boolean = false;
 
-  constructor(private menuLateralService: MenuLateralService) { }
+  constructor(private menuLateralService: MenuLateralService,private router: Router) { }
 
   ngOnInit(): void {
-    
-    
+
+
     (document.getElementById('sidebar') as HTMLElement).style.setProperty('background-image', 'url(https://www.autoluks.com.br/uploads/1/1/5/6/115643989/background-images/1817667807.jpg)')
-this.temaLuksColor = false;
+    this.temaLuksColor = false;
     (document.getElementById("mudarTema1") as HTMLElement).addEventListener(
       "click", () => {
         this.mudarTema()
@@ -38,7 +38,7 @@ this.temaLuksColor = false;
     );
 
     this.menuLateralService?.setTitulo('lateral')!
-    console.log(this.menuLateralService)
+    
   }
   expandirSidebar(event: Event) {
     console.log(event);
@@ -54,31 +54,39 @@ this.temaLuksColor = false;
     this.titulo = titulo;
   }
 
-mudarTema(){
-  let cor1 = '';
-  let cor2 = '';
-  let bgSidebar = '';
-  if (this.temaLuksColor) {
-    cor1 = getComputedStyle(document.documentElement)
-      .getPropertyValue('--cor-base-autoluks');
-    cor2 = getComputedStyle(document.documentElement)
-      .getPropertyValue('--cor-base-complementar-autoluks');
+  items!: MenuItem[];
+  mudarTema() {
+    this.items = [
+      { label: 'Usuários', icon: 'pi pi-fw pi-home', routerLink: ["/configuracoes"] }
+    ];
+
+
+
+
+    let cor1 = '';
+    let cor2 = '';
+    let bgSidebar = '';
+    if (this.temaLuksColor) {
+      cor1 = getComputedStyle(document.documentElement)
+        .getPropertyValue('--cor-base-autoluks');
+      cor2 = getComputedStyle(document.documentElement)
+        .getPropertyValue('--cor-base-complementar-autoluks');
       (document.getElementById('sidebar') as HTMLElement).style.setProperty('background-image', 'url(https://www.autoluks.com.br/uploads/1/1/5/6/115643989/background-images/1817667807.jpg)');
       this.temaLuksColor = false;
+    }
+    else {
+      (document.getElementById('sidebar') as HTMLElement).style.setProperty('background-image', 'url()');
+      (document.getElementById('sidebar') as HTMLElement).style.setProperty('background-image', cor1);
+      cor1 = getComputedStyle(document.documentElement)
+        .getPropertyValue('--cor-base-lukscolor');
+      cor2 = getComputedStyle(document.documentElement)
+        .getPropertyValue('--cor-base-complementar-lukscolor');
+      this.temaLuksColor = true;
+    }
+    (document.querySelector(':root') as HTMLElement).style.setProperty('--cor-base', cor1);
+    (document.querySelector(':root') as HTMLElement).style.setProperty('--cor-base-complementar', cor2);
+
   }
-  else {
-    (document.getElementById('sidebar') as HTMLElement).style.setProperty('background-image', 'url()');
-    (document.getElementById('sidebar') as HTMLElement).style.setProperty('background-image', cor1);
-    cor1 = getComputedStyle(document.documentElement)
-    .getPropertyValue('--cor-base-lukscolor');
-  cor2 = getComputedStyle(document.documentElement)
-    .getPropertyValue('--cor-base-complementar-lukscolor');  
-    this.temaLuksColor = true;       
-  }
-  (document.querySelector(':root') as HTMLElement).style.setProperty('--cor-base', cor1);
-  (document.querySelector(':root') as HTMLElement).style.setProperty('--cor-base-complementar', cor2);
-  
-}
 
 }
 

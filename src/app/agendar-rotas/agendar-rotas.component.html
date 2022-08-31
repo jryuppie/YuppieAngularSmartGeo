@@ -9,10 +9,10 @@
                     <div class="card" [ngStyle]="{backgroundColor:'rgb(239,243,248)'} ">
                         <p-timeline [value]="listaPontos" align="alternate">
                             <ng-template pTemplate="content" let-pontos>
-                                <small class="p-text-secondary">{{pontos.b}} - {{pontos.c}}</small>
+                                <small  class="p-text-secondary">{{pontos.b}} - {{pontos.c}}</small>
                             </ng-template>
                             <ng-template pTemplate="opposite" let-pontos>
-                                <b style="color:red">[{{pontos.d}}]</b> - <b>{{pontos.a}}</b>
+                                <b style="color:red">[{{pontos.d}}]</b> - <b  (click)="AbrirModalCEP(pontos.a)" >{{pontos.a}}</b>
                             </ng-template>
                         </p-timeline>
                     </div>
@@ -111,3 +111,21 @@
     </div>
 </div>
 <p-toast  [preventDuplicates]="true"   position="top-right"></p-toast>
+
+
+
+
+<!-- <p-dialog [(visible)]="mostrarModalCEP" [ngModel]="selectedModalCEP"
+  class="opacity-100 border-round-left-2xl border-round-right-2xl ">
+  <p-card  subheader="{{selectedModalCEP.IdFuncionario}}" [style]="{width: '360px'}"   header="{{selectedModalCEP.NomeFuncionario}}"
+    styleClass="p-card-shadow opacity-100"> 
+    <ng-template pTemplate="header">
+      <img alt="Card" class="align-items-center" src="assets/images/landscape-white.png" [style]="{width: '50px'}">
+    </ng-template>
+    <p>Representante {{selectedModalCEP.NomeFuncionario}} + está em {{selectedModalCEP.Cidade}} - {{selectedModalCEP.Estado}} - {{selectedModalCEP.CEP}} </p>
+    <ng-template pTemplate="footer">
+      <p-button label="Fechar" icon="pi pi-times" styleClass="p-button-secondary" [style]="{'margin-left': '.5em'}"></p-button>
+    </ng-template>
+  </p-card>
+</p-dialog> -->
+
