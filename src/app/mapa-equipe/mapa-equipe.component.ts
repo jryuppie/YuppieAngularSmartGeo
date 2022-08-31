@@ -84,6 +84,18 @@ export class MapaEquipeComponent implements OnInit {
       directionsRenderer.setMap( this.map);
       this.setMarkers( this.map);
       this.menuLateralService.setMap( this.map);
+
+      
+      //FIM DE MANIPUALÇÃO DOS CAMPOS PARA CONSULTA MANUAL
+
+
+      //REMOVER INFORMAÇÕES DO GOOGLE MAPS DA TELA
+      setTimeout(function () {
+        (document.querySelector("#mapEquipe > div > div > div:nth-child(17) > div") as HTMLElement).style['display'] = 'none';
+        (document.querySelector("#mapEquipe > div > div > div:nth-child(15) > div") as HTMLElement).style['display'] = 'none';
+        (document.querySelector("#mapEquipe > div > div > div:nth-child(5) > div") as HTMLElement).style['display'] = 'none';
+
+      }, 4000);
     });
 
 

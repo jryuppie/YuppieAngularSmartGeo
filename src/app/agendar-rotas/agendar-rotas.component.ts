@@ -1,13 +1,15 @@
-import { formatDate } from '@angular/common';
+import { formatDate, JsonPipe } from '@angular/common';
 import { HttpClient } from '@angular/common/http';
-import { Component, OnInit, Input, Output, EventEmitter } from '@angular/core';
+import { Component, OnInit, Input, Output, EventEmitter,OnDestroy  } from '@angular/core';
 import { Loader } from '@googlemaps/js-api-loader';
-
+import { Router } from '@angular/router';
 import { MenuLateralService } from '../menu-lateral/menu-lateral.service';
 import { csvRotas, ListaRotasCSV, Localizacao, RotasMaps } from '../models/csvRotas';
 import { PrimeIcons } from 'primeng/api';
 import { Message, MessageService } from 'primeng/api';
 import { HttpClientModule } from '@angular/common/http';
+import { Subject } from 'rxjs';
+import { stringify } from 'ajv';
 @Component({
   selector: 'app-agendar-rotas',
   templateUrl: './agendar-rotas.component.html',
@@ -18,8 +20,9 @@ import { HttpClientModule } from '@angular/common/http';
 
 
 export class AgendarRotasComponent implements OnInit {
+  public destroyed = new Subject<any>();
   valorFileText: undefined;
-  constructor(private menuLateralService: MenuLateralService, private http: HttpClient, private messageService: MessageService) { }
+  constructor(private menuLateralService: MenuLateralService, private http: HttpClient, private messageService: MessageService, private router: Router) { }
 
   //#region <VARIAVEIS DE AUTOCOMPLETE - GOOGLE API PLACES>    
   input1: any;
@@ -57,6 +60,9 @@ export class AgendarRotasComponent implements OnInit {
   map: any;
   directionsService: any;
   directionsRenderer: any;
+  
+  selectedModalCEP: csvRotas = {};
+  mostrarModalCEP: boolean = false;
   //#endregion
 
   apiKey: string = 'AIzaSyDYR45TvExNG498aRNe_C2MS4R0p4EKS4U';//'AIzaSyCbu9PxUAnPqy2W1fyKwLANXFywzDyiDKI',
@@ -65,11 +71,8 @@ export class AgendarRotasComponent implements OnInit {
 
 
   ngOnInit() {
-
-
+   
     this.corRota = getComputedStyle(document.documentElement).getPropertyValue('--cor-base');
-
-
 
     //ATRIBUIR TITULO A PAGINA
     (document.getElementById('h1Titulo') as HTMLElement).innerHTML = 'Planejar Rotas';
@@ -88,9 +91,10 @@ export class AgendarRotasComponent implements OnInit {
       region: 'BR',
       language: 'pt-BR',
     });
-
-    //MANIPUALÇAO DO MAPA APÓS INICIALIZAÇÃO DAS APIS -- AGUMAS FUNÇÕES DE MONITORAMENTO DE TELA DEVEM SER COLCOCADAS AQUI
+    
+    //MANIPUALÇAO DO MAPA APÓS INICIALIZAÇÃO DAS APIS -- AlGUMAS FUNÇÕES DE MONITORAMENTO DE TELA DEVEM SER COLCOCADAS AQUI
     loader.load().then(() => {
+      
       this.geocoder = new google.maps.Geocoder();
       this.directionsService = new google.maps.DirectionsService();
       this.directionsRenderer = new google.maps.DirectionsRenderer();
@@ -516,7 +520,7 @@ export class AgendarRotasComponent implements OnInit {
         this.listaPontos.push(item);
         indexAlfa++
       }
-      console.log(this.listaPontos);
+      console.log(this.listaPontos);     
     }
 
 
@@ -598,6 +602,7 @@ export class AgendarRotasComponent implements OnInit {
     map: google.maps.Map
   ) {
 
+    debugger
     // For each step, place a marker, and add the text to the marker's infowindow.
     // Also attach the marker to an array so we can keep track of it and remove it
     // when calculating new routes.
@@ -701,6 +706,17 @@ export class AgendarRotasComponent implements OnInit {
     }
   }
   //#endregion
+
+
+
+  AbrirModalCEP(cep: string) {
+    let cepTratado = cep.replace(/[^0-9]/g, '')!
+    debugger;
+    this.selectedModalCEP =   this.rotasMapa.Paradas?.find(f => f.CEP == cepTratado)!
+    
+    
+     this.mostrarModalCEP = true;
+  }
 
 }
 

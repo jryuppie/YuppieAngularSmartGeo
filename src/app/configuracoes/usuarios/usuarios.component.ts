@@ -90,7 +90,7 @@ export class UsuariosComponent implements OnInit {
         this.messageService.add({ severity: 'success', summary: 'Sucesso', detail: 'Usuário atualizado!', life: 3000 });
       }
       else {
-        this.usuario.id = this.createId();
+        this.usuario.id = Math.random();
         this.usuario.avatar = 'usuario-placeholder.svg';
         this.usuarios.push(this.usuario);
         this.messageService.add({ severity: 'success', summary: 'Sucesso', detail: 'Usuário criado!', life: 3000 });
@@ -102,7 +102,7 @@ export class UsuariosComponent implements OnInit {
     }
   }
 
-  findIndexById(id: string): number {
+  findIndexById(id: number): number {
     let index = -1;
     for (let i = 0; i < this.usuarios.length; i++) {
       if (this.usuarios[i].id === id) {

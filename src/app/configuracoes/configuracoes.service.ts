@@ -27,7 +27,7 @@ export class ConfiguracoesService {
  
   generateUsuario(): Usuario {
     const Usuario: Usuario = {
-      id: this.generateId(),
+      id: Math.random(),
       nome: "Funcionário",
       funcao: "Desenvolvedor",
       unidade: "São Paulo",
