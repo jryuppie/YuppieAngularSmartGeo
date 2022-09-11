@@ -2,59 +2,68 @@
 <html>
 
 <body id="principal">
-    <div class="wrapper">
+    <div class="wrapper ">
 
-        <nav id="sidebar" [className]="toggle ? 'active' : 'inactive'" class="grid">
-            <div style="margin-top:10%" class="sidebar-header">
-                <h1 id="header" class="text-6xl"><b>Luks</b>Move</h1>
-            </div>
-            <ul class="list-unstyled components  flex-grow-1 flex-shrink-1 col-12">
-                <p-chip id="idAvatar" [hidden]="temaLuksColor" label="SP1103" image="assets/images/avatarAutoLuks.png"
-                    styleClass="text-align-center custom-chip min-w-full  shadow-8 ">
-                </p-chip>
-                <p-chip id="idAvatar" [hidden]="!temaLuksColor" label="SP1103" image="assets/images/lukscolorR.png"
-                    styleClass="text-align-center custom-chip min-w-full  shadow-8 ">
-                </p-chip>
+        <nav id="sidebar" [className]="toggle ? 'active' : 'inactive'" class="grid ">
+            <div class="flex flex-column" style="height: 99%;">
+                <div style="margin-top:10%" class="sidebar-header flex-grow-0">
+                    <h1 id="header" class="text-6xl"><b>Luks</b>Move</h1>
+                </div>
+                <ul class="list-unstyled components  flex-grow-0 flex-shrink-1 ">
+                    <p-chip id="idAvatar" [hidden]="temaLuksColor" label="SP1103"
+                        image="assets/images/avatarAutoLuks.png"
+                        styleClass="text-align-center custom-chip min-w-full  shadow-8 ">
+                    </p-chip>
+                    <p-chip id="idAvatar" [hidden]="!temaLuksColor" label="SP1103" image="assets/images/lukscolorR.png"
+                        styleClass="text-align-center custom-chip min-w-full  shadow-8 ">
+                    </p-chip>
 
-                <li>
-                    <a class="px-5 align-items-center linkLateral" routerLink="/app/dashboard"><i
-                            class="material-icons left mr-2 mb-2 ">
-                            pie_chart</i><span>Dashboard</span></a>
-                </li>
-                <li>
-                    <a class="px-5" routerLink="/app/mapaEquipe"><i class="material-icons left mr-2 linkLateral">
-                            person_pin_circle</i>Mapa Equipe</a>
-                </li>
-                <li>
-                    <a class="px-5" routerLink="/app/agendarPlanejar"><i class="material-icons left mr-2 linkLateral">
-                            layers</i>Planejar Rotas </a>
-                </li>
-                <!-- <li><a class="px-5 menu" ><i
+                    <li>
+                        <a class="px-5 align-items-center linkLateral" ><i
+                                class="material-icons left mr-2 mb-2 ">
+                                pie_chart</i><span>Dashboard</span></a>
+                    </li>
+                    <!-- routerLink="/app/dashboard" -->
+                    <li>
+                        <a class="px-5"><i class="material-icons left mr-2 linkLateral">
+                                person_pin_circle</i>Mapa Equipe</a>
+                    </li>
+                    <!-- routerLink="/app/mapaEquipe" -->
+                    <li>
+                        <a class="px-5" routerLink="/app/agendarPlanejar"><i
+                                class="material-icons left mr-2 linkLateral">
+                                layers</i>Planejar Rotas </a>
+                    </li>
+                    <!-- <li><a class="px-5 menu" ><i
                             class="material-icons left mr-2 linkLateral"> settings</i>Configurações</a>
                             <ul>
                                 <li><a (click)="mudarTitulo('Configurações')" href="#" routerLink="/app/configuracoes">Usuarios</a></li>                             
                              </ul>
                 </li> -->
-                <li class="px-4 dropdown-submenu"><a class="dropdown-item">
-                        <i class="material-icons"> settings</i>
-                        Configurações
-                    </a>
-                    <ul class="dropdown-menu">
-                        <li><a class="linkSubmenu" routerLink="/app/usuarios">Usuários</a></li>
-                        <li><a class="linkSubmenu" routerLink="/app/configuracoes">Google</a></li>
-                    </ul>
-                </li>
+                    <li class="px-4 dropdown-submenu"><a class="dropdown-item">
+                            <i class="material-icons"> settings</i>
+                            Configurações
+                        </a>
+                        <ul class="dropdown-menu">
+                            <li><a class="linkSubmenu" routerLink="/app/usuarios">Usuários</a></li>
+                            <li><a class="linkSubmenu" routerLink="/app/configuracoes">Google</a></li>
+                        </ul>
+                    </li>
 
-            </ul>
-            <div class="flex-grow-1 flex-shrink-1 "></div>
-            <div class="flex-grow-1 flex-shrink-0 " style="margin-top: 32vh">
-                <img [hidden]="temaLuksColor" src="assets/images/landscape-white.png" alt="Image"
-                    class="p-image-mask w-min" style="padding-left: 5%;" >
-                    <!-- style="margin-top: 31vh;margin-left: 7%;height: 4%;"> -->
-                <img [hidden]="!temaLuksColor" src="assets/images/lukscolorR.png" alt="Image" class="p-image-mask w-min"  style="padding-left:33%; margin-top: -2vh;">
-                   
-                <img src="assets/images/yuppie-white.png" alt="Image" class="p-image-mask w-min"   style="padding-left:25%; margin-top: 17%; height: 5vh;"> 
-                   
+                </ul>
+
+                <div class="flex-grow-1 flex align-items-end" style="margin-top: 0vh">
+                    <div class="">
+                        <img [hidden]="temaLuksColor" src="assets/images/landscape-white.png" alt="Image"
+                            class="p-image-mask w-min col-12" style="padding-left: 5%;">
+                        <!-- style="margin-top: 31vh;margin-left: 7%;height: 4%;"> -->
+                        <!-- <img [hidden]="!temaLuksColor" src="assets/images/lukscolorR.png" alt="Image"
+                        class="p-image-mask w-min col-12" style="padding-left:33%; margin-top: -2vh;"> -->
+
+                        <img src="assets/images/yuppie-white.png" alt="Image" class="p-image-mask w-min col-12"
+                            style="padding-left:25%; margin-top: 17%; height: 70px;">
+                    </div>
+                </div>
             </div>
         </nav>
 
@@ -87,14 +96,14 @@
                         <div class="flex-grow-1 flex-shrink-1 flex"></div>
 
                     </div>
-                    <button [hidden]="temaLuksColor" id="mudarTema1" class="theme-btn" style="background-color: green;"
+                    <!-- <button [hidden]="temaLuksColor" id="mudarTema1" class="theme-btn" style="background-color: green;"
                         title="LuksColor">
                         <img style="height: 15px; " src="assets/images/lukscolorR.png" alt="LuksColor">
-                    </button>
-                    <button [hidden]="!temaLuksColor" id="mudarTema2" class="theme-btn" style="background-color: black;"
+                    </button> -->
+                    <!-- <button [hidden]="!temaLuksColor" id="mudarTema2" class="theme-btn" style="background-color: black;"
                         title="AutoLuks">
                         <img style="height: 10px;" src="assets/images/landscape-white.png" alt="AutoLuks">
-                    </button>
+                    </button> -->
                 </div>
             </nav>
 

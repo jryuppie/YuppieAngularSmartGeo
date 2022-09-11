@@ -1,10 +1,13 @@
 @import url('https://rsms.me/inter/inter-ui.css');
+
 ::selection {
   background: var(--cor-base);
 }
+
 ::-webkit-selection {
   background: var(--cor-base);
 }
+
 ::-moz-selection {
   background: var(--cor-base);
 }
@@ -15,15 +18,17 @@ body {
   margin: 0;
   padding: 20px;
 }
+
 .page {
   /* background: #e2e2e5; */
   display: flex;
   flex-direction: column;
-  height:100%;
+  height: 100%;
   position: absolute;
   place-content: center;
   width: 100%;
 }
+
 @media (max-width: 767px) {
   .page {
     height: auto;
@@ -31,12 +36,14 @@ body {
     padding-bottom: 20px;
   }
 }
+
 .container {
   display: flex;
   height: 35%;
   margin: 0 auto;
   width: 100%;
 }
+
 @media (max-width: 767px) {
   .container {
     flex-direction: column;
@@ -44,6 +51,7 @@ body {
     width: 320px;
   }
 }
+
 /* .left {
   background: white;
   height: calc(100% - 40px);
@@ -59,19 +67,19 @@ body {
   position: relative;
   width: 15%;
 }
+
 @media (max-width: 767px) {
   .left {
     height: 100%;
     left: 20px;
-    width:  100%;;
+    width: 100%;
+    ;
     max-height: 270px;
   }
 }
-.login {
-  font-size: 50px;
-  font-weight: 900;
-  margin: 50px 30px 40px;
-}
+
+
+
 .eula {
   margin-top: 10%;
   color: #999;
@@ -80,6 +88,7 @@ body {
   margin: 25px;
   padding-top: 25px;
 }
+
 /* .eula {
   margin-top: 10%;
   color: #999;
@@ -105,6 +114,7 @@ body {
   margin-top: 2%;
   height: 90%;
 }
+
 @media (max-width: 767px) {
   .right {
     flex-shrink: 0;
@@ -113,28 +123,33 @@ body {
     max-height: 350px;
   }
 }
+
 svg {
-  position: absolute;
-  width: 320px;
+  position: relative;
+  width: 650;
 }
+
 path {
   fill: none;
   stroke: url(#linearGradient);
   stroke-width: 4;
   stroke-dasharray: 240 1386;
 }
+
 .form {
   margin: 40px;
   /* position: absolute; */
 }
+
 label {
-  color:  #c2c2c5;
+  color: #c2c2c5;
   display: block;
   font-size: 14px;
   height: 16px;
   margin-top: 20px;
   margin-bottom: 5px;
 }
+
 input {
   background: transparent;
   border: 0;
@@ -145,17 +160,21 @@ input {
   outline: none !important;
   width: 100%;
 }
-input::-moz-focus-inner { 
-  border: 0; 
+
+input::-moz-focus-inner {
+  border: 0;
 }
+
 #submit {
   color: #707075;
   margin-top: 40px;
   transition: color 300ms;
 }
+
 #submit:focus {
   color: #f2f2f2;
 }
+
 #submit:active {
   color: #d0d0d2;
 }
@@ -163,7 +182,7 @@ input::-moz-focus-inner {
 
 input#submit:hover {
   color: var(--cor-base-complementar);
-  
+
 }
 
 input#email {
@@ -173,21 +192,87 @@ input#email {
 input#password {
   background-color: darkgray;
 }
+
 input#submit {
   color: white;
 }
 
 
 #loginTitulo {
- 
+  font-size: 50px;
+  font-weight: 900;
+  margin: 50px 10px 40px;
   font-weight: 600;
   color: var(--cor-base);
   text-shadow: 0 0 black;
   background-clip: text;
-  -webkit-background-clip: text;   
+  -webkit-background-clip: text;
   font-family: 'Gugi';
 }
 
 #header {
   font-family: 'Gugi', cursive;
+}
+
+#tsparticles {
+  width: 50%;
+  height: 50%;
+}
+
+
+
+
+@media (min-width: 1000px) and (max-width: 1668px) {
+
+  .left {
+    background: white;
+    height: calc(100% - 7px);
+    top: 5%;
+    position: relative;
+    width: 27%;
+  }
+
+  .right {
+    background: #474A59;
+    box-shadow: 0px 0px 40px 16px rgb(0 0 0 / 22%);
+    color: #F1F1F2;
+    position: relative;
+    width: 26%;
+    margin-top: 2%;
+    height: 78%;
+  }
+
+ 
+}
+@media (min-width: 750px) and (max-width: 1000px) {
+
+  .left {
+    background: white;
+    height: calc(100% - 7px);
+    top: 5%;
+    position: relative;
+    width: 27%;
+  }
+
+  .right {
+    background: #474A59;
+    box-shadow: 0px 0px 40px 16px rgb(0 0 0 / 22%);
+    color: #F1F1F2;
+    position: relative;
+    width: 26%;
+    margin-top: 2%;
+    height: 78%;
+  }
+
+  #loginTitulo{
+    font-size: 32px;
+  }
+  #eula{
+    font-size: 15px;
+    color: #999;
+    font-size: 20px;
+    line-height: 1.5;
+    margin: 43px;
+    padding-top: 0px;
+  }
 }

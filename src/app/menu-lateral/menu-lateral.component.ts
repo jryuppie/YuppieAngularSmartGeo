@@ -26,18 +26,18 @@ export class MenuLateralComponent implements OnInit {
 
     (document.getElementById('sidebar') as HTMLElement).style.setProperty('background-image', 'url(https://www.autoluks.com.br/uploads/1/1/5/6/115643989/background-images/1817667807.jpg)')
     this.temaLuksColor = false;
-    (document.getElementById("mudarTema1") as HTMLElement).addEventListener(
-      "click", () => {
-        this.mudarTema()
-      }
-    );
-    (document.getElementById("mudarTema2") as HTMLElement).addEventListener(
-      "click", () => {
-        this.mudarTema()
-      }
-    );
+    // (document.getElementById("mudarTema1") as HTMLElement).addEventListener(
+    //   "click", () => {
+    //     this.mudarTema()
+    //   }
+    // );
+    // (document.getElementById("mudarTema2") as HTMLElement).addEventListener(
+    //   "click", () => {
+    //     this.mudarTema()
+    //   }
+    // );
 
-    this.menuLateralService?.setTitulo('lateral')!
+    //this.menuLateralService?.setTitulo('lateral')!
     
   }
   expandirSidebar(event: Event) {

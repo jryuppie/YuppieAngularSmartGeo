@@ -187,7 +187,7 @@ export class LoginComponent implements OnInit {
     localStorage.setItem('usuario', user.usuario!);
     localStorage.setItem('funcao', user.funcao!);
     localStorage.setItem('idUsuario', user.toString());
-    this.router.navigate(['/app/mapaEquipe']);
+    this.router.navigate(['/app/agendarPlanejar']);
     return true;
 
     return this.loginService.VerificarLogin(this.usuarioLogin, this.senhaLogin).subscribe((data: Usuario) => {

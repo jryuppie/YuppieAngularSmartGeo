@@ -22,7 +22,7 @@ export class MapaEquipeComponent implements OnInit {
    
   }
 
-
+  apiKey: string = 'AIzaSyDYR45TvExNG498aRNe_C2MS4R0p4EKS4U';//'AIzaSyCbu9PxUAnPqy2W1fyKwLANXFywzDyiDKI',
   map: any
   items: any;
 
@@ -66,11 +66,12 @@ export class MapaEquipeComponent implements OnInit {
     (document.getElementById('h1Titulo') as HTMLElement).innerHTML =  'Mapa Equipe';
     
     let loader = new Loader({
-      apiKey: 'AIzaSyCbu9PxUAnPqy2W1fyKwLANXFywzDyiDKI',
-      libraries: ['places'],
+      apiKey: this.apiKey,
+      libraries: ['places','geometry'],
       region: 'BR',
       language: 'pt-BR',
     });
+debugger;
 
     loader.load().then(() => {
       var directionsService = new google.maps.DirectionsService();
@@ -81,9 +82,10 @@ export class MapaEquipeComponent implements OnInit {
         zoom: 8,
         streetViewControl: false
       })
+      console.log(this.map);
       directionsRenderer.setMap( this.map);
       this.setMarkers( this.map);
-      this.menuLateralService.setMap( this.map);
+    
 
       
       //FIM DE MANIPUALÇÃO DOS CAMPOS PARA CONSULTA MANUAL
