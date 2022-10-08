@@ -76,11 +76,11 @@ div#grupoGeral {
 
 div#sidebarPanel {
   overflow: scroll;
-  max-height: 67vh;
+  max-height: 60vh;
 }
 
 div#sidebarMarkers {
-  max-height: 67vh;
+  max-height: 60vh;
   overflow: scroll;
 }
 

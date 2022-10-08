@@ -6,6 +6,9 @@ import { MessageService } from 'primeng/api';
 import { Subject } from 'rxjs';
 import { MenuLateralService } from '../menu-lateral/menu-lateral.service';
 import { csvRotas, Localizacao, RotasMaps } from '../models/csvRotas';
+import * as XLSX from 'xlsx';
+import * as FileSaver from 'file-saver';
+
 @Component({
   selector: 'app-agendar-rotas',
   templateUrl: './agendar-rotas.component.html',
@@ -51,7 +54,7 @@ export class AgendarRotasComponent implements OnInit {
   rotasCep: any[] = [];
   ListaGeocode: Array<Localizacao> = [];
   buscarPorCep: boolean = true;
-  
+
   //#endregion
   //#region <VARIAVEIS PARA INICIALIZAÇÃO GOOGLE API'S>  
   geocoder: any;
@@ -63,14 +66,15 @@ export class AgendarRotasComponent implements OnInit {
   mostrarModalCEP: boolean = false;
   //#endregion
 
+
   apiKey: string = 'AIzaSyDYR45TvExNG498aRNe_C2MS4R0p4EKS4U';//'AIzaSyCbu9PxUAnPqy2W1fyKwLANXFywzDyiDKI',
   corRota: string = '';
   mostrarModalDetalhesRota: boolean = false;
   mostrarSidePanel: boolean = false;
   mostrarMapaSM: boolean = false;
 
-  labelsNumeric = [1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19,20,21,22,23,24,25,26,27,28,29,30];
-
+  labelsNumeric = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23, 24, 25, 26, 27, 28, 29, 30];
+  rotasParaExport: Array<csvRotas> = new Array<csvRotas>();
 
   ngOnInit() {
 
@@ -100,7 +104,7 @@ export class AgendarRotasComponent implements OnInit {
       this.geocoder = new google.maps.Geocoder();
       this.directionsService = new google.maps.DirectionsService();
       this.directionsRenderer = new google.maps.DirectionsRenderer({
-        suppressMarkers:true
+        suppressMarkers: true
       });
       this.stepDisplay = new google.maps.InfoWindow();
       // this.markerArray = [new google.maps.Marker];
@@ -208,7 +212,7 @@ export class AgendarRotasComponent implements OnInit {
       if (this.rotasMapa.Destino != undefined && this.rotasMapa.Partida != undefined)
         this.buscarRotasPorCidade(waypts)
     } else if (!this.buscarPorCep && this.rotaManualVisualizar) {
-      debugger;
+     
       if (this.rotasImportadas.length > 0) {
         //CSV - LATITUDE - LONGITUDE
         waypts = this.capturarWaypointsCSV();
@@ -226,7 +230,7 @@ export class AgendarRotasComponent implements OnInit {
 
   //#region <Google API - Directions - Consultar rotas>
   buscarRotasPorGeocode(csv: boolean, waypts: google.maps.DirectionsWaypoint[]) {
-    debugger;
+   
     this.directionsService.route(
       this.atribuirRequestLatLong(waypts))
       .then((response: any) => {
@@ -273,7 +277,7 @@ export class AgendarRotasComponent implements OnInit {
 
 
 
-    debugger;
+   
     if (listaDividida.length > 0) {
       var rotasPromisse: Promise<boolean>[] = []
       await listaDividida[0].forEach((item: any) => {
@@ -288,9 +292,9 @@ export class AgendarRotasComponent implements OnInit {
                   let localizacao: Localizacao = new Localizacao();
                   localizacao.CEP = cep;
                   localizacao.PlaceId = placeID;
-                //  console.log(cep + ' - ' + placeID + ' - ' + this.ListaGeocode.length)
+                  //  console.log(cep + ' - ' + placeID + ' - ' + this.ListaGeocode.length)
                   if (!this.ListaGeocode.some((a) => a.PlaceId === placeID)) { this.ListaGeocode.push(localizacao); }
-                  
+
                   // this.http.get<any>('https://maps.googleapis.com/maps/api/place/details/json?place_id=' + placeID + '&key=' + this.apiKey).subscribe(data => {console.log(data)});
                 }
               }
@@ -343,9 +347,9 @@ export class AgendarRotasComponent implements OnInit {
         waypoints: waypoints, travelMode: google.maps.TravelMode.DRIVING, optimizeWaypoints: true, region: 'BR'
       })
       .then((response: any) => {
-         this.pegarParadasResponse(response);
+        this.pegarParadasResponse(response);
         let labelIndex = 0;
-        debugger;
+       
         this.directionsRenderer
         this.directionsRenderer.setOptions({
           polylineOptions: {
@@ -353,22 +357,22 @@ export class AgendarRotasComponent implements OnInit {
             strokeColor: this.corRota,
             strokeOpacity: 1.0,
             strokeWeight: 5,
-            clickable: true, 
+            clickable: true,
             // icons: [
             //   {
             //      icon: this.labelsNumeric[labelIndex++ % this.labelsNumeric.length],
             //     offset: "100%",
-              
+
             //   }
             // ]
-          }          
+          }
         });
-      
-      
-        
 
-       
-       // this.mostrarParadas(response, markerArray, stepDisplay, map);
+
+
+
+
+        // this.mostrarParadas(response, markerArray, stepDisplay, map);
 
         // this.directionsRenderer.setDirections(response);
         this.isLoading = false;
@@ -381,7 +385,7 @@ export class AgendarRotasComponent implements OnInit {
       });
   }
   //#endregion
-//TESTE
+
 
 
   //#region <Funções de utilizade Tela>
@@ -427,7 +431,7 @@ export class AgendarRotasComponent implements OnInit {
 
   //#region <Funções de utilizade - Google API>
 
-  
+
   dividirLista(itens: any, maximo: any) {
     return itens.reduce((acumulador: any, item: any, indice: any) => {
       const grupo = Math.floor(indice / maximo);
@@ -449,7 +453,7 @@ export class AgendarRotasComponent implements OnInit {
       travelMode: google.maps.TravelMode.DRIVING,
       optimizeWaypoints: true,
       region: 'BR',
-    };    
+    };
   }
   atribuirRequestManual(waypts: google.maps.DirectionsWaypoint[]) {
     var request = { origin: {}, destination: {}, waypoints: waypts, travelMode: google.maps.TravelMode.DRIVING, optimizeWaypoints: true, region: 'BR' }
@@ -465,10 +469,10 @@ export class AgendarRotasComponent implements OnInit {
     };
     return request;
   }
-  
+
   pegarParadasResponse(response: any) {
-    debugger;
-    let labelsNumeric = ['1','2','3','4','5','6','7','8','9','10','11','12','13','14','15','16','17','18','19','20','21','22','23','24','25','26','27','28','29','30'];
+   
+    let labelsNumeric = ['1', '2', '3', '4', '5', '6', '7', '8', '9', '10', '11', '12', '13', '14', '15', '16', '17', '18', '19', '20', '21', '22', '23', '24', '25', '26', '27', '28', '29', '30'];
     let alfab = ['A', 'B', 'C', 'D', 'E', 'F', 'G', 'H', 'I', 'J', 'K', 'L', 'M', 'N', 'O', 'P', 'Q', 'R', 'S', 'T', 'U', 'V', 'W', 'X', 'Y', 'Z']
     let indexAlfa = 0
     const Legs = response!.routes[0]!.legs!;
@@ -476,29 +480,30 @@ export class AgendarRotasComponent implements OnInit {
     if (!this.rotaManualVisualizar) {
       for (let index = 0; index < Legs.length; index++) {
         if (index == 0) {
-          const ponto: string = Legs[index].start_address;
+          const cep: string = Legs[index].start_address;
           const distancia: string = '';//Legs[index].distance.text;
           const duracao: string = '';//Legs[index].duration.text;
-          const letra = labelsNumeric[indexAlfa]
-          let item: any = { a: ponto, b: distancia, c: duracao, d: letra }
+          const posicao = labelsNumeric[indexAlfa]
+          let item: any = { a: cep, b: distancia, c: duracao, d: posicao }
           this.listaPontos.push(item);
           indexAlfa++
         }
 
-        const ponto: string = Legs[index].end_address;
+        const cep: string = Legs[index].end_address;
         const distancia: string = Legs[index].distance.text;
         const duracao: string = Legs[index].duration.text;
-        const letra = labelsNumeric[indexAlfa]
-        let item: any = { a: ponto, b: distancia, c: duracao, d: letra }
+        const posicao = labelsNumeric[indexAlfa]
+        let item: any = { a: cep, b: distancia, c: duracao, d: posicao }
         this.listaPontos.push(item);
         indexAlfa++
       }
+
     }
     else {
-      this.deleteMarkers();    
-      for (let index = 0; index < Legs.length; index++) {         
-     
-      // console.log(Legs[index])
+      this.deleteMarkers();
+      for (let index = 0; index < Legs.length; index++) {
+
+        // console.log(Legs[index])
         if (index == 0) {
           const cep: string = Legs[index].start_address.split(',')[Legs[index].start_address.split(',').length === 4 ? 2 : 2];
           const endereco: string = Legs[index].start_address.split(',')[Legs[index].start_address.split(',').length === 4 ? 0 : 2] + ' - Início';
@@ -531,58 +536,111 @@ export class AgendarRotasComponent implements OnInit {
         }
         const letra = labelsNumeric[indexAlfa]
         let item: any = { a: cep, b: endereco, c: duracao, d: letra }
-        this.listaPontos.push(item);      
-        this.layoutMarcadores(item,Legs[index].end_location,index == Legs.length -1? true:false);  
+        this.listaPontos.push(item);
+        this.layoutMarcadores(item, Legs[index].end_location, index == Legs.length - 1 ? true : false);
         indexAlfa++
       }
       // console.log(this.listaPontos);
     }
- this.directionsRenderer.setDirections(response);
+    this.criarVariavelExportacao();
+    this.directionsRenderer.setDirections(response);
 
   }
 
+  //montar arquivo de export
+  criarVariavelExportacao() {
+   
+    this.rotasImportadas.forEach(linha => {
+      linha.Ordem = this.listaPontos.find(function (item: any) {
+        let cepTratado = item.a.replace(/[^0-9]/g, '')!
+        return  cepTratado === linha.CEP;
+      }).d;
+      linha.DataHoraConsulta = this.gerarDataHoraString() ;
+    });
+
+   this.rotasParaExport = this.rotasImportadas.sort((a, b) => (a.Ordem! < b.Ordem! ? -1 : 1));   
+  }
+  
+  exportarRota(){  
+
+      let ws: XLSX.WorkSheet =XLSX.utils.json_to_sheet(this.rotasParaExport, {header: ['IdFuncionario','NomeFuncionario','PatridaDestino','Latitude','Longitude','Cidade','Estado','CEP','Ordem','DataConsulta'],skipHeader: false});  
+      let wb: XLSX.WorkBook = XLSX.utils.book_new();
+      XLSX.utils.book_append_sheet(wb, ws, 'Rotas');
+   
+      let nomeArquivo = 'LuksMove_Rotas_SP1103_'+ '_' +this.gerarDataHoraString() +'.csv'
+      XLSX.writeFile(wb, nomeArquivo);
+  }
+
+
+  gerarDataHoraString(){
+    let dataAtual = new Date()
+    let datahora = dataAtual.toLocaleDateString();
+    let horario = dataAtual.getHours() + ":" + dataAtual.getMinutes() + ":" + dataAtual.getSeconds();
+    return datahora + ' ' + horario
+  }
+
   //adicioanr marcadores
-  layoutMarcadores(item:any, location:any, ultimo:boolean ){
-    debugger;
-    let textLabel = ultimo == true ?"1 - "+(item.d) : ""+(item.d)
-    let hrefGoogle = "https://www.google.com.br/maps/search/"+item.a.replace(/[^0-9]/g, '')
+  layoutMarcadores(item: any, location: any, ultimo: boolean) {
+   
+    let textLabel = ultimo == true ? "1 - " + (item.d) : "" + (item.d)
+    let hrefGoogle = "https://www.google.com.br/maps/search/" + item.a.replace(/[^0-9]/g, '')
     const contentString = `
  
     <div class="card border-round ">
         <img class="border-round" src="assets/images/imagemRota3.jpg" style="height:150px">     
         <div  style="padding: 16px 8px 8px 8px; margin-top:1px;" class="border-round-3xl">     
-          <span class="font-semibold p-1 text-xs border-1 border-solid border-red-500 text-red-600 border-round-3xl ml-3 ">`+item.a+`</span>
-          <span class="font-semibold p-1 text-xs border-1 border-solid border-red-500 text-red-600 border-round-3xl ml-3 ">`+item.c+`</span> 
-          <span class="font-semibold p-1 text-xs border-1 border-solid border-red-500 text-red-600 border-round-3xl ml-3 ">`+textLabel+`</span>     
-          <div class="font-semibold text-xl mt-2 p-3">`+item.b+`</div>         
-          <a href="`+hrefGoogle+`" target="_blank"><button  style="cursor: pointer; display: block; margin: 0 auto; border: 12px 24px; border-radius: 50px; border: none;  font-weight: 600;  color: #0077ff;  background-color: #e0efff;" >Google Maps</button></a>
+          <span class="font-semibold p-1 text-xs border-1 border-solid border-red-500 text-red-600 border-round-3xl ml-3 ">`+ item.a + `</span>
+          <span class="font-semibold p-1 text-xs border-1 border-solid border-red-500 text-red-600 border-round-3xl ml-3 ">`+ item.c + `</span> 
+          <span class="font-semibold p-1 text-xs border-1 border-solid border-red-500 text-red-600 border-round-3xl ml-3 ">`+ textLabel + `</span>     
+          <div class="font-semibold text-xl mt-2 p-3">`+ item.b + `</div>         
+          <a href="`+ hrefGoogle + `" target="_blank"><button  style="cursor: pointer; display: block; margin: 0 auto; border: 12px 24px; border-radius: 50px; border: none;  font-weight: 600;  color: #0077ff;  background-color: #e0efff;" >Google Maps</button></a>
         </div>
       </div>
    
   `
-    
-    textLabel = ultimo == true ?"1-"+(item.d) : ""+(item.d)
-  const infowindow = new google.maps.InfoWindow({
-    content: contentString,
-  });
-  const marker = new google.maps.Marker({
-    position:  location  ,
-    label: {text: textLabel, color: "white"},
-    map: this.map,
-    title:item.a,
-    animation: google.maps.Animation.DROP    
-});
-this.markerLista.push(marker);
 
-  marker.addListener("click", () => {
-    infowindow.open({
-      anchor: marker,
-      map:this.map,
-      shouldFocus: false,
+    textLabel = ultimo == true ? "1-" + (item.d) : "" + (item.d)
+    const infowindow = new google.maps.InfoWindow({
+      content: contentString,
     });
-  });  
+    const marker = new google.maps.Marker({
+      position: location,
+      label: { text: textLabel, color: "white" },
+      map: this.map,
+      title: item.a,
+      animation: google.maps.Animation.DROP
+    });
+    this.markerLista.push(marker);
 
-  
+    marker.addListener("click", () => {
+      infowindow.open({
+        anchor: marker,
+        map: this.map,
+        shouldFocus: false,
+      });
+    });
+    infowindow.addListener("domready", () => {
+
+
+      const nodeList1 = document.querySelectorAll(".gm-style-iw-d");
+      for (let i = 0; i < nodeList1.length; i++) {
+        (nodeList1[i] as HTMLElement).style['overflow'] = 'unset';
+      }
+      const nodeList2 = document.querySelectorAll(".gm-style-iw");
+      for (let i = 0; i < nodeList2.length; i++) {
+        (nodeList2[i] as HTMLElement).style['padding'] = '0px';
+        (nodeList2[i] as HTMLElement).style['maxHeight'] = '320px';
+        (nodeList2[i] as HTMLElement).style['maxWidth'] = '260px';
+      }
+      const nodeListC = document.querySelectorAll(".gm-style-iw-c");
+      for (let i = 0; i < nodeList1.length; i++) {
+        (nodeListC[i] as HTMLElement).classList.add('shadow-8');
+      }
+      // setTimeout(()=> {
+      //   this.loadMarker = false;
+      // }, 1000);
+    });
+
   }
 
   //Caputura inputs de tela e retorna lista de pontos de parada - Utilizado no tipo MANUAL
@@ -660,7 +718,7 @@ this.markerLista.push(marker);
     stepDisplay: google.maps.InfoWindow,
     map: google.maps.Map
   ) {
-       
+
     const rotaAtual = directionResult!.routes[0]!.legs[0]!;
 
     for (let i = 0; i < rotaAtual.steps.length; i++) {
@@ -674,22 +732,22 @@ this.markerLista.push(marker);
         rotaAtual.steps[i].instructions,
         map
       );
-    
+
     }
   }
 
-   
-    clearMarkers() {
-      for (var i = 0; i < this.markerLista.length; i++) {
-        this.markerLista[i].setMap(null);  
-      }
+
+  clearMarkers() {
+    for (var i = 0; i < this.markerLista.length; i++) {
+      this.markerLista[i].setMap(null);
+    }
   }
 
-  
+
   deleteMarkers() {
-    debugger;
-      this.clearMarkers();
-      this.markerLista = [];
+   
+    this.clearMarkers();
+    this.markerLista = [];
   }
   informacoesMostrarParadas(
     stepDisplay: google.maps.InfoWindow,
@@ -698,7 +756,7 @@ this.markerLista.push(marker);
     map: google.maps.Map
   ) {
 
-  
+
     google.maps.event.addListener(marker, "click", () => {
       // Open an info window when the marker is clicked on, containing the text
       // of the step.
@@ -732,6 +790,7 @@ this.markerLista.push(marker);
 
 
   leituraArquivoRotas(reader: FileReader) {
+   
     try {
       let separador = ';'
       let csv: any = reader.result;
@@ -780,7 +839,7 @@ this.markerLista.push(marker);
 
   AbrirModalCEP(cep: string) {
     let cepTratado = cep.replace(/[^0-9]/g, '')!
-    debugger;
+   
     this.selectedModalCEP = this.rotasMapa.Paradas?.find(f => f.CEP == cepTratado)!
 
 

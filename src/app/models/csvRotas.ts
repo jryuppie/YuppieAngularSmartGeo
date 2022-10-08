@@ -12,6 +12,8 @@ export class csvRotas {
     Estado?: string;
     CEP?: string;
     PlaceID?: string
+    Ordem?:string;
+    DataHoraConsulta?: string;
 }
 
 

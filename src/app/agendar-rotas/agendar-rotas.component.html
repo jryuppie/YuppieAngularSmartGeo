@@ -1,8 +1,8 @@
-<div class="row surface-ground  text-900  shadow-8 border-round-left-2xl border-round-right-2xl"  id="gridGeral">
+<div class="row surface-ground  text-900  shadow-8 border-round-left-2xl border-round-right-2xl" id="gridGeral">
     <div class="grid">
 
         <div class=" align-items-center xl:col-4 lg:col-4 md:col-12" id="colgrupoGeral">
-            <div id="grupoGeral" class="row">    
+            <div id="grupoGeral" class="row">
 
                 <div id="grupoInput" [hidden]="rotaManualVisualizar" class="flex-row ">
                     <div class="row ml-5 mt-5  min-w-full">
@@ -65,24 +65,35 @@
                             </mat-button-toggle-group>
                         </div>
                     </div>
-                    <button pButton [hidden]="!importacaoAtiva"
-                    (click)="mostrarSidePanel = !mostrarSidePanel" 
-                    type="button" label="{{ mostrarSidePanel ?  'Linha do tempo': 'Detalhes da rota'  }}" icon="{{ mostrarSidePanel ?  'pi pi-directions': 'pi pi-sort-numeric-down'  }}" 
-                    class="p-button min-w-full text-center mt-3 shadow-4"></button>
-                    
+
+                    <button pButton  [hidden]="!importacaoAtiva"
+                    type="button" label="Exportar rota" (click)="exportarRota()"
+                    icon="pi pi-file-excel"
+                    class="p-button-help min-w-full text-center mt-3 shadow-4 "></button>
+
+
+                    <button pButton [hidden]="!importacaoAtiva" (click)="mostrarSidePanel = !mostrarSidePanel"
+                        type="button" label="{{ mostrarSidePanel ?  'Linha do tempo': 'Detalhes da rota'  }}"
+                        icon="{{ mostrarSidePanel ?  'pi pi-directions': 'pi pi-sort-numeric-down'  }}"
+                        class="p-button min-w-full text-center mt-3 shadow-4"></button>
+
+
+
                     <!-- <button id="mostrarMapaBtn" pButton [hidden]="!importacaoAtiva"
                     (click)="mostrarMapaSM = !mostrarMapaSM" 
                     type="button" label="{{ mostrarMapaSM ?  'Ver Mapa': 'Ver Rotas'  }}" icon="{{ mostrarMapaSM ?  'pi pi-map': 'pi pi-map-marker'  }}" 
                     class="p-button min-w-full text-center mt-3 shadow-4"></button> -->
 
+                    <button pButton id="enviar" [hidden]="rotaManualVisualizar" type="button"
+                    label="Calcular Rota Manual" icon="pi pi-search"
+                    class="p-button-success min-w-full text-center mt-3 shadow-4"></button>
+                    
                     <div class="group">
                         <button pButton type="button" [hidden]="rotaManualVisualizar" (click)="adicionarParadaTela()"
                             id="adicionarParada" label="Adicionar Paradas" icon="pi pi-plus-circle" iconPos="right"
                             class=" btn min-w-full mt-3 shadow-4">
                         </button>
-                        <button pButton id="enviar" [hidden]="rotaManualVisualizar" type="button"
-                            label="Calcular Rota Manual" icon="pi pi-search"
-                            class="p-button-success min-w-full text-center mt-3 shadow-4"></button>                            
+                    
                     </div>
 
                     <button pButton [hidden]="rotaManualVisualizar"
@@ -90,33 +101,36 @@
                         type="button" label="Rota Automática" icon="pi pi-bars"
                         class="p-button-secondary min-w-full text-center mt-3 shadow-4"></button>
 
-
-
+                      
                 </div>
+            
+                    <div class="row sidebarPanelMarkers" [hidden]="!importacaoAtiva">
+                        <div id="sidebarPanel" [hidden]="!mostrarSidePanel" class=" mt-4 ml-5"></div>
+                        <div id="sidebarMarkers" [hidden]="mostrarSidePanel" class=" mt-4 ml-5 min-w-full ">
 
-                <div class="row sidebarPanelMarkers" [hidden]="!importacaoAtiva">                  
-                    <div id="sidebarPanel" [hidden]="!mostrarSidePanel" class=" mt-4 ml-5"></div>
-                    <div id="sidebarMarkers" [hidden]="mostrarSidePanel" class=" mt-4 ml-5 min-w-full ">
-
-                        <div class="card" [ngStyle]="{backgroundColor:'rgb(239,243,248)'} ">
-                            <p-timeline [value]="listaPontos" align="alternate">
-                                <ng-template pTemplate="content" let-pontos>
-                                    <small class="p-text-secondary">{{pontos.b}} - {{pontos.c}}</small>
-                                </ng-template>
-                                <ng-template pTemplate="opposite" let-pontos>
-                                    <b style="color:red">[{{pontos.d}}]</b> - <b
-                                        (click)="AbrirModalCEP(pontos.a)">{{pontos.a}}</b>
-                                </ng-template>
-                            </p-timeline>
+                            <div class="card" [ngStyle]="{backgroundColor:'rgb(239,243,248)'} ">
+                                <p-timeline [value]="listaPontos" align="alternate">
+                                    <ng-template pTemplate="content" let-pontos>
+                                        <small class="p-text-secondary">{{pontos.b}} - {{pontos.c}}</small>
+                                    </ng-template>
+                                    <ng-template pTemplate="opposite" let-pontos>
+                                        <b style="color:red">[{{pontos.d}}]</b> - <b
+                                            (click)="AbrirModalCEP(pontos.a)">{{pontos.a}}</b>
+                                    </ng-template>
+                                </p-timeline>
+                            </div>
                         </div>
                     </div>
-                </div>
+                 
+            
             </div>
         </div>
+
+
+        <!-- MAP DIV -->
         <div class="mt-1 xl:col-8 lg:col-8 lg:p-1 md:col-12  md:p-5" id="containerMap">
             <div class="flex align-items-center my-1  border-round-left-2xl border-round-right-2xl align-self-center "
                 id="mapAgendar"></div>
-
         </div>
     </div>
 </div>
@@ -138,4 +152,3 @@
     </ng-template>
   </p-card>
 </p-dialog> -->
-
