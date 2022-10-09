@@ -212,7 +212,7 @@ export class AgendarRotasComponent implements OnInit {
       if (this.rotasMapa.Destino != undefined && this.rotasMapa.Partida != undefined)
         this.buscarRotasPorCidade(waypts)
     } else if (!this.buscarPorCep && this.rotaManualVisualizar) {
-     
+
       if (this.rotasImportadas.length > 0) {
         //CSV - LATITUDE - LONGITUDE
         waypts = this.capturarWaypointsCSV();
@@ -230,7 +230,7 @@ export class AgendarRotasComponent implements OnInit {
 
   //#region <Google API - Directions - Consultar rotas>
   buscarRotasPorGeocode(csv: boolean, waypts: google.maps.DirectionsWaypoint[]) {
-   
+
     this.directionsService.route(
       this.atribuirRequestLatLong(waypts))
       .then((response: any) => {
@@ -277,7 +277,7 @@ export class AgendarRotasComponent implements OnInit {
 
 
 
-   
+
     if (listaDividida.length > 0) {
       var rotasPromisse: Promise<boolean>[] = []
       await listaDividida[0].forEach((item: any) => {
@@ -349,7 +349,7 @@ export class AgendarRotasComponent implements OnInit {
       .then((response: any) => {
         this.pegarParadasResponse(response);
         let labelIndex = 0;
-       
+
         this.directionsRenderer
         this.directionsRenderer.setOptions({
           polylineOptions: {
@@ -471,7 +471,7 @@ export class AgendarRotasComponent implements OnInit {
   }
 
   pegarParadasResponse(response: any) {
-   
+    this.rotasParaExport = [];
     let labelsNumeric = ['1', '2', '3', '4', '5', '6', '7', '8', '9', '10', '11', '12', '13', '14', '15', '16', '17', '18', '19', '20', '21', '22', '23', '24', '25', '26', '27', '28', '29', '30'];
     let alfab = ['A', 'B', 'C', 'D', 'E', 'F', 'G', 'H', 'I', 'J', 'K', 'L', 'M', 'N', 'O', 'P', 'Q', 'R', 'S', 'T', 'U', 'V', 'W', 'X', 'Y', 'Z']
     let indexAlfa = 0
@@ -549,30 +549,57 @@ export class AgendarRotasComponent implements OnInit {
 
   //montar arquivo de export
   criarVariavelExportacao() {
-   
-    this.rotasImportadas.forEach(linha => {
-      linha.Ordem = this.listaPontos.find(function (item: any) {
-        let cepTratado = item.a.replace(/[^0-9]/g, '')!
-        return  cepTratado === linha.CEP;
-      }).d;
-      linha.DataHoraConsulta = this.gerarDataHoraString() ;
-    });
+    //CRIAR A LOGICA PARA REDUZIR A LISTA APENAS A LSITA DE PONTOS CAPTURADOS
+    for (let index = 0; index < this.rotasImportadas.length; index++) {
+      const element = this.rotasImportadas[index];
 
-   this.rotasParaExport = this.rotasImportadas.sort((a, b) => (a.Ordem! < b.Ordem! ? -1 : 1));   
+      var contadorPD = 1;
+      for (let index = 0; index < this.listaPontos.length; index++) {
+       
+        const ponto = this.listaPontos[index];
+        let cepTratado = ponto.a.replace(/[^0-9]/g, '')!
+        if (cepTratado === element.CEP) {
+          debugger;
+          if (element.PatridaDestino === true && contadorPD < 2) {
+            contadorPD++
+            element.DataHoraConsulta = this.gerarDataHoraString();
+            element.Ordem = '1'
+            this.rotasParaExport.push(element);
+           break;
+          }
+          else {
+            element.DataHoraConsulta = this.gerarDataHoraString();
+            element.Ordem = ponto.d;
+            this.rotasParaExport.push(element);
+          }
+         
+        }
+      }
+    }
+    console.log(this.rotasParaExport);
+    // this.rotasImportadas.forEach(linha => {
+    //   linha.Ordem = this.listaPontos.find(function (item: any) {
+    //     let cepTratado = item.a.replace(/[^0-9]/g, '')!
+    //     return  cepTratado === linha.CEP;
+    //   })?.d;
+    //   linha.DataHoraConsulta = this.gerarDataHoraString() ;
+    // });
+
+    this.rotasParaExport = this.rotasParaExport.sort((a, b) => (a.Ordem! < b.Ordem! ? -1 : 1));
   }
-  
-  exportarRota(){  
 
-      let ws: XLSX.WorkSheet =XLSX.utils.json_to_sheet(this.rotasParaExport, {header: ['IdFuncionario','NomeFuncionario','PatridaDestino','Latitude','Longitude','Cidade','Estado','CEP','Ordem','DataConsulta'],skipHeader: false});  
-      let wb: XLSX.WorkBook = XLSX.utils.book_new();
-      XLSX.utils.book_append_sheet(wb, ws, 'Rotas');
-   
-      let nomeArquivo = 'LuksMove_Rotas_SP1103_'+ '_' +this.gerarDataHoraString() +'.csv'
-      XLSX.writeFile(wb, nomeArquivo);
+  exportarRota() {
+
+    let ws: XLSX.WorkSheet = XLSX.utils.json_to_sheet(this.rotasParaExport, { header: ['IdFuncionario', 'NomeFuncionario', 'PatridaDestino', 'Latitude', 'Longitude', 'Cidade', 'Estado', 'CEP', 'Ordem', 'DataHoraConsulta'], skipHeader: false });
+    let wb: XLSX.WorkBook = XLSX.utils.book_new();
+    XLSX.utils.book_append_sheet(wb, ws, 'Rotas');
+
+    let nomeArquivo = 'LuksMove_Rotas_SP1103_' + '_' + this.gerarDataHoraString() + '.csv'
+    XLSX.writeFile(wb, nomeArquivo);
   }
 
 
-  gerarDataHoraString(){
+  gerarDataHoraString() {
     let dataAtual = new Date()
     let datahora = dataAtual.toLocaleDateString();
     let horario = dataAtual.getHours() + ":" + dataAtual.getMinutes() + ":" + dataAtual.getSeconds();
@@ -581,7 +608,7 @@ export class AgendarRotasComponent implements OnInit {
 
   //adicioanr marcadores
   layoutMarcadores(item: any, location: any, ultimo: boolean) {
-   
+
     let textLabel = ultimo == true ? "1 - " + (item.d) : "" + (item.d)
     let hrefGoogle = "https://www.google.com.br/maps/search/" + item.a.replace(/[^0-9]/g, '')
     const contentString = `
@@ -745,7 +772,7 @@ export class AgendarRotasComponent implements OnInit {
 
 
   deleteMarkers() {
-   
+
     this.clearMarkers();
     this.markerLista = [];
   }
@@ -790,7 +817,7 @@ export class AgendarRotasComponent implements OnInit {
 
 
   leituraArquivoRotas(reader: FileReader) {
-   
+
     try {
       let separador = ';'
       let csv: any = reader.result;
@@ -839,7 +866,7 @@ export class AgendarRotasComponent implements OnInit {
 
   AbrirModalCEP(cep: string) {
     let cepTratado = cep.replace(/[^0-9]/g, '')!
-   
+
     this.selectedModalCEP = this.rotasMapa.Paradas?.find(f => f.CEP == cepTratado)!
 
 
