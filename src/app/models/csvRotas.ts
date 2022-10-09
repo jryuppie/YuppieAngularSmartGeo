@@ -5,7 +5,7 @@ export interface ListaRotasCSV {
 export class csvRotas {
     IdFuncionario?: string;
     NomeFuncionario?: string;
-    PatridaDestino?: boolean;
+    PatridaDestino?: String;
     Latitude?: string;
     Longitude?: string;
     Cidade?: string;

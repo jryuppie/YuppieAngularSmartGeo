@@ -560,7 +560,7 @@ export class AgendarRotasComponent implements OnInit {
         let cepTratado = ponto.a.replace(/[^0-9]/g, '')!
         if (cepTratado === element.CEP) {
           debugger;
-          if (element.PatridaDestino === true && contadorPD < 2) {
+          if (element.PatridaDestino === 'SIM' && contadorPD < 2) {
             contadorPD++
             element.DataHoraConsulta = this.gerarDataHoraString();
             element.Ordem = '1'
@@ -716,14 +716,14 @@ export class AgendarRotasComponent implements OnInit {
 
   capturarWaypointsCSV() {
     let waypts: google.maps.DirectionsWaypoint[] = [];
-    let arrayPartida = this.rotasImportadas.filter(r => r.PatridaDestino === true);
+    let arrayPartida = this.rotasImportadas.filter(r => r.PatridaDestino === 'SIM');
 
     if (arrayPartida != null && arrayPartida != undefined && arrayPartida.length > 0) {
       this.rotasMapa.Partida = arrayPartida[0];
       this.rotasMapa.Destino = arrayPartida[0];
     }
 
-    const paradasImportadas: Array<csvRotas> = this.rotasImportadas.filter(r => r.PatridaDestino === false);
+    const paradasImportadas: Array<csvRotas> = this.rotasImportadas.filter(r => r.PatridaDestino === 'NAO');
     this.rotasMapa.Paradas = paradasImportadas;
 
     paradasImportadas.forEach(element => {
@@ -840,7 +840,8 @@ export class AgendarRotasComponent implements OnInit {
           let rotaRow: csvRotas = {
             IdFuncionario: campos[0],
             NomeFuncionario: campos[1],
-            PatridaDestino: campos[2] === "SIM" ? true : false,
+            // PatridaDestino: campos[2] === "SIM" ? true : false,
+            PatridaDestino: campos[2] === "SIM" ? 'SIM' : 'NAO',
             Latitude: campos[3],
             Longitude: campos[4],
             Cidade: campos[5],
