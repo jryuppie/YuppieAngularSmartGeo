@@ -3,7 +3,7 @@ export interface ListaRotasCSV {
 }
 
 export class csvRotas {
-    IdFuncionario?: string;
+    SequenciaOriginal?: number;
     NomeFuncionario?: string;
     PatridaDestino?: String;
     Latitude?: string;
@@ -12,7 +12,7 @@ export class csvRotas {
     Estado?: string;
     CEP?: string;
     PlaceID?: string
-    Ordem?:string;
+    SequenciaOtimizada?:string;
     DataHoraConsulta?: string;
 }
 

@@ -8,6 +8,7 @@ import { MenuLateralService } from '../menu-lateral/menu-lateral.service';
 import { csvRotas, Localizacao, RotasMaps } from '../models/csvRotas';
 import * as XLSX from 'xlsx';
 import * as FileSaver from 'file-saver';
+import { toInteger } from '@ng-bootstrap/ng-bootstrap/util/util';
 
 @Component({
   selector: 'app-agendar-rotas',
@@ -518,6 +519,11 @@ export class AgendarRotasComponent implements OnInit {
         let endereco: string = '';
         let duracao: string = ';'
         switch (Legs[index].end_address.split(',').length) {
+          case 3:
+            cep = Legs[index].end_address.split(',')[1];
+            endereco = Legs[index].end_address.split(',')[0];
+            duracao = Legs[index].duration.text;
+            break;
           case 4:
             cep = Legs[index].end_address.split(',')[2];
             endereco = Legs[index].end_address.split(',')[0];
@@ -559,20 +565,27 @@ export class AgendarRotasComponent implements OnInit {
         const ponto = this.listaPontos[index];
         let cepTratado = ponto.a.replace(/[^0-9]/g, '')!
         if (cepTratado === element.CEP) {
-          debugger;
+         
           if (element.PatridaDestino === 'SIM' && contadorPD < 2) {
             contadorPD++
             element.DataHoraConsulta = this.gerarDataHoraString();
-            element.Ordem = '1'
+            element.SequenciaOtimizada = '1'
             this.rotasParaExport.push(element);
            break;
           }
           else {
             element.DataHoraConsulta = this.gerarDataHoraString();
-            element.Ordem = ponto.d;
+            element.SequenciaOtimizada = ponto.d;
             this.rotasParaExport.push(element);
           }
          
+        }
+
+        if(index == this.listaPontos.length){
+          element.DataHoraConsulta = this.gerarDataHoraString();
+          element.SequenciaOtimizada = (Number(ponto.d)+1).toString(); 
+          this.rotasParaExport.push(this.rotasImportadas[0]);
+
         }
       }
     }
@@ -585,12 +598,12 @@ export class AgendarRotasComponent implements OnInit {
     //   linha.DataHoraConsulta = this.gerarDataHoraString() ;
     // });
 
-    this.rotasParaExport = this.rotasParaExport.sort((a, b) => (a.Ordem! < b.Ordem! ? -1 : 1));
+    // this.rotasParaExport = this.rotasParaExport.sort((a, b) => (a.OrdemOriginal! < b.OrdemOriginal! ? -1 : 1));
   }
 
   exportarRota() {
 
-    let ws: XLSX.WorkSheet = XLSX.utils.json_to_sheet(this.rotasParaExport, { header: ['IdFuncionario', 'NomeFuncionario', 'PatridaDestino', 'Latitude', 'Longitude', 'Cidade', 'Estado', 'CEP', 'Ordem', 'DataHoraConsulta'], skipHeader: false });
+    let ws: XLSX.WorkSheet = XLSX.utils.json_to_sheet(this.rotasParaExport, { header: ['SequenciaOriginal', 'NomeFuncionario', 'PatridaDestino', 'Latitude', 'Longitude', 'Cidade', 'Estado', 'CEP', 'SequenciaOtimizada', 'DataHoraConsulta'], skipHeader: false });
     let wb: XLSX.WorkBook = XLSX.utils.book_new();
     XLSX.utils.book_append_sheet(wb, ws, 'Rotas');
 
@@ -838,7 +851,7 @@ export class AgendarRotasComponent implements OnInit {
         if (allTextLines[i] != '') {
           let campos = allTextLines[i].split(separador)
           let rotaRow: csvRotas = {
-            IdFuncionario: campos[0],
+            SequenciaOriginal: campos[0],
             NomeFuncionario: campos[1],
             // PatridaDestino: campos[2] === "SIM" ? true : false,
             PatridaDestino: campos[2] === "SIM" ? 'SIM' : 'NAO',
