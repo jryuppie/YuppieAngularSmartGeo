@@ -1,4 +1,5 @@
 import { Component, OnInit, ViewChild } from '@angular/core';
+import { BillingService} from '../services/billing.service'
 
 
 @Component({
@@ -8,7 +9,7 @@ import { Component, OnInit, ViewChild } from '@angular/core';
 })
 export class ConfiguracoesComponent implements OnInit {
  
-  constructor() { }
+  constructor(private billingService: BillingService) { }
   LigDeslGoogleAPIMaps: boolean = false;
   LigDeslGoogleAPIRotas: boolean = false;
   ngOnInit() {  
@@ -16,6 +17,9 @@ export class ConfiguracoesComponent implements OnInit {
     this.LigDeslGoogleAPIRotas = true;
 
     (document.getElementById('h1Titulo') as HTMLElement).innerHTML = 'Google API ';
+
+    debugger
+    this.billingService.getBillingInfo()
   }
   trocarStatusGoogleAPi(event: Event) {
     

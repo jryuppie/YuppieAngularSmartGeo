@@ -1,10 +1,9 @@
 <div class="row surface-ground  text-900  shadow-8 border-round-left-2xl border-round-right-2xl" id="gridGeral">
     <div class="grid">
-
         <div class=" align-items-center xl:col-4 lg:col-4 md:col-12" id="colgrupoGeral">
             <div id="grupoGeral" class="row">
 
-                <div id="grupoInput" [hidden]="rotaManualVisualizar" class="flex-row ">
+                <div id="grupoInput" [hidden]="rotaManualVisualizar" class="flex-row">
                     <div class="row ml-5 mt-5  min-w-full">
                         <span class="p-input-icon-right  min-w-full">
                             <i class="pi pi-search  mr-2"></i>
@@ -99,8 +98,6 @@
                         (click)="rotaManualVisualizar = !rotaManualVisualizar" (click)="rotaManualVisualizarFunc()"
                         type="button" label="Rota Automática" icon="pi pi-bars"
                         class="p-button-secondary min-w-full text-center mt-3 shadow-4"></button>
-
-                      
                 </div>
             
                     <div class="row sidebarPanelMarkers" [hidden]="!importacaoAtiva">
@@ -120,8 +117,6 @@
                             </div>
                         </div>
                     </div>
-                 
-            
             </div>
         </div>
 

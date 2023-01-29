@@ -3,7 +3,18 @@
 // The list of file replacements can be found in `angular.json`.
 
 export const environment = {
-  production: false
+  production: false,  
+  client_id:'',
+  project_id: 'smart-geo-maps',
+  auth_uri:' https://accounts.google.com/o/oauth2/auth',
+  token_uri:'https://oauth2.googleapis.com/token',
+  auth_provider_x509_cert_url:'https://www.googleapis.com/oauth2/v1/certs',
+  client_secret:'',
+  access_token:'',
+  scopeBilling:'https://www.googleapis.com/auth/cloud-billing.readonly',
+  token_type:'Bearer',  
+  refresh_token:'',
+  apikey:''
 };
 
 /*

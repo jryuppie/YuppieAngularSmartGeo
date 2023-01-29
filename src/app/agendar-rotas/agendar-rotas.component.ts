@@ -10,6 +10,8 @@ import * as XLSX from 'xlsx';
 import * as FileSaver from 'file-saver';
 import { toInteger } from '@ng-bootstrap/ng-bootstrap/util/util';
 
+import { environment } from '../../environments/environment';
+
 @Component({
   selector: 'app-agendar-rotas',
   templateUrl: './agendar-rotas.component.html',
@@ -67,8 +69,8 @@ export class AgendarRotasComponent implements OnInit {
   mostrarModalCEP: boolean = false;
   //#endregion
 
-
-  apiKey: string = 'AIzaSyDYR45TvExNG498aRNe_C2MS4R0p4EKS4U';//'AIzaSyCbu9PxUAnPqy2W1fyKwLANXFywzDyiDKI',
+//ATRIBUIR VALOR DA APIKEY
+  apiKey: string = environment.apikey;
   corRota: string = '';
   mostrarModalDetalhesRota: boolean = false;
   mostrarSidePanel: boolean = false;
@@ -190,48 +192,46 @@ export class AgendarRotasComponent implements OnInit {
 
 
       //REMOVER INFORMAÇÕES DO GOOGLE MAPS DA TELA
-      setTimeout(function () {
-        (document.querySelector("#mapAgendar > div > div > div:nth-child(17) > div") as HTMLElement).style['display'] = 'none';
-        (document.querySelector("#mapAgendar > div > div > div:nth-child(15) > div") as HTMLElement).style['display'] = 'none';
-        (document.querySelector("#mapAgendar > div > div > div:nth-child(5) > div") as HTMLElement).style['display'] = 'none';
+      const selectors = [
+        "#mapAgendar > div > div > div:nth-child(17) > div",
+        "#mapAgendar > div > div > div:nth-child(15) > div",
+        "#mapAgendar > div > div > div:nth-child(5) > div"
+      ];
 
+      setTimeout(function () {
+        selectors.forEach(selector => {
+          const element = document.querySelector(selector) as HTMLElement;
+          element.style.display = "none";
+        });
       }, 4000);
     });
   }
 
   //FUNÇÃO PRINCIPAL PARA CONSULTAR E EXIBIR ROTAS
   calcularExibirRotas(csv: boolean = false) {
-
     this.isLoading = true;
     let waypts: google.maps.DirectionsWaypoint[] = [];
     this.rotasMapa = new RotasMaps();
 
-    if (!csv) {
-      //TELA - MANUAL
-      //###TRECHO RESPONSAVEL POR CAPTURAR WAYPOINTS E PARTIDA/DESTINO###
-      waypts = this.capturarInputsWaypoints().waypts;
-      if (this.rotasMapa.Destino != undefined && this.rotasMapa.Partida != undefined)
-        this.buscarRotasPorCidade(waypts)
-    } else if (!this.buscarPorCep && this.rotaManualVisualizar) {
+    waypts = csv ? this.capturarWaypointsCSV() : this.capturarInputsWaypoints().waypts;
 
-      if (this.rotasImportadas.length > 0) {
-        //CSV - LATITUDE - LONGITUDE
-        waypts = this.capturarWaypointsCSV();
-        if (this.rotasMapa.Destino != undefined && this.rotasMapa.Partida != undefined)
-          this.buscarRotasPorGeocode(csv, waypts)
-      }
-    } else if (this.buscarPorCep && this.rotaManualVisualizar) {
-      //CSV - CEP
-      waypts = this.capturarWaypointsCSV();
-      if (this.rotasMapa.Destino != undefined && this.rotasMapa.Partida != undefined)
-        this.buscarRotasPorCep();
-    }
+    //TELA - MANUAL
+    //###TRECHO RESPONSAVEL POR CAPTURAR WAYPOINTS E PARTIDA/DESTINO###    
+    if (this.rotasMapa.Destino && this.rotasMapa.Partida)
+      this.buscarRotasPorCidade(waypts)
+
+    //CSV - LATITUDE - LONGITUDE    
+    if (!this.buscarPorCep && this.rotaManualVisualizar && this.rotasImportadas.length > 0 && this.rotasMapa.Destino && this.rotasMapa.Partida)
+      this.buscarRotasPorGeocode(csv, waypts)
+
+    //CSV - CEP    
+    if (this.buscarPorCep && this.rotaManualVisualizar && this.rotasMapa.Destino && this.rotasMapa.Partida)
+      this.buscarRotasPorCep();
   }
 
 
   //#region <Google API - Directions - Consultar rotas>
   buscarRotasPorGeocode(csv: boolean, waypts: google.maps.DirectionsWaypoint[]) {
-
     this.directionsService.route(
       this.atribuirRequestLatLong(waypts))
       .then((response: any) => {
@@ -281,26 +281,24 @@ export class AgendarRotasComponent implements OnInit {
 
     if (listaDividida.length > 0) {
       var rotasPromisse: Promise<boolean>[] = []
-      await listaDividida[0].forEach((item: any) => {
+      await listaDividida[0].map((item: any) => {
+        const url = `https://maps.googleapis.com/maps/api/geocode/json?address=${item}&key=${this.apiKey}&region=BR&language=pt-BR`;
         rotasPromisse.push(
-          new Promise((resolve, reject) => {
-            let stringet = 'https://maps.googleapis.com/maps/api/geocode/json?address=' + item + '&key=' + this.apiKey + '&region=BR&language=pt-BR';
-            this.http.get<any>(stringet).subscribe(data => {
-              if (data.status == 'OK') {
-                let cep: string = data.results[0]?.address_components[0].long_name.replace(/[^0-9]/g, '')!;
-                let placeID: string = data.results[0]?.place_id;
+          new Promise((resolve) => {
+            this.http.get<any>(url).subscribe(({ status, results }) => {
+              if (status == 'OK') {
+                let cep: string = results[0]?.address_components[0].long_name.replace(/[^0-9]/g, '')!;
+                let placeID: string = results[0]?.place_id;
+                let localizacao: Localizacao = new Localizacao();
+
                 if (typeof cep !== 'undefined' && cep && typeof placeID !== 'undefined' && placeID) {
-                  let localizacao: Localizacao = new Localizacao();
                   localizacao.CEP = cep;
                   localizacao.PlaceId = placeID;
-                  //  console.log(cep + ' - ' + placeID + ' - ' + this.ListaGeocode.length)
                   if (!this.ListaGeocode.some((a) => a.PlaceId === placeID)) { this.ListaGeocode.push(localizacao); }
-
-                  // this.http.get<any>('https://maps.googleapis.com/maps/api/place/details/json?place_id=' + placeID + '&key=' + this.apiKey).subscribe(data => {console.log(data)});
                 }
               }
               resolve(true)
-              if (data.status == 'ZERO_RESULTS') {
+              if (status == 'ZERO_RESULTS') {
                 this.messageService.add({ sticky: true, severity: 'info', summary: item, detail: 'CEP ou Coordenadas não encontrada!' });
               }
             })
@@ -368,11 +366,6 @@ export class AgendarRotasComponent implements OnInit {
             // ]
           }
         });
-
-
-
-
-
         // this.mostrarParadas(response, markerArray, stepDisplay, map);
 
         // this.directionsRenderer.setDirections(response);
@@ -473,85 +466,90 @@ export class AgendarRotasComponent implements OnInit {
 
   pegarParadasResponse(response: any) {
     this.rotasParaExport = [];
-    let labelsNumeric = ['1', '2', '3', '4', '5', '6', '7', '8', '9', '10', '11', '12', '13', '14', '15', '16', '17', '18', '19', '20', '21', '22', '23', '24', '25', '26', '27', '28', '29', '30'];
-    let alfab = ['A', 'B', 'C', 'D', 'E', 'F', 'G', 'H', 'I', 'J', 'K', 'L', 'M', 'N', 'O', 'P', 'Q', 'R', 'S', 'T', 'U', 'V', 'W', 'X', 'Y', 'Z']
-    let indexAlfa = 0
-    const Legs = response!.routes[0]!.legs!;
     this.listaPontos = [];
-    if (!this.rotaManualVisualizar) {
-      for (let index = 0; index < Legs.length; index++) {
-        if (index == 0) {
-          const cep: string = Legs[index].start_address;
-          const distancia: string = '';//Legs[index].distance.text;
-          const duracao: string = '';//Legs[index].duration.text;
-          const posicao = labelsNumeric[indexAlfa]
-          let item: any = { a: cep, b: distancia, c: duracao, d: posicao }
-          this.listaPontos.push(item);
-          indexAlfa++
-        }
+    let indexAlfa = 0;
+    const Legs = response!.routes[0]!.legs!;
+    let labelsNumeric = [];
 
-        const cep: string = Legs[index].end_address;
-        const distancia: string = Legs[index].distance.text;
-        const duracao: string = Legs[index].duration.text;
+    for (let i = 1; i <= Legs.length + 1; i++) {
+      labelsNumeric.push(i.toString());
+    }
+
+    !this.rotaManualVisualizar?  this.pegarRotasManual(Legs, labelsNumeric, indexAlfa) :  this.pegarRotasAutomaticas(Legs, labelsNumeric, indexAlfa)
+
+    this.criarVariavelExportacao();
+    this.directionsRenderer.setDirections(response);
+  }
+  pegarRotasManual(Legs: any, labelsNumeric: any[], indexAlfa: number) {
+    for (let index = 0; index < Legs.length; index++) {
+      if (index == 0) {
+        const cep: string = Legs[index].start_address;
+        const distancia: string = '';//Legs[index].distance.text;
+        const duracao: string = '';//Legs[index].duration.text;
         const posicao = labelsNumeric[indexAlfa]
         let item: any = { a: cep, b: distancia, c: duracao, d: posicao }
         this.listaPontos.push(item);
         indexAlfa++
       }
 
+      const cep: string = Legs[index].end_address;
+      const distancia: string = Legs[index].distance.text;
+      const duracao: string = Legs[index].duration.text;
+      const posicao = labelsNumeric[indexAlfa]
+      let item: any = { a: cep, b: distancia, c: duracao, d: posicao }
+      this.listaPontos.push(item);
+      indexAlfa++
     }
-    else {
-      this.deleteMarkers();
-      for (let index = 0; index < Legs.length; index++) {
+  }
 
-        // console.log(Legs[index])
-        if (index == 0) {
-          const cep: string = Legs[index].start_address.split(',')[Legs[index].start_address.split(',').length === 4 ? 2 : 2];
-          const endereco: string = Legs[index].start_address.split(',')[Legs[index].start_address.split(',').length === 4 ? 0 : 2] + ' - Início';
-          const dr: string = '';//Legs[index].duration.text;
-          const letra = labelsNumeric[indexAlfa]
-          let item: any = { a: cep, b: endereco, c: dr, d: letra }
-          this.listaPontos.push(item);
-          //this.layoutMarcadores(item, Legs[index].start_location,false);
-          indexAlfa++
-        }
-        let cep: string = '';
-        let endereco: string = '';
-        let duracao: string = ';'
-        switch (Legs[index].end_address.split(',').length) {
-          case 3:
-            cep = Legs[index].end_address.split(',')[1];
-            endereco = Legs[index].end_address.split(',')[0];
-            duracao = Legs[index].duration.text;
-            break;
-          case 4:
-            cep = Legs[index].end_address.split(',')[2];
-            endereco = Legs[index].end_address.split(',')[0];
-            duracao = Legs[index].duration.text;
-            break;
-          case 5:
-            cep = Legs[index].end_address.split(',')[3];
-            endereco = Legs[index].end_address.split(',')[0];
-            duracao = Legs[index].duration.text;
-            break;
-          default:
-            cep = Legs[index].end_address.split(',')[2];
-            endereco = Legs[index].end_address.split(',')[0];
-            duracao = Legs[index].duration.text;
-            break;
-        }
+  pegarRotasAutomaticas(Legs: any, labelsNumeric: any[], indexAlfa: number) {
+    this.deleteMarkers();
+    for (let index = 0; index < Legs.length; index++) {
+
+      // console.log(Legs[index])
+      if (index == 0) {
+        const cep: string = Legs[index].start_address.split(',')[Legs[index].start_address.split(',').length === 4 ? 2 : 2];
+        const endereco: string = Legs[index].start_address.split(',')[Legs[index].start_address.split(',').length === 4 ? 0 : 2] + ' - Início';
+        const dr: string = '';//Legs[index].duration.text;
         const letra = labelsNumeric[indexAlfa]
-        let item: any = { a: cep, b: endereco, c: duracao, d: letra }
+        let item: any = { a: cep, b: endereco, c: dr, d: letra }
         this.listaPontos.push(item);
-        this.layoutMarcadores(item, Legs[index].end_location, index == Legs.length - 1 ? true : false);
+        //this.layoutMarcadores(item, Legs[index].start_location,false);
         indexAlfa++
       }
-      // console.log(this.listaPontos);
-    }
-    this.criarVariavelExportacao();
-    this.directionsRenderer.setDirections(response);
-
+      let cep: string = '';
+      let endereco: string = '';
+      let duracao: string = ';'
+      switch (Legs[index].end_address.split(',').length) {
+        case 3:
+          cep = Legs[index].end_address.split(',')[1];
+          endereco = Legs[index].end_address.split(',')[0];
+          duracao = Legs[index].duration.text;
+          break;
+        case 4:
+          cep = Legs[index].end_address.split(',')[2];
+          endereco = Legs[index].end_address.split(',')[0];
+          duracao = Legs[index].duration.text;
+          break;
+        case 5:
+          cep = Legs[index].end_address.split(',')[3];
+          endereco = Legs[index].end_address.split(',')[0];
+          duracao = Legs[index].duration.text;
+          break;
+        default:
+          cep = Legs[index].end_address.split(',')[2];
+          endereco = Legs[index].end_address.split(',')[0];
+          duracao = Legs[index].duration.text;
+          break;
+      }
+      const letra = labelsNumeric[indexAlfa]
+      let item: any = { a: cep, b: endereco, c: duracao, d: letra }
+      this.listaPontos.push(item);
+      this.layoutMarcadores(item, Legs[index].end_location, index == Legs.length - 1 ? true : false);
+      indexAlfa++
+    }   
   }
+
 
   //montar arquivo de export
   criarVariavelExportacao() {
@@ -561,29 +559,29 @@ export class AgendarRotasComponent implements OnInit {
 
       var contadorPD = 1;
       for (let index = 0; index < this.listaPontos.length; index++) {
-       
+
         const ponto = this.listaPontos[index];
         let cepTratado = ponto.a.replace(/[^0-9]/g, '')!
         if (cepTratado === element.CEP) {
-         
+
           if (element.PatridaDestino === 'SIM' && contadorPD < 2) {
             contadorPD++
             element.DataHoraConsulta = this.gerarDataHoraString();
             element.SequenciaOtimizada = '1'
             this.rotasParaExport.push(element);
-           break;
+            break;
           }
           else {
             element.DataHoraConsulta = this.gerarDataHoraString();
             element.SequenciaOtimizada = ponto.d;
             this.rotasParaExport.push(element);
           }
-         
+
         }
 
-        if(index == this.listaPontos.length){
+        if (index == this.listaPontos.length) {
           element.DataHoraConsulta = this.gerarDataHoraString();
-          element.SequenciaOtimizada = (Number(ponto.d)+1).toString(); 
+          element.SequenciaOtimizada = (Number(ponto.d) + 1).toString();
           this.rotasParaExport.push(this.rotasImportadas[0]);
 
         }

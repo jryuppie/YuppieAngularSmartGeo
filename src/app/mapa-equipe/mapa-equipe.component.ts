@@ -2,7 +2,7 @@ import { Component, OnInit,Input  } from '@angular/core';
 import { Loader } from '@googlemaps/js-api-loader';
 import { MenuLateralService } from '../menu-lateral/menu-lateral.service';
 import { MessageService } from 'primeng/api';
-
+import { environment } from '../../environments/environment';
 
 @Component({
   selector: 'app-mapa-equipe',
@@ -22,7 +22,7 @@ export class MapaEquipeComponent implements OnInit {
    
   }
 
-  apiKey: string = 'AIzaSyDYR45TvExNG498aRNe_C2MS4R0p4EKS4U';//'AIzaSyCbu9PxUAnPqy2W1fyKwLANXFywzDyiDKI',
+  apiKey: string = environment.apikey;
   map: any
   items: any;
 
