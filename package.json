@@ -38,6 +38,7 @@
     "jest-preset-angular": "^12.2.6",
     "moment": "^2.29.4",
     "ng-particles": "^3.2.1",
+    "ngx-papaparse": "^7.0.0",
     "primeflex": "^3.2.1",
     "primeicons": "^5.0.0",
     "primeng": "^14.0.0",
