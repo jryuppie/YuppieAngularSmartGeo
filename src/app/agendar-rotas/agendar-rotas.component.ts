@@ -523,7 +523,8 @@ export class AgendarRotasComponent implements OnInit {
       let cep: string = '';
       let endereco: string = '';
       let duracao: string = ';'
-      switch (Legs[index].end_address.split(',').length) {
+      const length = Legs[index].end_address.split(',').length
+      switch (length) {
         case 3:
           cep = Legs[index].end_address.split(',')[1];
           endereco = Legs[index].end_address.split(',')[0];
@@ -556,10 +557,10 @@ export class AgendarRotasComponent implements OnInit {
 
   //montar arquivo de export
   criarVariavelExportacao() {
-    //CRIAR A LOGICA PARA REDUZIR A LISTA APENAS A LSITA DE PONTOS CAPTURADOS
+    //CRIAR A LOGICA PARA REDUZIR A LISTA APENAS A LISTA DE PONTOS CAPTURADOS
     for (let index = 0; index < this.rotasImportadas.length; index++) {
       const element = this.rotasImportadas[index];
-
+      element.SequenciaOriginal = index
       var contadorPD = 1;
       for (let index = 0; index < this.listaPontos.length; index++) {
 
@@ -589,8 +590,7 @@ export class AgendarRotasComponent implements OnInit {
 
         }
       }
-    }
-    console.log(this.rotasParaExport);
+    }    
     // this.rotasImportadas.forEach(linha => {
     //   linha.Ordem = this.listaPontos.find(function (item: any) {
     //     let cepTratado = item.a.replace(/[^0-9]/g, '')!
@@ -603,14 +603,15 @@ export class AgendarRotasComponent implements OnInit {
   }
 
   exportarRota() {
-
-    let ws: XLSX.WorkSheet = XLSX.utils.json_to_sheet(this.rotasParaExport, { header: ['SequenciaOriginal', 'NomeFuncionario', 'PartidaDestino', 'Latitude', 'Longitude', 'Cidade', 'Estado', 'CEP', 'SequenciaOtimizada', 'DataHoraConsulta'], skipHeader: false });
+    debugger
+    // let ws: XLSX.WorkSheet = XLSX.utils.json_to_sheet(this.rotasParaExport, { header: ['SequenciaOriginal', 'NomeFuncionario', 'PartidaDestino', 'Latitude', 'Longitude', 'Cidade', 'Estado', 'CEP', 'SequenciaOtimizada', 'DataHoraConsulta'], skipHeader: false });
+    let ws: XLSX.WorkSheet = XLSX.utils.json_to_sheet(this.rotasParaExport);
     let wb: XLSX.WorkBook = XLSX.utils.book_new();
     XLSX.utils.book_append_sheet(wb, ws, 'Rotas');
-
-    let nomeArquivo = 'LuksMove_Rotas_SP1103_' + '_' + this.gerarDataHoraString() + '.csv'
-    XLSX.writeFile(wb, nomeArquivo);
+    const nomeArquivo = `LuksMove_Rotas_${this.gerarDataHoraString()}.csv`;
+    XLSX.writeFile(wb, nomeArquivo, { bookType: 'csv' });   
   }
+
 
 
   gerarDataHoraString() {

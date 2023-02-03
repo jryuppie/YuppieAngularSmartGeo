@@ -52,16 +52,17 @@
                         <input id="uploadFile" style="display: none" type="file" [(ngModel)]="valorFileText"
                             (change)="onFileSelected($event)" #hiddenfileinput>
                         <button pButton id="uploadFile2" (click)="hiddenfileinput.click()" label="Importar Rotas"
-                            class="col-6 waves-effect waves-light btn shadow-4 " [loading]="isUpload"><i
+                            class=" min-w-full text-center mt-3 shadow-4" [loading]="isUpload"><i
                                 class="material-icons left"> map</i></button>
                         <div clas="row col-6 mb-2" [ngStyle]="{'display':!rotaManualVisualizar ? 'none' : ''}"
                             id="togleCEP">
-                            <mat-button-toggle-group class="shadow-4 border-round-left-4xl border-round-right-4xl"
+                            <!-- //TOGLE PARA ESCOLHA DE IMPORTÇÃO POR CEP OU LATITUDE E LONGITUDE -->
+                            <!-- <mat-button-toggle-group class="shadow-4 border-round-left-4xl border-round-right-4xl"
                                 (change)="manipularTipoImportacao($event)" [value]="buscarPorCep"
                                 [(ngModel)]="buscarPorCep" aria-label="Tipo de Importação">
                                 <mat-button-toggle [value]="true">CEP</mat-button-toggle>
                                 <mat-button-toggle [value]="false">Lat/Lon</mat-button-toggle>
-                            </mat-button-toggle-group>
+                            </mat-button-toggle-group> -->
                         </div>
                     </div>
 
@@ -74,7 +75,7 @@
                     <button pButton [hidden]="!importacaoAtiva" (click)="mostrarSidePanel = !mostrarSidePanel"
                         type="button" label="{{ mostrarSidePanel ?  'Linha do tempo': 'Detalhes da rota'  }}"
                         icon="{{ mostrarSidePanel ?  'pi pi-directions': 'pi pi-sort-numeric-down'  }}"
-                        class="p-button min-w-full text-center mt-3 shadow-4"></button>
+                        class="p-button-warning min-w-full text-center mt-3 shadow-4"></button>
 
 
 
