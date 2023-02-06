@@ -57,6 +57,7 @@ export class AgendarRotasComponent implements OnInit {
   rotasCep: any[] = [];
   ListaGeocode: Array<Localizacao> = [];
   buscarPorCep: boolean = true;
+  headerCSV: any[] = ['SequenciaOriginal', 'NomeFuncionario', 'PartidaDestino', 'Latitude', 'Longitude', 'Cidade', 'Estado', 'CEP', 'SequenciaOtimizada', 'DataHoraConsulta'];
 
   //#endregion
   //#region <VARIAVEIS PARA INICIALIZAÇÃO GOOGLE API'S>  
@@ -262,7 +263,7 @@ export class AgendarRotasComponent implements OnInit {
       .catch((e: any) => {
         debugger
         this.isLoading = false
-        if(!environment.production)
+        if (!environment.production)
           this.messageService.add({ sticky: true, severity: 'warn', summary: 'Erro!', detail: e.message });
       });
   }
@@ -590,7 +591,8 @@ export class AgendarRotasComponent implements OnInit {
 
         }
       }
-    }    
+    }
+    debugger
     // this.rotasImportadas.forEach(linha => {
     //   linha.Ordem = this.listaPontos.find(function (item: any) {
     //     let cepTratado = item.a.replace(/[^0-9]/g, '')!
@@ -602,15 +604,29 @@ export class AgendarRotasComponent implements OnInit {
     // this.rotasParaExport = this.rotasParaExport.sort((a, b) => (a.OrdemOriginal! < b.OrdemOriginal! ? -1 : 1));
   }
 
-  exportarRota() {
-    debugger
-    // let ws: XLSX.WorkSheet = XLSX.utils.json_to_sheet(this.rotasParaExport, { header: ['SequenciaOriginal', 'NomeFuncionario', 'PartidaDestino', 'Latitude', 'Longitude', 'Cidade', 'Estado', 'CEP', 'SequenciaOtimizada', 'DataHoraConsulta'], skipHeader: false });
-    let ws: XLSX.WorkSheet = XLSX.utils.json_to_sheet(this.rotasParaExport);
+  exportarRota() {    
+    let ws: XLSX.WorkSheet = XLSX.utils.json_to_sheet(this.rotasParaExport, { header: this.headerCSV, skipHeader: false });
+    // let ws: XLSX.WorkSheet = XLSX.utils.json_to_sheet(this.rotasParaExport);
     let wb: XLSX.WorkBook = XLSX.utils.book_new();
     XLSX.utils.book_append_sheet(wb, ws, 'Rotas');
     const nomeArquivo = `LuksMove_Rotas_${this.gerarDataHoraString()}.csv`;
-    XLSX.writeFile(wb, nomeArquivo, { bookType: 'csv' });   
+    XLSX.writeFile(wb, nomeArquivo, { bookType: 'csv' });
   }
+
+  // exportarRotasFileSaver() {
+  //   const selectedFields = ['SequenciaOriginal', 'NomeFuncionario', 'PatridaDestino', 'Latitude', 'Longitude', 'Cidade', 'Estado', 'CEP', 'SequenciaOtimizada', 'DataHoraConsulta'];        
+  //   let csv = this.rotasParaExport.map(row => selectedFields.map(fieldName => {
+  //     if (fieldName === 'Nome do Funcionário') {
+  //       return JSON.stringify(row['NomeFuncionario'], (key, value) => value === null ? '' : value)
+  //     }
+  //     return JSON.stringify(row[fieldName], (key, value) => value === null ? '' : value)
+  //   }).join(','));
+  //   csv.unshift(selectedFields.join(','));
+  //   csv = csv.join('\r\n');
+
+  //   const blob = new Blob([csv], {type: 'text/csv'});
+  //   saveAs(blob, 'data.csv');
+  // }
 
 
 
@@ -729,9 +745,9 @@ export class AgendarRotasComponent implements OnInit {
     return { waypts, partida, destino };
   }
 
-  capturarWaypointsCSV() {    
+  capturarWaypointsCSV() {
     let waypts: google.maps.DirectionsWaypoint[] = [];
-    let arrayPartida = this.rotasImportadas.filter(r => r.PartidaDestino === 'SIM');    
+    let arrayPartida = this.rotasImportadas.filter(r => r.PartidaDestino === 'SIM');
 
     if (arrayPartida != null && arrayPartida != undefined && arrayPartida.length > 0) {
       this.rotasMapa.Partida = arrayPartida[0];
@@ -820,15 +836,17 @@ export class AgendarRotasComponent implements OnInit {
       const file: File = result[0];
       if (file) {
         this.fileName = file.name;
-        let fileReader = new FileReader();        
+        let fileReader = new FileReader();
         fileReader.onload = (e) => {
           const csv = fileReader.result;
           if (typeof csv === 'string') {
             this.parsedData = this.papa.parse(csv, {
-              header: true            
+              header: true
             }).data;
             if (this.parsedData.length > 0)
-              this.rotasImportadas = [...this.parsedData]
+              this.removerCampos(this.parsedData)
+            debugger
+            this.rotasImportadas = [...this.parsedData]
             if (this.rotasImportadas.length > 0) {
               //CHAMAR A FUNÇÃO DE MOSTRAR ROTAS NA TELA
               this.calcularExibirRotas(true)
@@ -839,6 +857,16 @@ export class AgendarRotasComponent implements OnInit {
       }
     }
     this.isUpload = false;
+  }
+
+  removerCampos(data: any) {
+    data.forEach((linha: { [x: string]: any; }) => {
+      for (const property in linha) {
+        if(!this.headerCSV.includes(property))
+        delete linha[property]
+      }     
+      return linha
+    });
   }
 
 
@@ -884,7 +912,7 @@ export class AgendarRotasComponent implements OnInit {
       }
     }
     catch (e) {
-      if(!environment.production) console.log(e)
+      if (!environment.production) console.log(e)
       this.messageService.add({ sticky: true, severity: 'error', summary: 'Erro de leitura', detail: 'Erro na leiturado arquivo, verifique o modelo de importação' });
     }
   }
