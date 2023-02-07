@@ -79,6 +79,7 @@ export class AgendarRotasComponent implements OnInit {
   parsedData: any;
   labelsNumeric = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23, 24, 25, 26, 27, 28, 29, 30];
   rotasParaExport: Array<csvRotas> = new Array<csvRotas>();
+  consultarRotasRepetidas: boolean = true;
 
   ngOnInit() {
 
@@ -218,8 +219,8 @@ export class AgendarRotasComponent implements OnInit {
 
     //TELA - MANUAL
     //###TRECHO RESPONSAVEL POR CAPTURAR WAYPOINTS E PARTIDA/DESTINO###    
-    if (this.rotasMapa.Destino && this.rotasMapa.Partida)
-      this.buscarRotasPorCidade(waypts)
+    // if (this.rotasMapa.Destino && this.rotasMapa.Partida)
+    //   this.buscarRotasPorCidade(waypts)
 
     //CSV - LATITUDE - LONGITUDE    
     if (!this.buscarPorCep && this.rotaManualVisualizar && this.rotasImportadas.length > 0 && this.rotasMapa.Destino && this.rotasMapa.Partida)
@@ -241,7 +242,6 @@ export class AgendarRotasComponent implements OnInit {
         this.pegarParadasResponse(response);
         //this.mostrarParadas(response, markerArray, stepDisplay, map);
         this.isLoading = false;
-
       })
       .catch((e: any) => {
         this.isLoading = false
@@ -276,13 +276,12 @@ export class AgendarRotasComponent implements OnInit {
     this.ListaGeocode = [];
     let stringEnvio = this.rotasMapa.Partida?.CEP + '|' + this.rotasMapa.Destino?.CEP + '|' + rotasListaCEP.join('|');
     let splitRotas = stringEnvio.split('|');
-    let unique = [...new Set(splitRotas)]
+    if (!this.consultarRotasRepetidas) {
+      splitRotas = [...new Set(splitRotas)]
+    }
+    var listaDividida = this.dividirLista(splitRotas, 25)
+
     debugger
-    var listaDividida = this.dividirLista(unique, 25)
-
-
-
-
     if (listaDividida.length > 0) {
       var rotasPromisse: Promise<boolean>[] = []
       await listaDividida[0].map((item: any) => {
@@ -293,12 +292,18 @@ export class AgendarRotasComponent implements OnInit {
               if (status == 'OK') {
                 let cep: string = results[0]?.address_components[0].long_name.replace(/[^0-9]/g, '')!;
                 let placeID: string = results[0]?.place_id;
-                let localizacao: Localizacao = new Localizacao();
 
-                if (typeof cep !== 'undefined' && cep && typeof placeID !== 'undefined' && placeID) {
+                if (cep && placeID) {
+                  let localizacao: Localizacao = new Localizacao();
                   localizacao.CEP = cep;
                   localizacao.PlaceId = placeID;
-                  if (!this.ListaGeocode.some((a) => a.PlaceId === placeID)) { this.ListaGeocode.push(localizacao); }
+                  debugger
+                  if (!this.consultarRotasRepetidas && this.ListaGeocode.some(a => a.PlaceId === placeID)) {
+                    resolve(true)
+                    return;
+                  }
+                  debugger
+                  this.ListaGeocode.push(localizacao);
                 }
               }
               resolve(true)
@@ -322,7 +327,6 @@ export class AgendarRotasComponent implements OnInit {
           if (placeIdPartida != '' && placeIdDestino != '') {
             let unique = [...new Set(this.ListaGeocode)]
             unique.forEach(element => {
-
               if (!wayptsGeocode.some((a) => a.location === element.PlaceId)) {
                 if (element.CEP != this.rotasMapa.Partida?.CEP && element.CEP != this.rotasMapa.Destino?.CEP) {
                   wayptsGeocode.push({
@@ -604,7 +608,7 @@ export class AgendarRotasComponent implements OnInit {
     // this.rotasParaExport = this.rotasParaExport.sort((a, b) => (a.OrdemOriginal! < b.OrdemOriginal! ? -1 : 1));
   }
 
-  exportarRota() {    
+  exportarRota() {
     let ws: XLSX.WorkSheet = XLSX.utils.json_to_sheet(this.rotasParaExport, { header: this.headerCSV, skipHeader: false });
     // let ws: XLSX.WorkSheet = XLSX.utils.json_to_sheet(this.rotasParaExport);
     let wb: XLSX.WorkBook = XLSX.utils.book_new();
@@ -862,9 +866,9 @@ export class AgendarRotasComponent implements OnInit {
   removerCampos(data: any) {
     data.forEach((linha: { [x: string]: any; }) => {
       for (const property in linha) {
-        if(!this.headerCSV.includes(property))
-        delete linha[property]
-      }     
+        if (!this.headerCSV.includes(property))
+          delete linha[property]
+      }
       return linha
     });
   }
