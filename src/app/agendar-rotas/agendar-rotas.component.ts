@@ -17,7 +17,6 @@ import { environment } from '../../environments/environment';
   templateUrl: './agendar-rotas.component.html',
   styleUrls: ['./agendar-rotas.component.css'],
   providers: [MessageService]
-
 })
 
 
@@ -258,10 +257,8 @@ export class AgendarRotasComponent implements OnInit {
         this.pegarParadasResponse(response);
         // this.mostrarParadas(response, markerArray, stepDisplay, map);
         this.isLoading = false;
-
       })
       .catch((e: any) => {
-        debugger
         this.isLoading = false
         if (!environment.production)
           this.messageService.add({ sticky: true, severity: 'warn', summary: 'Erro!', detail: e.message });
@@ -281,7 +278,7 @@ export class AgendarRotasComponent implements OnInit {
     }
     var listaDividida = this.dividirLista(splitRotas, 25)
 
-    debugger
+
     if (listaDividida.length > 0) {
       var rotasPromisse: Promise<boolean>[] = []
       await listaDividida[0].map((item: any) => {
@@ -297,12 +294,12 @@ export class AgendarRotasComponent implements OnInit {
                   let localizacao: Localizacao = new Localizacao();
                   localizacao.CEP = cep;
                   localizacao.PlaceId = placeID;
-                  debugger
+
                   if (!this.consultarRotasRepetidas && this.ListaGeocode.some(a => a.PlaceId === placeID)) {
                     resolve(true)
                     return;
                   }
-                  debugger
+
                   this.ListaGeocode.push(localizacao);
                 }
               }
@@ -419,15 +416,11 @@ export class AgendarRotasComponent implements OnInit {
 
   rotaManualVisualizarFunc() {
     if (this.rotaManualVisualizar) {
-      (document.getElementById('uploadFile2') as HTMLElement).style['display'] = 'inline-flex';
-      // (document.getElementById('uploadFile')  as HTMLElement).style['display'] = 'inline-flex';
+      (document.getElementById('uploadFile2') as HTMLElement).style['display'] = 'inline-flex';      
     }
     else {
-      (document.getElementById('uploadFile2') as HTMLElement).style['display'] = 'none';
-      // (document.getElementById('uploadFile')  as HTMLElement).style['display'] = 'none';
-
+      (document.getElementById('uploadFile2') as HTMLElement).style['display'] = 'none';      
     }
-
   }
   //#endregion
 
@@ -566,73 +559,28 @@ export class AgendarRotasComponent implements OnInit {
     for (let index = 0; index < this.rotasImportadas.length; index++) {
       const element = this.rotasImportadas[index];
       element.SequenciaOriginal = index
-      var contadorPD = 1;
       for (let index = 0; index < this.listaPontos.length; index++) {
-
         const ponto = this.listaPontos[index];
         let cepTratado = ponto.a.replace(/[^0-9]/g, '')!
-        if (cepTratado === element.CEP) {
-
-          if (element.PartidaDestino === 'SIM' && contadorPD < 2) {
-            contadorPD++
-            element.DataHoraConsulta = this.gerarDataHoraString();
-            element.SequenciaOtimizada = '1'
-            this.rotasParaExport.push(element);
-            break;
-          }
-          else {
-            element.DataHoraConsulta = this.gerarDataHoraString();
-            element.SequenciaOtimizada = ponto.d;
-            this.rotasParaExport.push(element);
-          }
-
-        }
-
-        if (index == this.listaPontos.length) {
+        if (cepTratado === element.CEP && !this.rotasParaExport.some((pt: any) => pt.SequenciaOriginal === element.SequenciaOriginal)) {
           element.DataHoraConsulta = this.gerarDataHoraString();
-          element.SequenciaOtimizada = (Number(ponto.d) + 1).toString();
-          this.rotasParaExport.push(this.rotasImportadas[0]);
-
+          element.SequenciaOtimizada = ponto.d;
+          this.rotasParaExport.push(element);
         }
       }
     }
-    debugger
-    // this.rotasImportadas.forEach(linha => {
-    //   linha.Ordem = this.listaPontos.find(function (item: any) {
-    //     let cepTratado = item.a.replace(/[^0-9]/g, '')!
-    //     return  cepTratado === linha.CEP;
-    //   })?.d;
-    //   linha.DataHoraConsulta = this.gerarDataHoraString() ;
-    // });
-
-    // this.rotasParaExport = this.rotasParaExport.sort((a, b) => (a.OrdemOriginal! < b.OrdemOriginal! ? -1 : 1));
+    let destinoPonto = { ...this.rotasParaExport[0] }
+    destinoPonto.SequenciaOtimizada = (this.rotasParaExport.length + 1).toString()
+    this.rotasParaExport.unshift(destinoPonto)
   }
 
   exportarRota() {
-    let ws: XLSX.WorkSheet = XLSX.utils.json_to_sheet(this.rotasParaExport, { header: this.headerCSV, skipHeader: false });
-    // let ws: XLSX.WorkSheet = XLSX.utils.json_to_sheet(this.rotasParaExport);
+    let ws: XLSX.WorkSheet = XLSX.utils.json_to_sheet(this.rotasParaExport, { header: this.headerCSV, skipHeader: false });    
     let wb: XLSX.WorkBook = XLSX.utils.book_new();
     XLSX.utils.book_append_sheet(wb, ws, 'Rotas');
     const nomeArquivo = `LuksMove_Rotas_${this.gerarDataHoraString()}.csv`;
     XLSX.writeFile(wb, nomeArquivo, { bookType: 'csv' });
   }
-
-  // exportarRotasFileSaver() {
-  //   const selectedFields = ['SequenciaOriginal', 'NomeFuncionario', 'PatridaDestino', 'Latitude', 'Longitude', 'Cidade', 'Estado', 'CEP', 'SequenciaOtimizada', 'DataHoraConsulta'];        
-  //   let csv = this.rotasParaExport.map(row => selectedFields.map(fieldName => {
-  //     if (fieldName === 'Nome do Funcionário') {
-  //       return JSON.stringify(row['NomeFuncionario'], (key, value) => value === null ? '' : value)
-  //     }
-  //     return JSON.stringify(row[fieldName], (key, value) => value === null ? '' : value)
-  //   }).join(','));
-  //   csv.unshift(selectedFields.join(','));
-  //   csv = csv.join('\r\n');
-
-  //   const blob = new Blob([csv], {type: 'text/csv'});
-  //   saveAs(blob, 'data.csv');
-  // }
-
-
 
   gerarDataHoraString() {
     let dataAtual = new Date()
@@ -849,7 +797,7 @@ export class AgendarRotasComponent implements OnInit {
             }).data;
             if (this.parsedData.length > 0)
               this.removerCampos(this.parsedData)
-            debugger
+
             this.rotasImportadas = [...this.parsedData]
             if (this.rotasImportadas.length > 0) {
               //CHAMAR A FUNÇÃO DE MOSTRAR ROTAS NA TELA

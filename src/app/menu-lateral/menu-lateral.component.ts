@@ -2,6 +2,7 @@ import { Component, OnInit, Input } from '@angular/core';
 import { MenuLateralService } from './menu-lateral.service';
 import { MenuItem } from 'primeng/api';
 import { Router } from '@angular/router';
+import {APP_VERSION} from './../app.module';
 @Component({
   selector: 'app-menu-lateral',
   templateUrl: './menu-lateral.component.html',
@@ -19,11 +20,12 @@ export class MenuLateralComponent implements OnInit {
 
   temaLuksColor: boolean = false;
 
+  appVersion?: string;
+
   constructor(private menuLateralService: MenuLateralService,private router: Router) { }
 
   ngOnInit(): void {
-
-
+    this.appVersion = APP_VERSION;
     (document.getElementById('sidebar') as HTMLElement).style.setProperty('background-image', 'url(https://www.autoluks.com.br/uploads/1/1/5/6/115643989/background-images/1817667807.jpg)')
     this.temaLuksColor = false;
     // (document.getElementById("mudarTema1") as HTMLElement).addEventListener(

@@ -3,9 +3,8 @@
 
 <body id="principal">
     <div class="wrapper ">
-
         <nav id="sidebar" [className]="toggle ? 'active' : 'inactive'" class="grid ">
-            <div class="flex flex-column" style="height: 99%;">
+            <div class="flex flex-column" style="height: 99%;">               
                 <div style="margin-top:10%" class="sidebar-header flex-grow-0">
                     <h1 id="header" class="text-6xl"><b>Luks</b>Move</h1>
                 </div>
@@ -64,14 +63,15 @@
                             style="padding-left:25%; margin-top: 17%; height: 70px;">
                     </div>
                 </div>
+                <span style="font-size: 8px;">{{appVersion}}</span>
             </div>
+          
         </nav>
 
 
         <div id="content">
             <nav class="navbar navbar-expand-lg navbar-light bg-light">
-                <div class="container-fluid">
-
+                <div class="container-fluid">                  
                     <button type="button" [className]="toggle ? 'active' : 'inactive'" id="sidebarCollapse"
                         (click)="mudarActive()" class="navbar-btn">
                         <span></span>
@@ -83,10 +83,7 @@
                         aria-expanded="false" aria-label="Toggle navigation">
                         <i class="fas fa-align-justify"></i>
                     </button>
-
-
                     <div class="toggle-container">
-
                     </div>
                     <div class="collapse navbar-collapse" id="navbarSupportedContent">
                         <div class="flex-grow-1 flex-shrink-1 flex"></div>
@@ -94,7 +91,6 @@
                             <h1 id="h1Titulo" class=" text-6xl nav-item active"></h1>
                         </div>
                         <div class="flex-grow-1 flex-shrink-1 flex"></div>
-
                     </div>
                     <!-- <button [hidden]="temaLuksColor" id="mudarTema1" class="theme-btn" style="background-color: green;"
                         title="LuksColor">
@@ -104,6 +100,7 @@
                         title="AutoLuks">
                         <img style="height: 10px;" src="assets/images/landscape-white.png" alt="AutoLuks">
                     </button> -->
+                   
                 </div>
             </nav>
 

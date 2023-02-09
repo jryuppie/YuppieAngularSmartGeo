@@ -55,7 +55,8 @@ import {InputSwitchModule} from 'primeng/inputswitch';
 import { NgParticlesModule } from "ng-particles";
 import { NgbModule } from '@ng-bootstrap/ng-bootstrap';
 //#endregion
-
+//Melhorar a logica de versionamento posteriormente
+export const APP_VERSION = '0.1.5';
 @NgModule({
   declarations: [
     AppComponent,
@@ -80,4 +81,5 @@ import { NgbModule } from '@ng-bootstrap/ng-bootstrap';
   providers: [MenuLateralService,ConfiguracoesService],
   bootstrap: [AppComponent]
 })
-export class AppModule { }
+export class AppModule { 
+}
