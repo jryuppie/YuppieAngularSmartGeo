@@ -80,8 +80,7 @@ export class GoogleService {
   }
 
   loadGoogle(): Promise<any> {
-    return new Promise((resolve, reject) => {
-      debugger
+    return new Promise((resolve, reject) => {  
       if (typeof this.loader === 'undefined') {
         this.loader = new Loader({
           apiKey: this.apiKey,
@@ -89,8 +88,7 @@ export class GoogleService {
           region: 'BR',
           language: 'pt-BR',
         });
-      } else {
-        debugger
+      } else {       
         resolve(true);
       }
     });
@@ -99,25 +97,25 @@ export class GoogleService {
   carregarGoogleMaps() {
     //MANIPUALÇAO DO MAPA APÓS INICIALIZAÇÃO DAS APIS -- AlGUMAS FUNÇÕES DE MONITORAMENTO DE TELA DEVEM SER COLCOCADAS AQUI
     this.loader.load().then(() => {
-      this.geocoder = new google.maps.Geocoder();
-      this.directionsService = new google.maps.DirectionsService();
-      this.directionsRenderer = new google.maps.DirectionsRenderer({
-        suppressMarkers: true
-      });
-      this.stepDisplay = new google.maps.InfoWindow();
-      // this.markerArray = [new google.maps.Marker];
-
-      // mappId 57f03a0f789e26df
       this.googleMap = new google.maps.Map(document.getElementById('mapAgendar')!, {
         mapId: '178c0b225e053393',
         center: { lat: -23.734836221085317, lng: -46.56740373222433 },
         zoom: 15,
         streetViewControl: false
       })
-      this.directionsRenderer.setMap(this.googleMap);
-      this.directionsRenderer.setPanel(
-        document.getElementById("sidebarPanel") as HTMLElement
-      );
+
+      this.geocoder = new google.maps.Geocoder();
+      this.directionsService = new google.maps.DirectionsService();
+      this.directionsRenderer = new google.maps.DirectionsRenderer({
+        suppressMarkers: true,
+        markerOptions: {
+          visible: false
+        },
+        map: this.googleMap,
+        panel:  document.getElementById("sidebarPanel") as HTMLElement,
+      });
+      
+      this.stepDisplay = new google.maps.InfoWindow(); 
 
       // const onChangeHandler = () => {
       //   this.calcularExibirRotas();
@@ -143,8 +141,8 @@ export class GoogleService {
     const requestDS = geocode ? criarRequestLatLong(waypts, this.rotasMapa.Partida?.Cidade!, this.rotasMapa.Destino?.Cidade!) : criarRequestManual(waypts, this.rotasMapa.Partida?.Cidade!, this.rotasMapa.Destino?.Cidade!);
     this.directionsService.route(
       requestDS)
-      .then((response: any) => {
-        this.directionsRenderer.setOptions({ polylineOptions: { strokeColor: this.corRota } });
+      .then((response: any) => {       
+        this.directionsRenderer.setOptions({ polylineOptions: { strokeColor: this.corRota } });        
         this.directionsRenderer.setDirections(response);
         this.deletarMarcadores();
         this.listaPontos = !this.rotaAutomatica ? pegarRotasManualModulo(response) : pegarRotasAutomaticasModulo(response, this.googleMap)
@@ -238,8 +236,7 @@ export class GoogleService {
           }) 
         })
     }
-    else { this.messageService.add({ sticky: true, severity: 'warn', summary: 'Erro!', detail: 'Erro na leitura do arquivo' }); }
-    debugger
+    else { this.messageService.add({ sticky: true, severity: 'warn', summary: 'Erro!', detail: 'Erro na leitura do arquivo' }); }  
   }
 
 
@@ -282,8 +279,7 @@ export class GoogleService {
           const objRetorno = {
             listaPontos: this.listaPontos,
             rotasParaExport: this.rotasParaExport
-          }
-          debugger
+          }         
           resolve(objRetorno);
         });
     });

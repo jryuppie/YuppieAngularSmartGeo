@@ -49,7 +49,6 @@ export class OauthService {
     // Send the POST request to the OAuth 2.0 server
     await this.http.get(url, { headers })
       .subscribe(data => {
-        debugger
         return data
       });
 

@@ -17,8 +17,6 @@ export class ConfiguracoesComponent implements OnInit {
     this.LigDeslGoogleAPIRotas = true;
 
     (document.getElementById('h1Titulo') as HTMLElement).innerHTML = 'Google API ';
-
-    debugger
     this.billingService.getBillingInfo()
   }
   trocarStatusGoogleAPi(event: Event) {

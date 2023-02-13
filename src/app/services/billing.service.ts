@@ -22,7 +22,6 @@ export class BillingService {
     });
     this.http.get<any>(`${this.apiBaseUrl}/projects/${projectId}/billingInfo`, { headers })
     .subscribe(response => {     
-      debugger
     console.log(response)       
     });
   }

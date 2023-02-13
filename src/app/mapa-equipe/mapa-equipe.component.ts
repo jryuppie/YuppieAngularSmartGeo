@@ -71,7 +71,6 @@ export class MapaEquipeComponent implements OnInit {
       region: 'BR',
       language: 'pt-BR',
     });
-debugger;
 
     loader.load().then(() => {
       var directionsService = new google.maps.DirectionsService();
@@ -106,7 +105,6 @@ debugger;
     this.mostrarModalFuncionario = true;
   }
   mostrarFuncionario(id: number) {
-    debugger;
     this.selectedFuncionario = this.locationsComplex.find(f => f[3] == id)!;
     this.mostrarModalFuncionario = true;
   }

@@ -174,8 +174,7 @@ export class LoginComponent implements OnInit {
 
   }
 
-  btnEntrar() {
-    debugger;
+  btnEntrar() {  
     this.BuscarLogin()
   }
 
@@ -199,7 +198,6 @@ export class LoginComponent implements OnInit {
         let idUsuario = data.id != undefined? data.id : 0;
 
         if (data?.habilitado === true) {
-          debugger;
           localStorage.setItem('ativo', 'true');
           localStorage.setItem('usuario', data.usuario!);
           localStorage.setItem('funcao', data.funcao!);
