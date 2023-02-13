@@ -1,5 +1,5 @@
 import { Component } from '@angular/core';
-import {NgbOffcanvas, OffcanvasDismissReasons} from '@ng-bootstrap/ng-bootstrap';
+import {NgbOffcanvas} from '@ng-bootstrap/ng-bootstrap';
 @Component({
   selector: 'app-root',
   templateUrl: './app.component.html',
@@ -7,15 +7,13 @@ import {NgbOffcanvas, OffcanvasDismissReasons} from '@ng-bootstrap/ng-bootstrap'
 })
 
 export class AppComponent  {
-  constructor(private offcanvasService: NgbOffcanvas) { }
+  constructor() { }
   closeResult = '';
-  title = 'YuppieAngularSmartgeo';
+  title = 'LuksMove';
   toggle: boolean = false;
   
 
   expandirSidebar(event: Event){
-    console.log(event);
-    
     this.toggle = true;
   }
 

@@ -121,3 +121,40 @@ export function criarRequestManual(waypts: google.maps.DirectionsWaypoint[], cid
       region: 'BR',
     };
   }
+
+
+  export function  mostrarParadas(
+    directionResult: google.maps.DirectionsResult,
+    markerArray: google.maps.Marker[],
+    stepDisplay: google.maps.InfoWindow,
+    map: google.maps.Map
+  ) {
+    const rotaAtual = directionResult!.routes[0]!.legs[0]!;
+    for (let i = 0; i < rotaAtual.steps.length; i++) {
+      const marker = (new google.maps.Marker());
+
+      marker.setMap(map);
+      marker.setPosition(rotaAtual.steps[i].start_location);
+      informacoesMostrarParadas(
+        stepDisplay,
+        marker,
+        rotaAtual.steps[i].instructions,
+        map
+      );
+
+    }
+  }
+
+  export function informacoesMostrarParadas(
+    stepDisplay: google.maps.InfoWindow,
+    marker: google.maps.Marker,
+    text: string,
+    map: google.maps.Map
+  ) {
+    google.maps.event.addListener(marker, "click", () => {
+      // Open an info window when the marker is clicked on, containing the text
+      // of the step.
+      stepDisplay.setContent(text);
+      stepDisplay.open(map, marker);
+    });
+  }

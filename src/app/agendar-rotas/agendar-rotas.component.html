@@ -5,7 +5,7 @@
                 <div class=" mb-3   " id="grupoBotoes">
                     <div class="flex align-items-center justify-content-center">
                         <input id="uploadFile" style="display: none" type="file" [(ngModel)]="valorFileText"
-                            (change)="onFileSelected($event)" #hiddenfileinput>
+                            (change)="arquivoSelecionado($event)" #hiddenfileinput>
                         <button pButton id="uploadFile2" (click)="hiddenfileinput.click()" label="Importar Rotas"
                             class=" min-w-full text-center mt-3 shadow-4" [loading]="isUpload"><i
                                 class="material-icons left"> map</i></button>
