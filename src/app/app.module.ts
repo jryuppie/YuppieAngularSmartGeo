@@ -58,7 +58,7 @@ import { NgbModule } from '@ng-bootstrap/ng-bootstrap';
 //#endregion
 
 //Melhorar a logica de versionamento posteriormente
-export const APP_VERSION = '0.1.6';
+export const APP_VERSION = '0.1.7';
 @NgModule({
   declarations: [
     AppComponent,
