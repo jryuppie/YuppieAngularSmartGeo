@@ -86,8 +86,20 @@ export function pegarRotasAutomaticasModulo(response: any, map: any) {
         let title2 = ''
         if(element.visible === false){
           let titulo = markerLista.find(x=> x.title == element.title).label.text;
-          if(!titulo.includes('+'))
-            markerLista.find(x=> x.title == element.title).label.text =  markerLista.find(x=> x.title == element.title).label.text + '+'
+          // if(!titulo.includes('+'))
+          //   markerLista.find(x=> x.title == element.title).label.text =  markerLista.find(x=> x.title == element.title).label.text + '+'
+
+            if(!titulo.includes('+')){
+              markerLista.find(x=> x.title == element.title).label.text =  markerLista.find(x=> x.title == element.title).label.text + '+'
+              let marker = markerLista.find(x=> x.title == element.title);            
+              marker.setIcon({
+                url: '../../../assets/images/route.png'          ,     
+                size: new google.maps.Size(250, 250),
+                origin: new google.maps.Point(0,0),
+                anchor: new google.maps.Point(16, 16)
+              });
+              marker.setVisible(true);    
+            }
           debugger
         }        
       });
@@ -137,7 +149,7 @@ export function criarRequestManual(waypts: google.maps.DirectionsWaypoint[], cid
     waypoints: waypts,
     travelMode: google.maps.TravelMode.DRIVING,
     optimizeWaypoints: true,
-    region: 'BR',
+    region: 'BR'
   };
   return request;
 }

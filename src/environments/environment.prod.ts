@@ -1,6 +1,6 @@
 export const environment = {
   production: true,
-  apikey:'AIzaSyCbFrQ-caNKZesfJdUxvuhQatVwJhnSp6c',
+  apikey:'AIzaSyAnWKBmhK7cWobbiTXaG8uKigReRdRzBVE',
   apikeyDev:'AIzaSyDYR45TvExNG498aRNe_C2MS4R0p4EKS4U',
   client_id: '',
   project_id: 'smart-geo-maps',

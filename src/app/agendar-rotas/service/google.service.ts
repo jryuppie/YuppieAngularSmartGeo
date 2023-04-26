@@ -37,6 +37,8 @@ export class GoogleService {
     libraries: ['places', 'geometry'],
     region: 'BR',
     language: 'pt-BR',
+    version: 'weekly',
+
   });
   //#endregion
 
@@ -246,9 +248,10 @@ export class GoogleService {
         {
           origin: { placeId: partida },
           destination: { placeId: destino },
-          waypoints: waypoints, travelMode: google.maps.TravelMode.DRIVING, optimizeWaypoints: true, region: 'BR'
+          waypoints: waypoints, travelMode: google.maps.TravelMode.DRIVING, optimizeWaypoints: true, region: 'BR', provideRouteAlternatives: true
         })
         .then((response: any) => {
+          debugger
           this.deletarMarcadores();
           this.listaPontos = !this.rotaAutomatica ? pegarRotasManualModulo(response) : pegarRotasAutomaticasModulo(response, this.googleMap)
           this.rotasParaExport = criarVariavelExportacao(this.rotasImportadas, this.listaPontos);
