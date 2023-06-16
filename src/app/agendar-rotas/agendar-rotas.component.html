@@ -21,30 +21,60 @@
                         </div>
                     </div>
 
+                    <div class="flex align-items-center justify-content-center min-w-min">
+                        <span class="p-float-label mt-5 min-w-min ml-2">
+                            <p-inputNumber class="p-inputnumber-button" [min]="0" [max]="15" inputId="preco" [(ngModel)]="preco" mode="currency" currency="BRL" [showButtons]="true"> </p-inputNumber>
+                            <label class="font-bold  mb-2" for="consumo">Preço</label>   
+                        </span>
+
+                        <span class="p-float-label mt-5 sm:ml-0 md:ml-0 lg:ml-0 xl:ml-1 min-w-min">
+                            <p-inputNumber  class="p-inputnumber-button" [min]="0" [max]="50" inputId="consumo"  [(ngModel)]="consumo" [showButtons]="true" mode="decimal" locale="en-US" [minFractionDigits]="2"> </p-inputNumber>
+                            <label class="font-bold  mb-2" for="consumo">Consumo(km/l)</label>   
+                        </span>                        
+                    </div>
                     <button pButton  [hidden]="!importacaoAtiva"
                     type="button" label="Exportar rota" (click)="exportarRota()"
                     icon="pi pi-file-excel"
                     class="p-button-help min-w-full text-center mt-3 shadow-4 "></button>
-
 
                     <button pButton [hidden]="!importacaoAtiva" (click)="mostrarSidePanel = !mostrarSidePanel"
                         type="button" label="{{ mostrarSidePanel ?  'Linha do tempo': 'Detalhes da rota'  }}"
                         icon="{{ mostrarSidePanel ?  'pi pi-directions': 'pi pi-sort-numeric-down'  }}"
                         class="p-button-warning min-w-full text-center mt-3 shadow-4"></button>
                                     </div>
-            
-                    <div class="row sidebarPanelMarkers" [hidden]="!importacaoAtiva">
-                        <div id="sidebarPanel" [hidden]="!mostrarSidePanel" class=" mt-4 ml-5"></div>
-                        <div id="sidebarMarkers" [hidden]="mostrarSidePanel" class=" mt-4 ml-5 min-w-full ">
-
-                            <div class="card" [ngStyle]="{backgroundColor:'rgb(239,243,248)'} ">
+             
+                    <div class="row sidebarPanelMarkers" [hidden]="!importacaoAtiva">                        
+                        <div id="sidebarPanel" [hidden]="!mostrarSidePanel" class=" mt-4 ml-5"></div>                       
+                        <div id="sidebarMarkers" [hidden]="mostrarSidePanel" class=" mt-4 ml-5 min-w-full ">                          
+                            <div class="card" [ngStyle]="{backgroundColor:'rgb(239,243,248)'} ">                                
+                                <div class="bg-gray-900 text-gray-100 p-3 flex justify-content-between lg:justify-content-center align-items-center flex-wrap mb-1">
+                                    <div class="mr-5 flex align-items-center mt-3">
+                                        <i class="pi pi-wallet mr-2"></i>                                        
+                                        <span *ngIf="!showSpinnerCustoRota; else showSpinnerCustoRotaTemplate">Custo Pedágios: {{custoRota.total_tolls}} </span>                                        
+                                    </div>
+                                    <div class="mr-5 flex align-items-center mt-3">
+                                        <i class="pi pi-car mr-2"></i>
+                                        <span  *ngIf="!showSpinnerCustoRota; else showSpinnerCustoRotaTemplate">Distância Total: {{custoRota.distance}}</span>
+                                    </div>  
+                                    <div class="mr-5 flex align-items-center mt-3">
+                                        <i class="pi pi-caret-up mr-2"></i>
+                                        <span  *ngIf="!showSpinnerCustoRota; else showSpinnerCustoRotaTemplate">Pedágios: {{custoRota.tolls}}</span>
+                                    </div>    
+                                    <div class="mr-5 flex align-items-center mt-3">
+                                        <i class="pi pi-bolt mr-2"></i>
+                                        <span  *ngIf="!showSpinnerCustoRota; else showSpinnerCustoRotaTemplate">Custo Combustível: {{custoRota.total_consumption}}</span>
+                                    </div>  
+                                    
+                                    <ng-template #showSpinnerCustoRotaTemplate>
+                                        <p-progressSpinner   class="spinner-color" styleClass="w-1rem h-1rem" strokeWidth="6"  animationDuration=".8s"></p-progressSpinner>                              
+                                      </ng-template>
+                                </div>
                                 <p-timeline [value]="listaPontos" align="alternate">
                                     <ng-template pTemplate="content" let-pontos>
-                                        <small class="p-text-secondary">{{pontos.b}} - {{pontos.c}}</small>
+                                        <small  class="p-text-secondary">{{pontos.b}} - {{pontos.c}}</small>
                                     </ng-template>
                                     <ng-template pTemplate="opposite" let-pontos>
-                                        <b style="color:red">[{{pontos.d}}]</b> - <b
-                                            (click)="AbrirModalCEP(pontos.a)">{{pontos.a}}</b>
+                                        <b style="color:red">[{{pontos.d}}]</b> - <a style="color:black" class="link-cep" href="https://www.google.com.br/maps/search/{{pontos.a}}" target="_blank">{{pontos.a}}</a>                                      
                                     </ng-template>
                                 </p-timeline>
                             </div>

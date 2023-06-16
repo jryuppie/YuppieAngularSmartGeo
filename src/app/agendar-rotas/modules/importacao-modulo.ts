@@ -38,7 +38,7 @@ export async function importarArquivoSelecionado(event: Event, parsedData: any, 
       fileReader.readAsText(file);
      return await new Promise(resolve => {
         fileReader.onloadend = () => {
-          resolve(objetoRetorno)          
+          resolve(objetoRetorno)               
         }
       });     
     }

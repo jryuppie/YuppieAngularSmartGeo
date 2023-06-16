@@ -21,8 +21,7 @@ export function criarVariavelExportacao(rotasImportadas: any, listaPontos: any) 
     }
     let destinoPonto = { ...rotasParaExport[0] }
     destinoPonto.SequenciaOtimizada = (rotasParaExport.length + 1).toString()
-    rotasParaExport.unshift(destinoPonto)
-
+    rotasParaExport.unshift(destinoPonto)  
     return rotasParaExport;
 }
 

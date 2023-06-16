@@ -13,24 +13,27 @@ export class LoginService {
   constructor(private http: HttpClient) { 
     // this.actionRoute = environment.URL_API
     
-     this.actionRoute = "https://localhost:44325/api/Login/"
+     this.actionRoute = "https://localhost:44318/api/Login?"
   }
 
   VerificarLogin(usuario: string, senha: string): Observable<any> {
     return this.get(usuario,senha);
   }
 
+  // VerificarLogin(usuario: string, senha: string) {
+  //   return this.get(usuario,senha);
+  // }
 
   get(usuario: string, senha: string) {
     
-    let url = this.actionRoute + 'usuario='+usuario+ '&senha='+senha+''
+    let url = this.actionRoute + 'documento='+usuario+ '&senha='+senha+''
     return this.http
-      .get<Usuario>(url, {})
+      .get(url)
       .pipe(catchError(this.tratarErro));
   }
 
   async requisicaoLogin(usuario: string, senha: string) {
-    let rotas = ['https://localhost:44325/api/Login?usuario='+ usuario + "&senha=" + senha + ""]
+    let rotas = ['https://localhost:44325/api/Login?documento='+ usuario + "&senha=" + senha + ""]
 
   
     await Promise.all(rotas.map(function(url) {

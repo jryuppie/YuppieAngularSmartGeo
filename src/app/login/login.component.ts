@@ -7,6 +7,8 @@ import { LoginService } from './login.service';
 import { MessageService } from 'primeng/api';
 import { Usuario } from '../models/usuario';
 
+import {NgForm} from '@angular/forms';
+
 @Component({
   selector: 'app-login',
   templateUrl: './login.component.html',
@@ -163,34 +165,29 @@ export class LoginComponent implements OnInit {
 
 
 
-    const onChangeHandler = () => {
-      this.btnEntrar();
-    };
+    // const onChangeHandler = () => {
+    //   this.btnEntrar();
+    // };
 
-    (document.getElementById("btnEntrar") as HTMLElement).addEventListener(
-      "click",
-      onChangeHandler
-    );
+    // (document.getElementById("btnEntrar") as HTMLElement).addEventListener(
+    //   "click",
+    //   onChangeHandler
+    // );
 
   }
 
-  btnEntrar() {  
-    this.BuscarLogin()
-  }
-
-  BuscarLogin() {
-    let user: Usuario = {
-      funcao: 'Desenvolvedor', id: 1, nome: 'Jonathan', usuario : 'jonedur'
-    }
+  onSubmit(f: NgForm) {  
     localStorage.setItem('ativo', 'true');
-    localStorage.setItem('usuario', user.usuario!);
-    localStorage.setItem('funcao', user.funcao!);
-    localStorage.setItem('idUsuario', user.toString());
     this.router.navigate(['/app/agendarPlanejar']);
-    return true;
+    // this.BuscarLogin(f.value.documento, f.value.password)
+  }
 
-    return this.loginService.VerificarLogin(this.usuarioLogin, this.senhaLogin).subscribe((data: Usuario) => {
-      data = user;
+  async BuscarLogin(documento:string,senha:string) {
+  this.usuarioLogin = documento;
+  this.senhaLogin = senha;
+
+     return this.loginService.VerificarLogin(this.usuarioLogin, this.senhaLogin).subscribe((data: Usuario) => {
+      
       if (data == null) {
         this.messageService.add({ severity: 'error', summary: 'Erro', detail: 'Usuario ou senha incorretos, tente novamente!' });
 
@@ -205,6 +202,8 @@ export class LoginComponent implements OnInit {
           this.router.navigate(['/inicio']);
         }
       }
+
+
     }, erro => { this.messageService.add({ severity: 'error', summary: 'Erro', detail: 'Erro ao realizar o login, tente novamente!' }); });
   }
 
@@ -216,5 +215,7 @@ export class LoginComponent implements OnInit {
   // @Input() error: string | null;
 
   @Output() submitEM = new EventEmitter();
+
+
 }
 

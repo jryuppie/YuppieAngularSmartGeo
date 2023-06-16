@@ -9,6 +9,9 @@ import { pegarRotasManualModulo, pegarRotasAutomaticasModulo, criarRequestManual
 import { criarVariavelExportacao, exportarRotaModule } from '../modules/exportacao-modulo'
 import { MessageService } from 'primeng/api';
 import { Subject } from 'rxjs';
+import { responseQualp , ConsumoMedio} from '../../models/responseQualp';
+
+
 
 declare var google: any;
 @Injectable({
@@ -23,7 +26,11 @@ export class GoogleService {
   public rotasParaExport$ = this.rotasParaExportSubject.asObservable();
   private importacaoAtivaSubject = new Subject<any>();
   public importacaoAtiva$ = this.importacaoAtivaSubject.asObservable();
-  
+  private custoRotaSubject = new Subject<any>();
+  public custoRota$ = this.custoRotaSubject.asObservable();
+  private consumoMedioSubject = new Subject<any>();
+  public consumoMedio$ = this.consumoMedioSubject.asObservable();
+
 
   //#region <VARIAVEIS PARA INICIALIZAÇÃO GOOGLE API'S>  
   geocoder: any;
@@ -55,11 +62,11 @@ export class GoogleService {
   labelsNumeric = [];
   rotasParaExport: Array<csvRotas> = new Array<csvRotas>();
   consultarRotasRepetidas: boolean = true;
+  CEPImportadosSubject: string[] = [];
   //#endregion
 
 
   //#region <VARIAVEIS DE EXIBIÇÃO/TELA>  
-
   isUpload: boolean = false;
   listaPontos: any;
   rotaAutomatica: boolean = true;
@@ -79,6 +86,10 @@ export class GoogleService {
   }
   public atualizaImportacaoAtiva(ativo: boolean){
     this.importacaoAtivaSubject.next(ativo)
+  }
+
+  public atualizarCustoRota(custoRota: any) {
+    this.custoRotaSubject.next(custoRota);
   }
 
   loadGoogle(): Promise<any> {
@@ -159,7 +170,7 @@ export class GoogleService {
       });
   }
 
-  public async buscarRotasPorCepService(rotasMapa: RotasMaps, rotasImportadas: Array<csvRotas>) {
+  public async buscarRotasPorCepService(rotasMapa: RotasMaps, rotasImportadas: Array<csvRotas>, consumoMedio: ConsumoMedio) {
     this.rotasMapa = rotasMapa;
     this.rotasImportadas = rotasImportadas;
     let wayptsGeocode: google.maps.DirectionsWaypoint[] = [];
@@ -173,8 +184,7 @@ export class GoogleService {
       splitRotas = [...new Set(splitRotas)]
     }
     var listaDividida = dividirLista(splitRotas, 25)
-
-
+   
     if (listaDividida.length > 0) {
       var rotasPromisse: Promise<boolean>[] = []
       await listaDividida[0].map((item: any) => {
@@ -234,7 +244,7 @@ export class GoogleService {
             if (listaDividida.length > 1) {
               this.messageService.add({ sticky: true, severity: 'info', summary: 'Limite de Rotas!', detail: 'Limite de 25 rotas atingido, as demais rotas não seram exibidas!' });
             }
-            return this.consultarDirectionsService(placeIdPartida, placeIdDestino, wayptsGeocode);
+            return this.consultarDirectionsService(placeIdPartida, placeIdDestino, wayptsGeocode,consumoMedio);
           }) 
         })
     }
@@ -242,7 +252,7 @@ export class GoogleService {
   }
 
 
-  private async consultarDirectionsService(partida: string, destino: string, waypoints: google.maps.DirectionsWaypoint[]) {
+  private async consultarDirectionsService(partida: string, destino: string, waypoints: google.maps.DirectionsWaypoint[], consumoMedio: ConsumoMedio) {
     return new Promise((resolve, reject) => {
       this.directionsService.route(
         {
@@ -252,9 +262,10 @@ export class GoogleService {
         })
         .then((response: any) => {
           debugger
-          this.deletarMarcadores();
-          this.listaPontos = !this.rotaAutomatica ? pegarRotasManualModulo(response) : pegarRotasAutomaticasModulo(response, this.googleMap)
+          this.deletarMarcadores();         
+          this.listaPontos = !this.rotaAutomatica ? pegarRotasManualModulo(response) : pegarRotasAutomaticasModulo(response, this.googleMap)         
           this.rotasParaExport = criarVariavelExportacao(this.rotasImportadas, this.listaPontos);
+          this.CEPImportadosSubject = this.rotasParaExport.map(objeto => objeto.CEP?? '');          
           this.directionsRenderer.setOptions({
             polylineOptions: {
               geodesic: true,
@@ -274,6 +285,7 @@ export class GoogleService {
           this.atualizarListaPontos(this.listaPontos)
           this.atualizarRotasMapa(this.rotasParaExport)
           this.atualizaImportacaoAtiva(true)
+          this.realizarConsultaApiQualp(this.CEPImportadosSubject, consumoMedio);
           resolve(objRetorno);
         })
         .catch((e: any) => {          
@@ -298,6 +310,26 @@ export class GoogleService {
   }
   //#endregion
 
-
+  async realizarConsultaApiQualp(waypoints: string[], consumoMedio: ConsumoMedio) {
+    debugger;
+    const username = 'jonathan.rossato@yuppie.in';
+    const password = 'Qualp@77'; 
+    let precoQualp:number = consumoMedio.preco ?? 0;
+    let consumoQualp:number = consumoMedio.consumo?? 0;    
+    
+    const url = `https://localhost:44318/api/Qualp?username=${encodeURIComponent(username)}&password=${encodeURIComponent(password)}&waypoints=${waypoints.join('&waypoints=')}&preco=${encodeURIComponent(precoQualp)}&consumo=${encodeURIComponent(consumoQualp)}`;
+    
+    this.http.get<responseQualp>(url).subscribe(
+      (response) => {
+        console.log(response)
+        this.atualizarCustoRota(response);
+        return response;
+      },
+      (error) => {
+        return error;
+      }
+    );
+    
+  }
 }
 

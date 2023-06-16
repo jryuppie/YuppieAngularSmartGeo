@@ -232,6 +232,39 @@ div#h1Marker{
 }
 
 
+.link-cep {
+  color: #000000;
+  text-decoration: none; 
+  font-weight: bold; 
+}
 
 
+:host ::ng-deep .p-inputnumber-button-up , 
+:host ::ng-deep .p-inputnumber-button-down{
+    border-radius: 15%;
+    border: none;
+    margin: 0 10px;
+    background-color: rgb(0, 0, 0);
+    width: 30px;
+}
 
+:host ::ng-deep .spinner-color .p-progress-spinner-circle {
+  animation: spinner-color-css 8s ease-in-out infinite;
+}
+
+@keyframes spinner-color-css {
+100%,
+0% {
+      stroke: #a82e2e;
+}
+40% {
+      stroke: #a82e2e;
+}
+66% {
+      stroke: #a82e2e;
+}
+80%,
+90% {
+      stroke: #a82e2e;
+}
+}

@@ -50,6 +50,9 @@ import { ToolbarModule } from 'primeng/toolbar';
 import { RippleModule } from 'primeng/ripple';
 import { PanelMenuModule } from 'primeng/panelmenu';
 import { InputSwitchModule } from 'primeng/inputswitch';
+import { InputNumberModule } from 'primeng/inputnumber';
+import { CheckboxModule } from 'primeng/checkbox';
+import { ProgressSpinnerModule } from 'primeng/progressspinner';
 //#endregion
 
 //#region <Outros Componentes> 
@@ -78,7 +81,7 @@ export const APP_VERSION = '0.1.7';
     FormsModule, ReactiveFormsModule,
     DialogModule, CardModule, ButtonModule, ListboxModule, PanelModule, MenuModule, InputTextModule, HttpClientModule, TimelineModule
     , ChipModule, MatButtonToggleModule, MessageModule, MessagesModule, ToastModule, NgParticlesModule, ChartModule, ConfirmDialogModule, TableModule, RippleModule, ToolbarModule
-    , PanelMenuModule, InputSwitchModule
+    , PanelMenuModule, InputSwitchModule,InputNumberModule,CheckboxModule,ProgressSpinnerModule
   ],
   providers: [MenuLateralService, ConfiguracoesService, GoogleService],
   bootstrap: [AppComponent]
