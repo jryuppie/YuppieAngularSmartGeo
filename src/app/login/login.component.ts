@@ -5,10 +5,9 @@ import { MoveDirection, ClickMode, HoverMode, OutMode, Engine, Container } from 
 import { loadFull } from "tsparticles";
 import { LoginService } from './login.service';
 import { MessageService } from 'primeng/api';
-import { Usuario } from '../models/usuario';
+import { UsuarioDTO } from '../models/usuarioDTO';
 
 import {NgForm} from '@angular/forms';
-
 @Component({
   selector: 'app-login',
   templateUrl: './login.component.html',
@@ -176,17 +175,16 @@ export class LoginComponent implements OnInit {
 
   }
 
-  onSubmit(f: NgForm) {  
-    localStorage.setItem('ativo', 'true');
-    this.router.navigate(['/app/agendarPlanejar']);
-    // this.BuscarLogin(f.value.documento, f.value.password)
+ 
+  onSubmit(f: NgForm) {     
+    this.BuscarLogin(f.value.documento, f.value.password)
   }
 
   async BuscarLogin(documento:string,senha:string) {
   this.usuarioLogin = documento;
   this.senhaLogin = senha;
 
-     return this.loginService.VerificarLogin(this.usuarioLogin, this.senhaLogin).subscribe((data: Usuario) => {
+     return this.loginService.realizarLoginLuksMove(this.usuarioLogin, this.senhaLogin).subscribe((data: UsuarioDTO) => {
       
       if (data == null) {
         this.messageService.add({ severity: 'error', summary: 'Erro', detail: 'Usuario ou senha incorretos, tente novamente!' });
@@ -194,13 +192,16 @@ export class LoginComponent implements OnInit {
       } else {
         let idUsuario = data.id != undefined? data.id : 0;
 
-        if (data?.habilitado === true) {
+        if (data?.status === true) {         
           localStorage.setItem('ativo', 'true');
-          localStorage.setItem('usuario', data.usuario!);
-          localStorage.setItem('funcao', data.funcao!);
+          localStorage.setItem('usuario', data.documento!);
+          localStorage.setItem('funcao', data.tipoUsuario!);
           localStorage.setItem('idUsuario', idUsuario.toString());
-          this.router.navigate(['/inicio']);
+          this.router.navigate(['/app/agendarPlanejar']);          
         }
+        else       
+          this.router.navigate(['/login']);         
+        
       }
 
 

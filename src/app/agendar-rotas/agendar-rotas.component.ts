@@ -144,8 +144,7 @@ export class AgendarRotasComponent implements OnInit {
   //#endregion
 
   //#region <Funções de importação de Arquivo - Importada do modulo de importação>
-  async arquivoSelecionado(event: Event) {
-    debugger;
+  async arquivoSelecionado(event: Event) {    
     let retornoImportacao = await importarArquivoSelecionado(event, this.parsedData, this.papa);
     if (retornoImportacao.exibirRotas) {
       this.rotasMapa = retornoImportacao.rotasMapa

@@ -260,8 +260,7 @@ export class GoogleService {
           destination: { placeId: destino },
           waypoints: waypoints, travelMode: google.maps.TravelMode.DRIVING, optimizeWaypoints: true, region: 'BR', provideRouteAlternatives: true
         })
-        .then((response: any) => {
-          debugger
+        .then((response: any) => {          
           this.deletarMarcadores();         
           this.listaPontos = !this.rotaAutomatica ? pegarRotasManualModulo(response) : pegarRotasAutomaticasModulo(response, this.googleMap)         
           this.rotasParaExport = criarVariavelExportacao(this.rotasImportadas, this.listaPontos);
@@ -317,7 +316,7 @@ export class GoogleService {
     let precoQualp:number = consumoMedio.preco ?? 0;
     let consumoQualp:number = consumoMedio.consumo?? 0;    
     
-    const url = `https://localhost:44318/api/Qualp?username=${encodeURIComponent(username)}&password=${encodeURIComponent(password)}&waypoints=${waypoints.join('&waypoints=')}&preco=${encodeURIComponent(precoQualp)}&consumo=${encodeURIComponent(consumoQualp)}`;
+    const url = `http://192.168.2.236:5010/api/Qualp?username=${encodeURIComponent(username)}&password=${encodeURIComponent(password)}&waypoints=${waypoints.join('&waypoints=')}&preco=${encodeURIComponent(precoQualp)}&consumo=${encodeURIComponent(consumoQualp)}`;
     
     this.http.get<responseQualp>(url).subscribe(
       (response) => {

@@ -1,56 +1,50 @@
 import { Injectable } from '@angular/core';
-import { HttpClient } from '@angular/common/http';
-import { Observable } from 'rxjs';
-import { catchError } from 'rxjs/operators';
-import { throwError } from 'rxjs';
-import { Usuario } from '../models/usuario';
-
+import { Observable, of } from 'rxjs';
+import { HttpClient, HttpHeaders, HttpParams } from '@angular/common/http';
+import { catchError, map } from 'rxjs/operators';
+import { UsuarioDTO } from '../models/usuarioDTO';
 @Injectable({
   providedIn: 'root'
 })
 export class LoginService {
-  private actionRoute: string;
-  constructor(private http: HttpClient) { 
-    // this.actionRoute = environment.URL_API
-    
-     this.actionRoute = "https://localhost:44318/api/Login?"
+  constructor(private http: HttpClient) { }
+  private loggedIn: boolean = false;
+  isLoggedIn(): Observable<boolean> {
+    debugger;
+    if (this.loggedIn) {
+      // Verifica se o estado do login já está em memória
+      return of(this.loggedIn);
+    } else {
+      // Caso contrário, verifica se há um usuário logado armazenado no localStorage
+      const status =  localStorage.getItem('ativo');
+      if (status === "true")this.loggedIn = true;  
+      return of(this.loggedIn);
+    }
   }
 
-  VerificarLogin(usuario: string, senha: string): Observable<any> {
-    return this.get(usuario,senha);
-  }
+  realizarLoginLuksMove(documento: string, senha: string): Observable<UsuarioDTO> {
 
-  // VerificarLogin(usuario: string, senha: string) {
-  //   return this.get(usuario,senha);
-  // }
-
-  get(usuario: string, senha: string) {
-    
-    let url = this.actionRoute + 'documento='+usuario+ '&senha='+senha+''
-    return this.http
-      .get(url)
-      .pipe(catchError(this.tratarErro));
-  }
-
-  async requisicaoLogin(usuario: string, senha: string) {
-    let rotas = ['https://localhost:44325/api/Login?documento='+ usuario + "&senha=" + senha + ""]
-
-  
-    await Promise.all(rotas.map(function(url) {
-      fetch(url).then(function(resp) {
-        return resp.json();
-      }).then(function(r) {
-        return r;
+    const url = 'http://192.168.2.236:5010/api/Login';
+    // Adicione os parâmetros à URL
+    const params = {
+      documento: documento,
+      senha: senha
+    };    
+    return this.http.get(url, { params: params }).pipe(
+      map((response: any) => {
+        debugger
+        this.loggedIn = true;
+        return response as string; // Conversão de tipo explícita
+      }),
+      catchError((error: any) => {
+        this.loggedIn = false;
+        return of(error);
       })
-    }));
-   }
-  
-
-   private tratarErro(error: Response) {
-    return throwError(error || 'Erro no servidor')
+    );
   }
-
 }
+
+
 
 
 

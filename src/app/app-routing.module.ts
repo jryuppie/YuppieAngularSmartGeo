@@ -14,6 +14,8 @@ const routes: Routes = [
     path: '',
     component: LoginComponent    
   },
+  // Rota curinga para redirecionar para o LoginComponent
+  { path: '**', redirectTo: '/app/agendarPlanejar' },
   {
     path: 'login',
     component: LoginComponent         

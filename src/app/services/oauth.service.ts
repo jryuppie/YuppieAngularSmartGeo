@@ -1,12 +1,32 @@
 import { Injectable } from '@angular/core';
 import { HttpClient, HttpHeaders, HttpParams } from '@angular/common/http';
 import { environment } from '../../environments/environment';
+import { Observable } from 'rxjs';
+
 @Injectable({
   providedIn: 'root'
 })
 export class OauthService {
-
+_documento: string = '';
+_senha: string = '';
   constructor(private http: HttpClient) { }
+
+
+  login(documento: string, senha: string): Observable<any> {
+    const url = 'http://192.168.2.236:5010/api/Login';
+
+    this._documento = documento;
+    this._senha = senha;
+
+    // Adicione os parâmetros à URL
+    const params = {
+      documento: documento,
+      senha: senha
+    };
+
+    return this.http.get(url, { params: params });
+  }
+
 
   async getAccessToken() {
     let data = null

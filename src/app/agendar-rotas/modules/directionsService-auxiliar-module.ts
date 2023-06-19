@@ -99,8 +99,7 @@ export function pegarRotasAutomaticasModulo(response: any, map: any) {
                 anchor: new google.maps.Point(16, 16)
               });
               marker.setVisible(true);    
-            }
-          debugger
+            }          
         }        
       });
     }

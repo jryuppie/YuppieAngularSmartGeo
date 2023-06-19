@@ -8,22 +8,6 @@ export interface Usuario {
     email?: string;  
     matricula?: string;   
     avatar?: string;
-    status?:string;
+    status?:boolean;
     habilitado?: boolean
 }
-
-// export interface Usuario {
-//     Id?: number;
-//     DateTime?: string;
-//     Nome?: string;
-//     Senha?: string;
-//     Status?: boolean;
-//     Telefone?: string;   
-//     TipoUsuario?: string;  
-//     TipoPessoa?: string;   
-//     Documento?: string;
-//     Latitude?:string;
-//     Longitude?: string;
-//     Cep?:string;
-//     DataAtualizacao?:string;
-// }
