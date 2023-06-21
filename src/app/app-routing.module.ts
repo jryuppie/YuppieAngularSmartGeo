@@ -14,8 +14,12 @@ const routes: Routes = [
     path: '',
     component: LoginComponent    
   },
+  {
+    path: 'app',
+    component: LoginComponent    
+  },
   // Rota curinga para redirecionar para o LoginComponent
-  { path: '**', redirectTo: '/app/agendarPlanejar' },
+  // { path: '**',canActivate: [AuthGuard], redirectTo: '/app/agendarPlanejar' },
   {
     path: 'login',
     component: LoginComponent         
@@ -23,6 +27,7 @@ const routes: Routes = [
   {
     path: 'app',    
     component: MenuLateralComponent,
+    canActivate: [AuthGuard],   
     children: [
       {
         path: 'mapaEquipe',  

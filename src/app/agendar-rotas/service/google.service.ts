@@ -316,7 +316,7 @@ export class GoogleService {
     let precoQualp:number = consumoMedio.preco ?? 0;
     let consumoQualp:number = consumoMedio.consumo?? 0;    
     
-    const url = `http://192.168.2.236:5010/api/Qualp?username=${encodeURIComponent(username)}&password=${encodeURIComponent(password)}&waypoints=${waypoints.join('&waypoints=')}&preco=${encodeURIComponent(precoQualp)}&consumo=${encodeURIComponent(consumoQualp)}`;
+    const url = `${environment.WebAPI}/api/Qualp?username=${encodeURIComponent(username)}&password=${encodeURIComponent(password)}&waypoints=${waypoints.join('&waypoints=')}&preco=${encodeURIComponent(precoQualp)}&consumo=${encodeURIComponent(consumoQualp)}`;
     
     this.http.get<responseQualp>(url).subscribe(
       (response) => {
