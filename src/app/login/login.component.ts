@@ -139,7 +139,7 @@ export class LoginComponent implements OnInit {
 
 
   particlesLoaded(container: Container): void {
-    console.log(container);
+    
   }
 
   async particlesInit(engine: Engine): Promise<void> {
@@ -181,8 +181,14 @@ export class LoginComponent implements OnInit {
   }
 
   async BuscarLogin(documento:string,senha:string) {
-  this.usuarioLogin = documento;
-  this.senhaLogin = senha;
+  // this.usuarioLogin = documento;
+  // this.senhaLogin = senha;
+  // localStorage.setItem('ativo', 'true');
+  // localStorage.setItem('usuario', 'tester');
+  // localStorage.setItem('funcao', 'teste');
+  // localStorage.setItem('idUsuario', '1');
+  // this.router.navigate(['/app/agendarPlanejar']);          
+
 
      return this.loginService.realizarLoginLuksMove(this.usuarioLogin, this.senhaLogin).subscribe((data: UsuarioDTO) => {
       
@@ -203,9 +209,8 @@ export class LoginComponent implements OnInit {
           this.router.navigate(['/login']);         
         
       }
-
-
     }, erro => { this.messageService.add({ severity: 'error', summary: 'Erro', detail: 'Erro ao realizar o login, tente novamente!' }); });
+
   }
 
   submit() {

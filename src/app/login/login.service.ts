@@ -3,6 +3,7 @@ import { Observable, of } from 'rxjs';
 import { HttpClient, HttpHeaders, HttpParams } from '@angular/common/http';
 import { catchError, map } from 'rxjs/operators';
 import { UsuarioDTO } from '../models/usuarioDTO';
+import { environment } from '../../environments/environment';
 @Injectable({
   providedIn: 'root'
 })
@@ -24,7 +25,7 @@ export class LoginService {
 
   realizarLoginLuksMove(documento: string, senha: string): Observable<UsuarioDTO> {
 
-    const url = 'http://192.168.2.236:5010/api/Login';
+    const url = `${environment.WebAPI}/api/Login`;
     // Adicione os parâmetros à URL
     const params = {
       documento: documento,

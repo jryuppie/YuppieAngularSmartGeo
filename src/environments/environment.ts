@@ -16,7 +16,7 @@ export const environment = {
   scope: 'https://www.googleapis.com/auth/cloud-billing.readonly',
   token_type: 'Bearer',
   refresh_token: '',  
-  WebAPI:'https://api.luksmove.facesign.in'
+  WebAPI:'https://api.luksmove.facesign.in'//'https://localhost:44340'
 };
 
 /*
